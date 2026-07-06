@@ -1,5 +1,5 @@
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
+import { OrbitControls, PerformanceMonitor } from "@react-three/drei";
 import { useStore } from "zustand";
 import { Factory } from "./scenes/Factory";
 import { MachineLine } from "./scenes/MachineLine";
@@ -22,17 +22,21 @@ export default function App() {
         camera={{ position: [4.5, 4, 9.5], fov: 42 }}
         gl={{ antialias: true, powerPreference: "high-performance" }}
       >
-        <Factory />
-        <MachineLine />
-        <SimulationController />
-        <OrbitControls
-          makeDefault
-          target={[-0.8, 1, 0]}
-          minDistance={4}
-          maxDistance={20}
-          maxPolarAngle={Math.PI / 2.05}
-        />
-        <PostFX />
+        {/* flipflops=2: sınırda gezen makine sürekli kalite değiştirip durmasın.
+            stepDown localStorage'a yazmaz — anlık yavaşlama kalıcı düşürme yapmaz. */}
+        <PerformanceMonitor flipflops={2} onDecline={() => qualityStore.getState().stepDown()}>
+          <Factory />
+          <MachineLine />
+          <SimulationController />
+          <OrbitControls
+            makeDefault
+            target={[-0.8, 1, 0]}
+            minDistance={4}
+            maxDistance={20}
+            maxPolarAngle={Math.PI / 2.05}
+          />
+          <PostFX />
+        </PerformanceMonitor>
       </Canvas>
       <ProductionPlanHUD />
       <QualityControls />
