@@ -47,7 +47,8 @@ export function DataBillboards() {
   const machineState = useStore(machineStateStore, (s) => s.state);
   const palletCount = useStore(simStore, (s) => s.palletStack.length);
   const completedCount = useStore(simStore, (s) => s.completedPallets.length);
-  const [snap, setSnap] = useState({ coilPercent: 100, phasePct: 0 });
+  const totalPieces = useStore(simStore, (s) => s.totalPiecesCut);
+  const [snap, setSnap] = useState({ coilPercent: 100, phasePct: 0, uptimeMin: 0 });
 
   useEffect(() => {
     if (!active) return;
@@ -56,10 +57,22 @@ export function DataBillboards() {
       setSnap({
         coilPercent: Math.round(((r - COIL.RMIN) / (COIL.R0 - COIL.RMIN)) * 100),
         phasePct: Math.round(simFrame.progress * 100),
+        uptimeMin: Math.round((performance.now() / 60000) * 10) / 10,
       });
     }, 500);
     return () => clearInterval(id);
   }, [active]);
+
+  // Basit OEE modeli (fuar verisi): kullanılabilirlik sabit yüksek, performans
+  // kesim temposundan, kalite fire tahmininden türetilir — ERP'de gerçeğe bağlanır.
+  const availability = 0.94;
+  const performance_ = Math.min(1, 0.82 + 0.03 * Math.sin(totalPieces));
+  const scrapNow = (currentRecommendation(simStore.getState())?.estimatedScrapPercent ?? 3) / 100;
+  const quality = 1 - scrapNow;
+  const oee = Math.round(availability * performance_ * quality * 100);
+  // Enerji/CO₂: kesilen parça başına ~1.9 kWh, şebeke ~0.42 kgCO₂/kWh (mock)
+  const kwh = Math.round(totalPieces * 1.9 * 10) / 10;
+  const co2 = Math.round(kwh * 0.42 * 10) / 10;
 
   if (!active) return null;
   const rec = currentRecommendation(simStore.getState());
@@ -80,6 +93,17 @@ export function DataBillboards() {
         rows={[
           ["Durum", STATE_TR[machineState]],
           ["Faz", `%${snap.phasePct}`],
+          ["OEE", `%${oee}`],
+          ["Çalışma", `${snap.uptimeMin} dk`],
+        ]}
+      />
+      <Tag
+        position={[-2, 2.9, 3.5]}
+        title="ENERJİ & KARBON"
+        rows={[
+          ["Tüketim", `${kwh} kWh`],
+          ["Karbon", `${co2} kg CO₂`],
+          ["Ton başına", `${totalPieces > 0 ? Math.round((kwh / Math.max(totalPieces * 0.011, 0.01)) * 10) / 10 : 0} kWh/t`],
         ]}
       />
       <Tag

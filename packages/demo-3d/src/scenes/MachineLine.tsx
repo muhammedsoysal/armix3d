@@ -44,6 +44,8 @@ import { Forklift } from "./Forklift";
 import { SlittingLine } from "./SlittingLine";
 import { BandingStation } from "./BandingStation";
 import { Truck } from "../truck/Truck";
+import { AndonTower } from "./AndonTower";
+import { QCScanner } from "./QCScanner";
 
 /** CNC hattının tamamı: rulo → doğrultucu → kesim → vakum kaldırıcı → palet. */
 export function MachineLine() {
@@ -68,6 +70,8 @@ export function MachineLine() {
       <SlittingLine />
       <BandingStation />
       <Truck />
+      <AndonTower />
+      <QCScanner />
     </group>
   );
 }
