@@ -1,6 +1,5 @@
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import { Bloom, EffectComposer, Vignette } from "@react-three/postprocessing";
 import { useStore } from "zustand";
 import { Factory } from "./scenes/Factory";
 import { MachineLine } from "./scenes/MachineLine";
@@ -8,6 +7,7 @@ import { SimulationController } from "./sim/SimulationController";
 import { ProductionPlanHUD } from "./hud/ProductionPlanHUD";
 import { QualityControls } from "./hud/QualityControls";
 import { AssetManifestLoader } from "./assets/AssetLoader";
+import { PostFX } from "./fx/PostFX";
 import { qualityStore } from "./quality/qualityStore";
 
 export default function App() {
@@ -32,12 +32,7 @@ export default function App() {
           maxDistance={20}
           maxPolarAngle={Math.PI / 2.05}
         />
-        {params.bloom && (
-          <EffectComposer>
-            <Bloom mipmapBlur intensity={0.85} luminanceThreshold={0.9} luminanceSmoothing={0.2} />
-            {params.vignette ? <Vignette offset={0.25} darkness={0.65} /> : <></>}
-          </EffectComposer>
-        )}
+        <PostFX />
       </Canvas>
       <ProductionPlanHUD />
       <QualityControls />
