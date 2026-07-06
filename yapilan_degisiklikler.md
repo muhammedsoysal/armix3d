@@ -57,3 +57,23 @@ Bu dosya, Antigravity AI asistanı tarafından yapılan son güncellemeleri diğ
 - **Dosya:** `IndustrialCoilStorage.tsx`
 - Raflarda bekleyen rulolara (bobinlere) hover (üzerine gelme) efekti eklendi. Mouse ile üzerine gelindiğinde rulo mavi parlıyor ve bir **Glassmorphism 3D Bilgi Kartı (Html Drei)** beliriyor.
 - Kartta o anki ruloya ait detaylı stok verileri yazıyor (Malzeme Türü, Kalınlık, Stok Adeti, Hangi Üründe Kullanıldığı).
+
+## 13. Otonom Lojistik (The Living Floor - AGV)
+- **Dosyalar:** `agvLogic.ts`, `AGV.tsx`, `GuideLanes.tsx` vb.
+- Sahada otonom olarak dolaşan AGV'ler (Otonom Taşıyıcı Robotlar) eklendi.
+- Kesim bitip palet dolduğunda AGV gelip paleti fiziksel olarak alıp stok alanına taşıyor.
+- Yere veri akışını gösteren ışıklı taşıma yolları (Guide Lanes) ve arka planda dolaşan devriye AGV'si eklendi.
+- Gelecek .glb/.stl modelleri için `OptionalModel` altyapısı hazırlandı.
+
+## 14. Sinematik Efektler (Cinematic Post Stack)
+- Sahneye Bloom (Lazer parlaması), Volumetric Shafts (Tavandan süzülen tozlu ışık hüzmeleri) eklendi.
+- Kesim anında sıçrayan kıvılcım (sparks) efektleri iyileştirildi.
+
+## 15. Fuar Otopilot Kamerası (Director Mode)
+- **Dosyalar:** `DirectorCamera.tsx`, `DirectorHUD.tsx`
+- Fuarda kimse cihaza dokunmadığında devreye giren akıllı kamera sistemi.
+- Makine kesim yaparken, palet taşınırken kameranın doğru açılara uçması ve sinematik geçişler (Depth of Field) eklendi.
+
+## 16. X-Ray & Hologram Veri Katmanı (Data Layer Toggle)
+- Tüm sahneyi "TRON" tarzı neon çizgili bir dijital ikiz hologramına dönüştüren "X-Ray" modu eklendi.
+- Makineler arasında veri akışını (pipelines) gösteren parlak çizgiler ve makinelerin üzerine canlı simülasyon durumlarını basan "Data Billboards" (Veri Tabelaları) asıldı.
