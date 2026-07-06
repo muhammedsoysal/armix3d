@@ -56,7 +56,12 @@ export function SimulationController() {
 
   useFrame((_, rawDelta) => {
     const sim = simStore.getState();
-    if (!sim.plan || sim.plan.recommendations.length === 0) return;
+    if (!sim.plan || sim.plan.recommendations.length === 0 || sim.isPlanCompleted) {
+      if (machineStateStore.getState().state !== "IDLE") {
+        machineStateStore.getState().transition("IDLE", { sku: "", source: "Sistem" });
+      }
+      return;
+    }
 
     const delta = Math.min(rawDelta, 0.1); // sekme arka planda kalınca sıçramayı önle
     const machine = machineStateStore.getState();
@@ -95,15 +100,20 @@ export function SimulationController() {
         const palletFull = stack.length > 4;
         let recIndex = s.recIndex;
         let pieces = s.piecesCutForRec + 1;
+        let isPlanCompleted = s.isPlanCompleted;
         const target = Math.min(rec.recommendedQuantity, PIECES_PER_RECOMMENDATION);
         if (pieces >= target) {
-          recIndex = (s.recIndex + 1) % s.plan!.recommendations.length;
+          if (s.recIndex + 1 >= s.plan!.recommendations.length) {
+            isPlanCompleted = true;
+          } else {
+            recIndex = s.recIndex + 1;
+          }
           pieces = 0;
         }
         let completed = s.completedPallets;
         if (palletFull) {
           console.log("[SIM] Palet doldu — forklift aldı, yeni palet.");
-          completed = [{ id: Date.now(), stack }, ...s.completedPallets].slice(0, 3);
+          completed = [{ id: Date.now(), stack }, ...s.completedPallets].slice(0, 6);
         }
         return {
           palletStack: palletFull ? [] : stack,
@@ -111,6 +121,7 @@ export function SimulationController() {
           piecesCutForRec: pieces,
           recIndex,
           totalPiecesCut: s.totalPiecesCut + 1,
+          isPlanCompleted,
         };
       });
     }

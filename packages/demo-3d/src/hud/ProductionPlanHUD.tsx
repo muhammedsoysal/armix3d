@@ -52,11 +52,26 @@ export function ProductionPlanHUD() {
   const totalPieces = useStore(simStore, (s) => s.totalPiecesCut);
   const palletCount = useStore(simStore, (s) => s.palletStack.length);
   const { coilPercent, phaseProgress } = useSimSnapshot();
+  const isPlanCompleted = useStore(simStore, (s) => s.isPlanCompleted);
 
   const rec = plan ? currentRecommendation(simStore.getState()) : null;
-  const upNext = plan
-    ? [1, 2, 3, 4, 5].map((o) => plan.recommendations[(recIndex + o) % plan.recommendations.length])
-    : [];
+  
+  const queueItems = plan ? (() => {
+    // Sadece geçmişteki 1, şu anki ve gelecekteki 3 işi göster
+    const startIndex = Math.max(0, recIndex - 1);
+    const endIndex = Math.min(plan.recommendations.length, recIndex + 4);
+    
+    return plan.recommendations.slice(startIndex, endIndex).map((r, i) => {
+      const realIndex = startIndex + i;
+      return {
+        ...r,
+        realIndex,
+        isPast: realIndex < recIndex,
+        isCurrent: realIndex === recIndex,
+        isFuture: realIndex > recIndex,
+      };
+    });
+  })() : [];
 
   return (
     <div className="pointer-events-none absolute inset-0 select-none font-sans">
@@ -97,27 +112,76 @@ export function ProductionPlanHUD() {
           
           <div className="space-y-2 relative">
             {/* Kuyruk öğeleri */}
-            {upNext.map((r, i) => (
-              <div key={i} className="flex items-center justify-between bg-white/5 border border-white/10 rounded-lg p-2.5 shadow-inner">
-                <div className="flex items-center gap-3 overflow-hidden">
-                  <div className="flex-shrink-0 w-5 h-5 rounded-full bg-neutral-800 border border-neutral-600 flex items-center justify-center text-[10px] font-mono text-neutral-400">
-                    {((recIndex + i + 1) % plan.recommendations.length) + 1}
+            {queueItems.map((r, i) => {
+              const isPast = r.isPast;
+              const isCurrent = r.isCurrent && !isPlanCompleted;
+              
+              return (
+                <div key={`${r.sku}-${i}`} className={`flex items-center justify-between border rounded-lg p-2.5 shadow-inner transition-all duration-500 ${
+                  isCurrent ? "bg-sky-900/40 border-sky-400/50" :
+                  isPast || isPlanCompleted ? "bg-emerald-900/10 border-emerald-500/20 opacity-50" :
+                  "bg-white/5 border-white/10"
+                }`}>
+                  <div className="flex items-center gap-3 overflow-hidden">
+                    {isPast || isPlanCompleted ? (
+                      <div className="flex-shrink-0 w-5 h-5 rounded-full bg-emerald-500/20 border border-emerald-500/50 flex items-center justify-center text-emerald-400">
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                      </div>
+                    ) : isCurrent ? (
+                      <div className="flex-shrink-0 w-5 h-5 rounded-full bg-sky-500/20 border border-sky-400 flex items-center justify-center text-[10px] font-mono text-sky-300 animate-pulse">
+                        {r.realIndex + 1}
+                      </div>
+                    ) : (
+                      <div className="flex-shrink-0 w-5 h-5 rounded-full bg-neutral-800 border border-neutral-600 flex items-center justify-center text-[10px] font-mono text-neutral-400">
+                        {r.realIndex + 1}
+                      </div>
+                    )}
+                    <div className="truncate">
+                      <div className={`text-[13px] font-semibold truncate ${isCurrent ? 'text-sky-100' : isPast || isPlanCompleted ? 'text-neutral-400 line-through' : 'text-neutral-200'}`}>
+                        {r.productName}
+                      </div>
+                      <div className={`text-[10px] mt-0.5 truncate ${isCurrent ? 'text-sky-300/80' : 'text-neutral-500'}`}>
+                        {isPast || isPlanCompleted ? "Tamamlandı" : isCurrent ? `Kesiliyor (${piecesCutForRec}/${Math.min(r.recommendedQuantity, PIECES_PER_RECOMMENDATION)})` : r.sku}
+                      </div>
+                    </div>
                   </div>
-                  <div className="truncate">
-                    <div className="text-[13px] font-semibold text-neutral-200 truncate">{r.productName}</div>
-                    <div className="text-[10px] text-neutral-500 mt-0.5 truncate">{r.sku}</div>
+                  <div className={`flex-shrink-0 flex flex-col items-end pl-2 border-l ${isCurrent ? 'border-sky-400/30' : 'border-white/10'}`}>
+                    <div className={`text-[10px] uppercase tracking-wider ${isCurrent ? 'text-sky-400' : 'text-neutral-500'}`}>Adet</div>
+                    <div className={`text-[12px] font-mono font-bold ${isCurrent ? 'text-sky-100' : isPast || isPlanCompleted ? 'text-neutral-500' : 'text-neutral-300'}`}>
+                      {Math.min(r.recommendedQuantity, PIECES_PER_RECOMMENDATION)}
+                    </div>
                   </div>
                 </div>
-                <div className="flex-shrink-0 flex flex-col items-end pl-2 border-l border-white/10">
-                  <div className="text-[10px] uppercase text-neutral-500 tracking-wider">Adet</div>
-                  <div className="text-[12px] font-mono text-neutral-300 font-bold">{Math.min(r.recommendedQuantity, PIECES_PER_RECOMMENDATION)}</div>
-                </div>
-              </div>
-            ))}
+              );
+            })}
             
-            {/* Kuyruk devam efekti */}
-            <div className="absolute -bottom-2 left-0 right-0 h-10 bg-gradient-to-t from-black/80 to-transparent pointer-events-none flex items-end justify-center pb-1">
-              <span className="text-neutral-500/50 text-[10px] tracking-widest">. . .</span>
+            {/* Kuyruk bitmediyse devam efekti */}
+            {!isPlanCompleted && queueItems.length > 0 && queueItems[queueItems.length - 1].realIndex < plan.recommendations.length - 1 && (
+              <div className="absolute -bottom-2 left-0 right-0 h-10 bg-gradient-to-t from-black/80 to-transparent pointer-events-none flex items-end justify-center pb-1">
+                <span className="text-neutral-500/50 text-[10px] tracking-widest">. . .</span>
+              </div>
+            )}
+          </div>
+        </Panel>
+      )}
+
+      {/* Plan Tamamlandı Bildirimi */}
+      {isPlanCompleted && (
+        <Panel className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] border border-emerald-500/40 bg-gradient-to-br from-emerald-900/90 to-black/90 shadow-[0_0_50px_rgba(16,185,129,0.3)] backdrop-blur-2xl p-8 flex flex-col items-center justify-center text-center animate-in fade-in zoom-in duration-500">
+          <div className="w-20 h-20 rounded-full bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center text-emerald-400 mb-6 shadow-[0_0_30px_rgba(16,185,129,0.5)]">
+            <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+          </div>
+          <h2 className="text-3xl font-bold text-white tracking-wide mb-2">Üretim Tamamlandı</h2>
+          <p className="text-emerald-200/80 mb-8 max-w-md">Karar Motoru tarafından hazırlanan {plan?.recommendations.length} adımlık üretim planı başarıyla işlendi ve makine bekleme konumuna alındı.</p>
+          
+          <div className="grid grid-cols-2 gap-4 w-full">
+            <div className="bg-black/40 border border-emerald-500/20 rounded-lg p-4">
+              <div className="text-xs text-emerald-400/80 uppercase tracking-widest mb-1">Toplam Üretim</div>
+              <div className="text-2xl font-mono font-bold text-white">{totalPieces} <span className="text-sm text-emerald-200/50">adet</span></div>
+            </div>
+            <div className="bg-black/40 border border-emerald-500/20 rounded-lg p-4">
+              <div className="text-xs text-emerald-400/80 uppercase tracking-widest mb-1">Doldurulan Palet</div>
+              <div className="text-2xl font-mono font-bold text-white">{completedPallets.length} <span className="text-sm text-emerald-200/50">palet</span></div>
             </div>
           </div>
         </Panel>

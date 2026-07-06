@@ -17,6 +17,7 @@ export interface SimStoreState {
   totalPiecesCut: number;
   palletStack: PalletPiece[];
   completedPallets: { id: number; stack: PalletPiece[] }[];
+  isPlanCompleted: boolean;
   setPlan: (plan: ProductionPlan, parts: Record<string, PartDefinition>) => void;
 }
 
@@ -28,7 +29,8 @@ export const simStore = createStore<SimStoreState>()((set) => ({
   totalPiecesCut: 0,
   palletStack: [],
   completedPallets: [],
-  setPlan: (plan, parts) => set({ plan, parts, recIndex: 0, piecesCutForRec: 0 }),
+  isPlanCompleted: false,
+  setPlan: (plan, parts) => set({ plan, parts, recIndex: 0, piecesCutForRec: 0, isPlanCompleted: false }),
 }));
 
 export function currentRecommendation(s: SimStoreState): PlanRecommendation | null {

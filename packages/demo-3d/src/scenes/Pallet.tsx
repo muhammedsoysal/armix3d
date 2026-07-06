@@ -46,10 +46,25 @@ export function Pallet() {
       {/* Aktif palet */}
       {renderPalletWithStack(stack, 0)}
 
-      {/* Tamamlanıp kenara alınan paletler */}
-      {completedPallets.map((cp, idx) => (
-        <group key={cp.id}>{renderPalletWithStack(cp.stack, 1.4 * (idx + 1))}</group>
-      ))}
+      {/* Tamamlanıp kenara alınan paletler (Stok Alanı Simülasyonu) */}
+      {completedPallets.map((cp, idx) => {
+        // 2 satırlı bir grid (arka arkaya) dizilimi yapalım:
+        // idx=0 -> row=0, col=0
+        // idx=1 -> row=1, col=0
+        // idx=2 -> row=0, col=1 vs.
+        const row = idx % 2;
+        const col = Math.floor(idx / 2);
+        
+        // Aktif paletten uzaklık:
+        const offsetX = 1.8 + col * 1.5;
+        const offsetZ = row === 0 ? 0 : -1.2;
+        
+        return (
+          <group key={cp.id} position={[0, 0, offsetZ]}>
+            {renderPalletWithStack(cp.stack, offsetX)}
+          </group>
+        );
+      })}
     </group>
   );
 }
