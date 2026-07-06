@@ -1,15 +1,15 @@
 import { useStore } from "zustand";
 import { LAYOUT } from "../sim/constants";
-import { simStore } from "../sim/simStore";
+import { simStore, type PalletPiece } from "../sim/simStore";
 import { OptionalModel } from "../assets/AssetLoader";
+import { agvStore } from "../agv/agvStore";
+import { STAGING, dropSlotFor } from "../agv/agvLogic";
 
-/** Ahşap palet + kesilen parçaların istifi (palet dolunca forklift alır). */
-export function Pallet() {
-  const stack = useStore(simStore, (s) => s.palletStack);
-  const completedPallets = useStore(simStore, (s) => s.completedPallets);
-
-  const renderPalletWithStack = (palletStack: any[], offsetX: number) => (
-    <group position={[LAYOUT.palletX + offsetX, 0, 0]}>
+/** Ahşap palet + parça istifi — konumu çağıran belirler (grid, istasyon
+ * veya AGV deck'i). AGV.tsx de taşınan paleti bununla çizer. */
+export function PalletWithStack({ stack }: { stack: PalletPiece[] }) {
+  return (
+    <group>
       <OptionalModel name="pallet">
         {/* Palet tahtaları */}
         {[-0.45, -0.15, 0.15, 0.45].map((z) => (
@@ -27,7 +27,7 @@ export function Pallet() {
       </OptionalModel>
 
       {/* Kesilen parça istifi */}
-      {palletStack.map((piece, i) => (
+      {stack.map((piece, i) => (
         <mesh
           key={i}
           position={[0, LAYOUT.palletBaseY + i * 0.024, 0]}
@@ -40,28 +40,44 @@ export function Pallet() {
       ))}
     </group>
   );
+}
+
+/** Aktif palet + tamamlanan paletlerin yaşam döngüsü:
+ * istasyonda AGV bekler → AGV deck'inde taşınır (burada çizilmez) →
+ * grid hücresine teslim edilir. */
+export function Pallet() {
+  const stack = useStore(simStore, (s) => s.palletStack);
+  const completedPallets = useStore(simStore, (s) => s.completedPallets);
+  const carrying = useStore(agvStore, (s) => s.carrying);
+  const pending = useStore(agvStore, (s) => s.pending);
+  const deliveredIds = useStore(agvStore, (s) => s.deliveredIds);
 
   return (
     <group>
       {/* Aktif palet */}
-      {renderPalletWithStack(stack, 0)}
+      <group position={[LAYOUT.palletX, 0, 0]}>
+        <PalletWithStack stack={stack} />
+      </group>
 
-      {/* Tamamlanıp kenara alınan paletler (Stok Alanı Simülasyonu) */}
       {completedPallets.map((cp, idx) => {
-        // 2 satırlı bir grid (arka arkaya) dizilimi yapalım:
-        // idx=0 -> row=0, col=0
-        // idx=1 -> row=1, col=0
-        // idx=2 -> row=0, col=1 vs.
-        const row = idx % 2;
-        const col = Math.floor(idx / 2);
-        
-        // Aktif paletten uzaklık:
-        const offsetX = 1.8 + col * 1.5;
-        const offsetZ = row === 0 ? 0 : -1.2;
-        
+        // AGV deck'inde: AGV.tsx çizer
+        if (carrying?.id === cp.id) return null;
+
+        // Henüz teslim edilmedi: istasyonda AGV'yi bekliyor
+        if (!deliveredIds.includes(cp.id)) {
+          const queuePos = Math.max(0, pending.findIndex((p) => p.id === cp.id));
+          return (
+            <group key={cp.id} position={[STAGING.x + queuePos * 1.4, 0, STAGING.z]}>
+              <PalletWithStack stack={cp.stack} />
+            </group>
+          );
+        }
+
+        // Teslim edildi: stok grid hücresi (append sıralı → indeks stabil)
+        const slot = dropSlotFor(idx);
         return (
-          <group key={cp.id} position={[0, 0, offsetZ]}>
-            {renderPalletWithStack(cp.stack, offsetX)}
+          <group key={cp.id} position={[slot.x, 0, slot.z]}>
+            <PalletWithStack stack={cp.stack} />
           </group>
         );
       })}

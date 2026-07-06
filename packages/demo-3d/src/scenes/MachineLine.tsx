@@ -36,6 +36,7 @@ function Tables() {
 }
 
 import { IndustrialCoilStorage } from "./IndustrialCoilStorage";
+import { AGV, PatrolAGV } from "../agv/AGV";
 
 /** CNC hattının tamamı: rulo → doğrultucu → kesim → vakum kaldırıcı → palet. */
 export function MachineLine() {
@@ -51,6 +52,8 @@ export function MachineLine() {
       <Smoke />
       <VacuumLifter />
       <Pallet />
+      <AGV />
+      <PatrolAGV />
     </group>
   );
 }

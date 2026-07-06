@@ -34,6 +34,8 @@ export interface AgvStoreState {
   deliveredIds: number[];
   enqueue: (p: PendingPallet) => void;
   beginPickup: () => void;
+  /** Alım noktasına varıldı: kaldırma animasyonu başlar */
+  beginLift: () => void;
   /** LIFT bitti: sıradaki palet deck'e alınır */
   pickUp: () => void;
   beginDrop: () => void;
@@ -51,6 +53,7 @@ export const agvStore = createStore<AgvStoreState>()((set) => ({
   deliveredIds: [],
   enqueue: (p) => set((s) => ({ pending: [...s.pending, p] })),
   beginPickup: () => set({ phase: "TO_PICKUP" }),
+  beginLift: () => set({ phase: "LIFT" }),
   pickUp: () =>
     set((s) => {
       const [next, ...rest] = s.pending;
