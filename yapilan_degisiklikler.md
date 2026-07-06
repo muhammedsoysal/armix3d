@@ -114,3 +114,8 @@ Bu dosya, Antigravity AI asistanı tarafından yapılan son güncellemeleri diğ
 ## Teknik Durum (2026-07-07)
 - 26/26 birim testi, 0 tip hatası, production build yeşil. Tüm özellikler headless Chrome'da uçtan uca doğrulandı (tam plan koşusu: kesim → bantlama → AGV → grid → kamyon yükleme → kalkış).
 - Saf mantık test edilir modüllerde (`agvLogic`, `nestingMath`, `whatIfMath`, `waveMath`, `shots`); render bileşenleri store'lardan okur. Yeni store'lar: `agvStore` (görevler), `truckStore`, `scrapStore`, `xrayStore`, `directorStore`, `fxStore`.
+
+## 22. AAA Paketi: Gerçek Modeller + Vinç + Mekânsal Ses
+- **Gerçek GLB pipeline'ı canlı:** `AssetLoader` manifest'i artık transform destekler (`{file, scale, rotationY, position}`); kamyon gerçek bir GLB ile çalışıyor (Cesium Milk Truck, CC-BY — `public/models/ATTRIBUTIONS.md`). Premium model ekleme rehberi: `docs/ASSET_GUIDE.md` (kaynaklar, lisanslar, ölçek/yön ayarı, draco sıkıştırma, sorun giderme).
+- **Vinç animasyonu** (`IndustrialCoilStorage.tsx`): tavan vinci 40 sn'lik döngüde köprüyü gezdirir, kancayı indirir, ruloyu kaldırıp diğer raf hattına aktarır (smoothstep zaman çizelgesi).
+- **Mekânsal ses** (`audio/`, `scripts/generate-audio.mjs`): prosedürel üretilmiş WAV'lar (telifsiz) — 50 Hz tesis uğultusu, kesim tıslaması (yalnız CUTTING), AGV bip'i (görevde). drei PositionalAudio ile 3D konumlu; sağ alttaki 🔊 butonu tarayıcı jest kuralını karşılar.
