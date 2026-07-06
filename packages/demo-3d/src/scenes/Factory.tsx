@@ -1,6 +1,7 @@
 import { Environment, Grid, Lightformer } from "@react-three/drei";
 import { useStore } from "zustand";
 import { qualityStore } from "../quality/qualityStore";
+import { VolumetricShafts } from "./VolumetricShafts";
 
 /** Fabrika ortamı: zemin, sis, ışıklar ve prosedürel environment map
  * (dosya/network bağımlılığı yok — fuar makinesi offline çalışabilir).
@@ -34,6 +35,8 @@ export function Factory() {
         <Lightformer intensity={0.8} color="#8fb7ff" position={[-6, 3, -6]} scale={[5, 2, 1]} />
         <Lightformer intensity={0.6} color="#ffd0a3" position={[6, 2, 6]} rotation-y={Math.PI} scale={[5, 2, 1]} />
       </Environment>
+
+      <VolumetricShafts />
 
       <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[90, 90]} />
