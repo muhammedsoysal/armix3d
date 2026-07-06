@@ -48,7 +48,10 @@ export function Truck() {
       return;
     }
     g.position.z += DEPART_SPEED * dt;
-    for (const w of wheelsRef.current.children) (w as Mesh).rotation.x += (DEPART_SPEED * dt) / 0.34;
+    // Gerçek GLB takılıyken placeholder tekerlekler yoktur — ref null olabilir
+    if (wheelsRef.current) {
+      for (const w of wheelsRef.current.children) (w as Mesh).rotation.x += (DEPART_SPEED * dt) / 0.34;
+    }
   });
 
   return (

@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useFrame } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
+import type { Group, Mesh } from "three";
 
 /** Bobin verileri */
 const coilsData = [
@@ -118,8 +120,40 @@ function SteelRacks() {
   );
 }
 
-/** Tavan Vinç Sistemi (Overhead Crane) */
+/** Faz zaman çizelgesi yardımcıları: [t0,t1] aralığında 0→1 smoothstep. */
+function phase(t: number, t0: number, t1: number): number {
+  const u = Math.min(Math.max((t - t0) / (t1 - t0), 0), 1);
+  return u * u * (3 - 2 * u);
+}
+
+/** Tavan Vinç Sistemi (Overhead Crane) — CANLI: 40 sn'lik döngüde köprü
+ * raflar üzerinde gezer, kancayı indirir, bir ruloyu kaldırıp diğer raf
+ * hattına aktarır (ikmal gösterisi). Tamamen zaman çizelgesi güdümlü. */
 function OverheadCrane() {
+  const bridgeRef = useRef<Group>(null!);
+  const ropeRef = useRef<Mesh>(null!);
+  const hookRef = useRef<Group>(null!);
+  const coilRef = useRef<Mesh>(null!);
+
+  useFrame(({ clock }) => {
+    const t = clock.elapsedTime % 40;
+
+    // Köprü x: 0 → -2 (alış) → +2 (bırakış) → 0
+    const x = -2 * phase(t, 6, 10) + 4 * phase(t, 17, 22) - 2 * phase(t, 29, 33);
+    bridgeRef.current.position.x = x;
+
+    // Halat uzunluğu: alışta ve bırakışta iner (3.4 m), taşırken kısa (1.0 m)
+    const down1 = phase(t, 10, 13) - phase(t, 14, 17);
+    const down2 = phase(t, 22, 25) - phase(t, 26, 29);
+    const L = 1.0 + 2.4 * Math.max(down1, down2);
+    ropeRef.current.scale.y = L / 2;
+    ropeRef.current.position.y = -0.55 - L / 2;
+    hookRef.current.position.y = -0.55 - L;
+
+    // Taşınan rulo: kaldırma (14 sn) ile bırakma (25 sn) arasında kancada
+    coilRef.current.visible = t >= 14 && t < 25;
+  });
+
   return (
     <group position={[-1.5, 5, -4.5]}>
       {/* İki taraftaki yürüme yolları (Runway Beams) */}
@@ -132,26 +166,37 @@ function OverheadCrane() {
         <meshStandardMaterial color="#334155" metalness={0.5} roughness={0.6} />
       </mesh>
 
-      {/* Gezen Köprü (Bridge) */}
-      <group position={[0, 0.2, 0]}>
+      {/* Gezen Köprü (Bridge) — animasyonlu */}
+      <group ref={bridgeRef} position={[0, 0.2, 0]}>
         <mesh castShadow receiveShadow>
           <boxGeometry args={[0.5, 0.4, 4.2]} />
-          <meshStandardMaterial color="#eab308" metalness={0.6} roughness={0.3} /> {/* Dikkat Sarısı */}
+          <meshStandardMaterial color="#eab308" metalness={0.6} roughness={0.3} />
         </mesh>
         {/* Vinç Motoru (Hoist) */}
         <mesh position={[0, -0.3, 0.5]} castShadow receiveShadow>
           <boxGeometry args={[0.6, 0.5, 0.8]} />
           <meshStandardMaterial color="#1e293b" metalness={0.8} roughness={0.2} />
         </mesh>
-        {/* Halat ve Kanca Sembolik */}
-        <mesh position={[0, -1.3, 0.5]} castShadow>
+        {/* Halat: üst ucu sabit, uzayıp kısalır */}
+        <mesh ref={ropeRef} position={[0, -1.05, 0.5]} castShadow>
           <cylinderGeometry args={[0.02, 0.02, 2, 8]} />
           <meshStandardMaterial color="#94a3b8" metalness={0.9} roughness={0.1} />
         </mesh>
-        <mesh position={[0, -2.4, 0.5]} castShadow>
-          <cylinderGeometry args={[0.1, 0.1, 0.2, 16]} />
-          <meshStandardMaterial color="#eab308" metalness={0.8} roughness={0.2} />
-        </mesh>
+        {/* Kanca + C-çengel + taşınan rulo */}
+        <group ref={hookRef} position={[0, -1.55, 0.5]}>
+          <mesh castShadow>
+            <cylinderGeometry args={[0.1, 0.1, 0.2, 16]} />
+            <meshStandardMaterial color="#eab308" metalness={0.8} roughness={0.2} />
+          </mesh>
+          <mesh position={[0, -0.18, 0]} castShadow>
+            <boxGeometry args={[0.5, 0.08, 0.12]} />
+            <meshStandardMaterial color="#b45309" metalness={0.7} roughness={0.35} />
+          </mesh>
+          <mesh ref={coilRef} position={[0, -0.42, 0]} rotation={[0, 0, Math.PI / 2]} visible={false} castShadow>
+            <cylinderGeometry args={[0.38, 0.38, 0.6, 28]} />
+            <meshStandardMaterial color="#9aa2ad" metalness={0.9} roughness={0.3} />
+          </mesh>
+        </group>
       </group>
     </group>
   );

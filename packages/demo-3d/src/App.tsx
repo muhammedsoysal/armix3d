@@ -15,6 +15,8 @@ import { DataBillboards } from "./xray/DataBillboards";
 import { XRayToggle } from "./hud/XRayToggle";
 import { OptimizerThinkingHUD } from "./hud/OptimizerThinkingHUD";
 import { WhatIfHUD } from "./hud/WhatIfHUD";
+import { AudioToggle } from "./hud/AudioToggle";
+import { FactoryAudio } from "./audio/FactoryAudio";
 import { DirectorHUD } from "./hud/DirectorHUD";
 import { directorStore } from "./director/directorStore";
 import { qualityStore } from "./quality/qualityStore";
@@ -39,6 +41,7 @@ export default function App() {
           <MachineLine />
           <SimulationController />
           <DirectorCamera />
+          <FactoryAudio />
           <XRayEffect />
           <DataPipelines />
           <DataBillboards />
@@ -54,6 +57,7 @@ export default function App() {
       <XRayToggle />
       <OptimizerThinkingHUD />
       <WhatIfHUD />
+      <AudioToggle />
     </div>
   );
 }
