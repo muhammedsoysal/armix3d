@@ -87,3 +87,30 @@ Bu dosya, Antigravity AI asistanı tarafından yapılan son güncellemeleri diğ
 - **Dosyalar:** `SlittingLine.tsx`
 - Fabrika sahasına devasa ruloların döner dairesel bıçaklarla (spinning circular knives) dar şeritler (ribbons) halinde kesildiği animasyonlu bir dilme makinesi eklendi.
 - Yeni hover kartı eklendi (YARMA HATTI · Giriş 1100mm 304 BA · Çıkış 5 şerit × 190mm).
+
+## 18. Yarma Hattı (Slitting Line)
+- **Dosya:** `SlittingLine.tsx`
+- Ön-sol boş sahaya rulo servis merkezlerinin imza makinesi kuruldu: ana rulo döngüsel olarak incelir, dönen dairesel bıçaklardan geçen şerit 5 dar şeride (mult) ayrılıp ayrı kafalara sarılır (sarıcılar gözle görülür kalınlaşır, 75 sn'de döngü sıfırlanır). Hover'da hat bilgi kartı.
+
+## 19. Sipariş-Sevkiyat Finali (Order-to-Ship Arc)
+- **Dosyalar:** `BandingStation.tsx`, `truck/Truck.tsx`, `truck/truckStore.ts`, `agvStore.ts` (görev sistemi)
+- **Bantlama İstasyonu:** Dolan paletler istasyonda çemberlenir (çelik çemberler + sarı köşebentler + QR sevkiyat etiketi, animasyonlu uygulayıcı kol); AGV bantlama bitmeden paleti almaz (`readyAt`).
+- **Kamyon Rampası:** Plan tamamlanınca AGV grid'deki TÜM paletleri sırayla kamyon kasasına yükler (`mission: store|load` genellemesi); yükleme bitince kamyon tesisten ayrılır (tekerlekler döner, kasadaki paletler birlikte gider).
+- **Director entegrasyonu:** Yükleme ve kalkış anlarında kamera otomatik "Sevkiyat — Yükleme Rampası" kadrajına keser. IDLE kadrajı artık raf kahramanı ↔ yarma hattı arasında dönüşümlü.
+
+## 20. Nesting Projeksiyonu & Fiyatlı Hurda Kasası
+- **Dosyalar:** `nesting/` (nestingMath.ts test edilmiş, NestingProjection.tsx, ScrapBin.tsx), `OptimizerThinkingHUD.tsx`
+- Karar Motoru'nun seçtiği yerleşim kesilen sacın ÜZERİNE yansıtılır: cyan parça hücreleri, kırmızı taramalı fire bölgeleri, kesim kafası geçtikçe yeşile dönen hücreler.
+- "Optimizer Düşünüyor" paneli: iş değişiminde adaylar (normal/döndürülmüş/tek sıra) fire yüzdeleriyle sırayla gösterilir, kazanan yeşil damgayla kilitlenir.
+- Fiziksel hurda kasası her kesimde dolar; hover kartında kg + ₺ kayıp değeri (₺85/kg 304 hurda üzerinden).
+
+## 21. Saha Canlılığı Paketi (Autonomous Batch)
+- **Andon Kulesi** (`AndonTower.tsx`): kesim portalı yanında kırmızı/amber/yeşil istif lambası — üretimde yeşil, beklemede amber, plan bitince kutlama nabzı.
+- **QC Lazer Kemeri** (`QCScanner.tsx`): çıkış masası üzerinde; PALETLEME sırasında yeşil ışık perdesi parçayı süpürür.
+- **Operatör NPC** (`Worker.tsx`): hi-vis yelekli, baretli vardiya operatörü hat boyunca devriye atar, istasyonlarda duraklar (yürüyüş animasyonlu).
+- **X-Ray telemetri genişlemesi:** CNC tabelasına OEE (%kullanılabilirlik×performans×kalite) + çalışma süresi; yeni "ENERJİ & KARBON" tabelası (kWh, kg CO₂, kWh/ton).
+- **Director dip-to-black:** her kadraj kesmesinde 240ms film karartması.
+
+## Teknik Durum (2026-07-07)
+- 26/26 birim testi, 0 tip hatası, production build yeşil. Tüm özellikler headless Chrome'da uçtan uca doğrulandı (tam plan koşusu: kesim → bantlama → AGV → grid → kamyon yükleme → kalkış).
+- Saf mantık test edilir modüllerde (`agvLogic`, `nestingMath`, `whatIfMath`, `waveMath`, `shots`); render bileşenleri store'lardan okur. Yeni store'lar: `agvStore` (görevler), `truckStore`, `scrapStore`, `xrayStore`, `directorStore`, `fxStore`.
