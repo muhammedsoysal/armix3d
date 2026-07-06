@@ -10,6 +10,9 @@ import { AssetManifestLoader } from "./assets/AssetLoader";
 import { PostFX } from "./fx/PostFX";
 import { DirectorCamera } from "./director/DirectorCamera";
 import { XRayEffect } from "./xray/XRayEffect";
+import { DataPipelines } from "./xray/DataPipelines";
+import { DataBillboards } from "./xray/DataBillboards";
+import { XRayToggle } from "./hud/XRayToggle";
 import { DirectorHUD } from "./hud/DirectorHUD";
 import { directorStore } from "./director/directorStore";
 import { qualityStore } from "./quality/qualityStore";
@@ -35,6 +38,8 @@ export default function App() {
           <SimulationController />
           <DirectorCamera />
           <XRayEffect />
+          <DataPipelines />
+          <DataBillboards />
           <PostFX />
         </PerformanceMonitor>
       </Canvas>
@@ -44,6 +49,7 @@ export default function App() {
         <QualityControls />
       </div>
       <DirectorHUD />
+      <XRayToggle />
     </div>
   );
 }
