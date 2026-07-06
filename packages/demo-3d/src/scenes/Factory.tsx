@@ -43,6 +43,9 @@ export function Factory() {
         <meshStandardMaterial color="#13161c" roughness={0.92} metalness={0.05} />
       </mesh>
       <Grid
+        /* noXray: drei Grid kendi shader uniform'larını her kare günceller;
+           hologram swap'ı onu kırar — zaten TRON dünyasının grid'i budur */
+        userData={{ noXray: true }}
         position={[0, 0.005, 0]}
         infiniteGrid
         cellSize={0.5}

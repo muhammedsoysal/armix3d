@@ -31,13 +31,13 @@ function Arc({
       start={start}
       mid={mid}
       end={end}
-      color="#67e8f9"
-      lineWidth={2.4}
+      color="#f0fdff"
+      lineWidth={3.6}
       dashed
-      dashSize={0.22}
-      gapSize={0.14}
+      dashSize={0.26}
+      gapSize={0.16}
       transparent
-      opacity={0.9}
+      opacity={1}
     />
   );
 }

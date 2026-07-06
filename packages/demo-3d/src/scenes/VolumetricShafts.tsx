@@ -3,6 +3,7 @@ import { AdditiveBlending, CanvasTexture, DoubleSide } from "three";
 import { Sparkles } from "@react-three/drei";
 import { useStore } from "zustand";
 import { qualityStore } from "../quality/qualityStore";
+import { xrayStore } from "../xray/xrayStore";
 
 /** Tepeden düşen sahte volümetrik ışık hüzmesi dokusu: üstte parlak,
  * tabana doğru şeffaflaşan dikey gradyan (raymarch yok, kiosk dostu). */
@@ -29,10 +30,12 @@ const SHAFTS: { x: number; z: number; topR: number; bottomR: number; h: number }
 
 export function VolumetricShafts() {
   const enabled = useStore(qualityStore, (s) => s.params.volumetrics);
+  // Işık hüzmesi madde değildir: şematik (x-ray) dünyada var olmaz
+  const xrayActive = useStore(xrayStore, (s) => s.active);
   const texture = useMemo(makeShaftTexture, []);
   useEffect(() => () => texture.dispose(), [texture]);
 
-  if (!enabled) return null;
+  if (!enabled || xrayActive) return null;
 
   return (
     <group>

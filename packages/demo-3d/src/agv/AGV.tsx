@@ -124,8 +124,10 @@ function AgvBody({
       <RoundedBox args={[1.1, 0.22, 0.78]} radius={0.05} smoothness={3} position={[0, 0.16, 0]} castShadow>
         <meshStandardMaterial color={bodyColor} metalness={0.55} roughness={0.35} />
       </RoundedBox>
-      {/* Durum ışık şeridi — gövdeyi çevreler, bloom'a girer */}
-      <mesh ref={lightBarRef} position={[0, 0.16, 0]}>
+      {/* Durum ışık şeridi — gövdeyi çevreler, bloom'a girer.
+          noXray: materyali her kare mutasyona uğrar, hologram swap'ı dışında
+          tutulur (robotlar veri katmanında da durum ışığını korur). */}
+      <mesh ref={lightBarRef} position={[0, 0.16, 0]} userData={{ noXray: true }}>
         <boxGeometry args={[1.12, 0.03, 0.8]} />
         <meshStandardMaterial color="#0a0f14" emissive="#38bdf8" emissiveIntensity={2.5} toneMapped={false} />
       </mesh>
@@ -139,7 +141,7 @@ function AgvBody({
         <meshStandardMaterial color="#000000" emissive="#ef4444" emissiveIntensity={1.2} toneMapped={false} />
       </mesh>
       {/* İkaz feneri (döner lamba) */}
-      <mesh ref={beaconRef} position={[-0.42, 0.36, 0]}>
+      <mesh ref={beaconRef} position={[-0.42, 0.36, 0]} userData={{ noXray: true }}>
         <cylinderGeometry args={[0.035, 0.045, 0.09, 12]} />
         <meshStandardMaterial color="#331a00" emissive="#ff8c00" emissiveIntensity={3} toneMapped={false} />
       </mesh>
@@ -165,7 +167,7 @@ function AgvBody({
         </mesh>
       ))}
       {/* Zemin altı holografik halka (underglow) */}
-      <mesh ref={glowRef} position={[0, 0.012, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+      <mesh ref={glowRef} position={[0, 0.012, 0]} rotation={[-Math.PI / 2, 0, 0]} userData={{ noXray: true }}>
         <ringGeometry args={[0.55, 0.78, 40]} />
         <meshBasicMaterial color="#38bdf8" transparent opacity={0.35} blending={AdditiveBlending} depthWrite={false} toneMapped={false} />
       </mesh>

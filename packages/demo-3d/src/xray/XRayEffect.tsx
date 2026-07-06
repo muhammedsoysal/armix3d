@@ -37,9 +37,11 @@ const HOLO_FRAGMENT = /* glsl */ `
     vec3 N = normalize(vNormal);
     float fres = pow(1.0 - abs(dot(N, V)), 2.0);
     float scan = 0.5 + 0.5 * sin(vWorldPos.y * 26.0 - uTime * 2.5);
-    vec3 base = vec3(0.010, 0.035, 0.075);
+    // Taban yeterince parlak olmalı: düz/yatay yüzeylerde fresnel≈0 iken
+    // "siyah delik" görünmesin
+    vec3 base = vec3(0.030, 0.095, 0.170);
     vec3 rim = vec3(0.22, 0.74, 0.97); // #38bdf8
-    vec3 col = base + rim * fres * 1.9 + rim * scan * 0.05;
+    vec3 col = base + rim * fres * 1.9 + rim * scan * 0.09;
     gl_FragColor = vec4(col, 1.0);
   }
 `;
@@ -67,6 +69,9 @@ export function XRayEffect() {
         vertexShader: HOLO_VERTEX,
         fragmentShader: HOLO_FRAGMENT,
         uniforms: { uTime: { value: 0 } },
+        // Orijinallerin bir kısmı DoubleSide (sac, plane'ler) — tek taraflı
+        // hologram bu yüzeyleri "siyah delik" yapar
+        side: DoubleSide,
       }),
     [],
   );
@@ -110,6 +115,9 @@ export function XRayEffect() {
     if (w.mode === "in" || (active && w.mode === null)) {
       scene.traverse((obj) => {
         if (!(obj instanceof Mesh) || obj.userData.noXray || swapped.current.has(obj)) return;
+        // three-stdlib Line2/LineSegments2 Mesh'ten türer; instanced çizgi
+        // geometrisi holo shader ile çakışır (kılavuz hatları kaybolur)
+        if ((obj as unknown as { isLineSegments2?: boolean }).isLineSegments2) return;
         obj.getWorldPosition(tmp);
         if (tmp.distanceTo(w.origin) <= radius) {
           swapped.current.set(obj, obj.material);
