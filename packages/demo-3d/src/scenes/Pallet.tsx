@@ -3,6 +3,7 @@ import { LAYOUT } from "../sim/constants";
 import { simStore, type PalletPiece } from "../sim/simStore";
 import { OptionalModel } from "../assets/AssetLoader";
 import { agvStore } from "../agv/agvStore";
+import { truckStore } from "../truck/truckStore";
 import { STAGING, dropSlotFor } from "../agv/agvLogic";
 
 /** Çemberleme + köşebent + QR etiketi — bantlama istasyonundan çıkan palet. */
@@ -99,6 +100,7 @@ export function Pallet() {
   const carrying = useStore(agvStore, (s) => s.carrying);
   const pending = useStore(agvStore, (s) => s.pending);
   const deliveredIds = useStore(agvStore, (s) => s.deliveredIds);
+  const loadedIds = useStore(truckStore, (s) => s.loadedIds);
 
   return (
     <group>
@@ -108,8 +110,8 @@ export function Pallet() {
       </group>
 
       {completedPallets.map((cp, idx) => {
-        // AGV deck'inde: AGV.tsx çizer
-        if (carrying?.id === cp.id) return null;
+        // AGV deck'inde: AGV.tsx çizer; kamyon kasasında: Truck.tsx çizer
+        if (carrying?.id === cp.id || loadedIds.includes(cp.id)) return null;
 
         // Henüz teslim edilmedi: istasyonda AGV'yi bekliyor
         if (!deliveredIds.includes(cp.id)) {

@@ -4,6 +4,7 @@ import { CameraControls } from "@react-three/drei";
 import type CameraControlsImpl from "camera-controls";
 import { machineStateStore } from "@metalnest/core";
 import { simStore } from "../sim/simStore";
+import { truckStore } from "../truck/truckStore";
 import { fxStore } from "../fx/fxStore";
 import { directorStore } from "./directorStore";
 import { SHOTS, shotForEvent, type ShotId } from "./shots";
@@ -72,6 +73,13 @@ export function DirectorCamera() {
         cutTo("palletYard");
       }
     });
+    // Sevkiyat olayları: ilk yükleme ve kalkış → rampa kadrajı (büyük final)
+    const unsubTruck = truckStore.subscribe((s, prev) => {
+      if (!directorStore.getState().active) return;
+      if (s.loadedIds.length > prev.loadedIds.length || (s.departing && !prev.departing)) {
+        cutTo("truckDock");
+      }
+    });
     // Aktivasyonda beklemeden mevcut faza kes
     const unsubDirector = directorStore.subscribe((s, prev) => {
       if (s.active && !prev.active) cutToCurrent();
@@ -83,6 +91,7 @@ export function DirectorCamera() {
     return () => {
       unsubMachine();
       unsubSim();
+      unsubTruck();
       unsubDirector();
     };
   }, []);

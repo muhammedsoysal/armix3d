@@ -11,6 +11,8 @@ import {
 } from "three";
 import { useStore } from "zustand";
 import { simStore } from "../sim/simStore";
+import { truckStore } from "../truck/truckStore";
+import { TRUCK_LOAD_POINT } from "../truck/Truck";
 import { OptionalModel } from "../assets/AssetLoader";
 import { PalletWithStack } from "../scenes/Pallet";
 import { AGV_PHASE_LABEL, agvStore, type AgvPhase } from "./agvStore";
@@ -219,7 +221,29 @@ export function AGV() {
           legsRef.current = missionLegs(STAGING, dropSlotFor(first.slotIdx));
           f.leg = legsRef.current.toPickup;
           f.s = 0;
-          store.beginPickup();
+          store.startMission({ kind: "store", pallet: first });
+          break;
+        }
+        // Plan bitti: grid'deki paletleri sırayla kamyona yükle, sonra uğurla
+        const sim = simStore.getState();
+        if (sim.isPlanCompleted && store.pending.length === 0) {
+          const loaded = truckStore.getState().loadedIds;
+          const nextId = store.deliveredIds.find((id) => !loaded.includes(id));
+          if (nextId !== undefined) {
+            const idx = sim.completedPallets.findIndex((cp) => cp.id === nextId);
+            const cp = sim.completedPallets[idx];
+            if (cp) {
+              legsRef.current = missionLegs(dropSlotFor(idx), TRUCK_LOAD_POINT);
+              f.leg = legsRef.current.toPickup;
+              f.s = 0;
+              store.startMission({
+                kind: "load",
+                pallet: { id: cp.id, stack: cp.stack, slotIdx: idx, readyAt: 0 },
+              });
+            }
+          } else if (loaded.length > 0 && !truckStore.getState().departing) {
+            truckStore.getState().depart();
+          }
         }
         break;
       }

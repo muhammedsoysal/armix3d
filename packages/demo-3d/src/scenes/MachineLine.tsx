@@ -43,6 +43,7 @@ import { ScrapBin } from "../nesting/ScrapBin";
 import { Forklift } from "./Forklift";
 import { SlittingLine } from "./SlittingLine";
 import { BandingStation } from "./BandingStation";
+import { Truck } from "../truck/Truck";
 
 /** CNC hattının tamamı: rulo → doğrultucu → kesim → vakum kaldırıcı → palet. */
 export function MachineLine() {
@@ -66,6 +67,7 @@ export function MachineLine() {
       <Forklift />
       <SlittingLine />
       <BandingStation />
+      <Truck />
     </group>
   );
 }
