@@ -16,9 +16,9 @@ export const LAYOUT = {
 /** Rulo geometrisi. Kalınlık görsel olarak abartılmıştır (gerçek 2mm'de
  * azalma gözle görülmez) — yarıçap formülü yine fiziksel: r=√(R₀²−L·t/π). */
 export const COIL = {
-  R0: 1.15,
-  RMIN: 0.45,
-  THICKNESS: 0.016,
+  R0: 0.85,
+  RMIN: 0.25,
+  THICKNESS: 0.005,
   WIDTH: 1.3,
 } as const;
 
@@ -63,7 +63,7 @@ export const simFrame = {
  */
 export function coilSetAmplitude(coilRadius: number): number {
   const depletion = (COIL.R0 - coilRadius) / (COIL.R0 - COIL.RMIN); // 0=dolu, 1=bitmek üzere
-  return 0.022 + 0.055 * depletion;
+  return 0.01 + 0.02 * depletion;
 }
 
 export const easeInOut = (t: number): number => t * t * (3 - 2 * t);

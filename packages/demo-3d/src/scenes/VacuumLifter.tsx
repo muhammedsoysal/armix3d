@@ -111,8 +111,8 @@ export function VacuumLifter() {
       const pos = pieceGeometry.attributes.position;
       for (let i = 0; i < pos.count; i++) {
         const u = pos.getX(i) * 2; // -1..1 (uzunluk)
-        const v = pos.getZ(i) * 2; // -1..1 (genişlik)
-        pos.setY(i, -simFrame.pieceBow * (0.55 * u * u + 0.2 * v * v));
+        // Sadece rulo açma yönünde (uzunlamasına) bükülme olmalı (v'yi kaldırdık)
+        pos.setY(i, -simFrame.pieceBow * (u * u));
       }
       pos.needsUpdate = true;
       pieceGeometry.computeVertexNormals();
