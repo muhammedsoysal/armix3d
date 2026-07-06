@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useStore } from "zustand";
 import { machineStateStore } from "@metalnest/core";
 import { simStore, currentRecommendation } from "../sim/simStore";
@@ -20,8 +21,23 @@ export function DirectorHUD() {
   const rec = plan ? currentRecommendation(simStore.getState()) : null;
   const shot = shotId ? SHOTS[shotId] : null;
 
+  // Kadraj değişiminde kısa film karartması (dip-to-black) — kesme hissi
+  const [flash, setFlash] = useState(false);
+  useEffect(() => {
+    if (!shotId || !active) return;
+    setFlash(true);
+    const t = setTimeout(() => setFlash(false), 240);
+    return () => clearTimeout(t);
+  }, [shotId, active]);
+
   return (
     <>
+      {/* Kadraj kesme karartması */}
+      <div
+        className={`pointer-events-none absolute inset-0 z-10 bg-black transition-opacity ${
+          flash ? "opacity-60 duration-75" : "opacity-0 duration-500"
+        }`}
+      />
       {/* Sinemaskop bantlar — aktifken kayarak girer */}
       <div
         className={`pointer-events-none absolute inset-x-0 top-0 z-20 h-[7vh] bg-black transition-transform duration-700 ease-out ${
