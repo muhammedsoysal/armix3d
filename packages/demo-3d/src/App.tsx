@@ -1,5 +1,5 @@
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, PerformanceMonitor } from "@react-three/drei";
+import { PerformanceMonitor } from "@react-three/drei";
 import { useStore } from "zustand";
 import { Factory } from "./scenes/Factory";
 import { MachineLine } from "./scenes/MachineLine";
@@ -8,6 +8,7 @@ import { ProductionPlanHUD } from "./hud/ProductionPlanHUD";
 import { QualityControls } from "./hud/QualityControls";
 import { AssetManifestLoader } from "./assets/AssetLoader";
 import { PostFX } from "./fx/PostFX";
+import { DirectorCamera } from "./director/DirectorCamera";
 import { qualityStore } from "./quality/qualityStore";
 
 export default function App() {
@@ -28,13 +29,7 @@ export default function App() {
           <Factory />
           <MachineLine />
           <SimulationController />
-          <OrbitControls
-            makeDefault
-            target={[-0.8, 1, 0]}
-            minDistance={4}
-            maxDistance={20}
-            maxPolarAngle={Math.PI / 2.05}
-          />
+          <DirectorCamera />
           <PostFX />
         </PerformanceMonitor>
       </Canvas>
