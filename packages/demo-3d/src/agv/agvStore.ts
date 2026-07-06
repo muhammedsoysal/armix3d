@@ -18,6 +18,8 @@ export interface PendingPallet {
   stack: PalletPiece[];
   /** completedPallets içindeki kalıcı grid indeksi (stabil — append sıralı) */
   slotIdx: number;
+  /** Bantlama istasyonu bitiş zamanı (epoch ms) — AGV bundan önce almaz */
+  readyAt: number;
 }
 
 /** Yüksek seviyeli AGV durumu — HUD ve Pallet.tsx buradan okur.

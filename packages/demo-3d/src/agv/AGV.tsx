@@ -197,7 +197,8 @@ export function AGV() {
       if (s.completedPallets.length > prev.completedPallets.length) {
         const idx = s.completedPallets.length - 1;
         const cp = s.completedPallets[idx];
-        agvStore.getState().enqueue({ id: cp.id, stack: cp.stack, slotIdx: idx });
+        // readyAt: bantlama istasyonu paletle ~3.2 sn ilgilenir, AGV bekler
+        agvStore.getState().enqueue({ id: cp.id, stack: cp.stack, slotIdx: idx, readyAt: Date.now() + 3200 });
       }
     });
   }, []);
@@ -212,7 +213,8 @@ export function AGV() {
     switch (store.phase) {
       case "DOCKED": {
         f.battery = Math.min(100, f.battery + 1.6 * dt);
-        if (store.pending.length > 0) {
+        if (store.pending.length > 0 && Date.now() >= store.pending[0].readyAt) {
+          // Depolama görevi: bantlanmış paleti istasyondan grid'e taşı
           const first = store.pending[0];
           legsRef.current = missionLegs(STAGING, dropSlotFor(first.slotIdx));
           f.leg = legsRef.current.toPickup;
@@ -320,7 +322,7 @@ export function AGV() {
       <group ref={deckRef}>
         {carrying && (
           <group position={[0, 0.3, 0]} scale={0.82}>
-            <PalletWithStack stack={carrying.stack} />
+            <PalletWithStack stack={carrying.stack} banded />
           </group>
         )}
       </group>

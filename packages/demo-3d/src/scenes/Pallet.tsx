@@ -5,11 +5,59 @@ import { OptionalModel } from "../assets/AssetLoader";
 import { agvStore } from "../agv/agvStore";
 import { STAGING, dropSlotFor } from "../agv/agvLogic";
 
-/** Ahşap palet + parça istifi — konumu çağıran belirler (grid, istasyon
- * veya AGV deck'i). AGV.tsx de taşınan paleti bununla çizer. */
-export function PalletWithStack({ stack }: { stack: PalletPiece[] }) {
+/** Çemberleme + köşebent + QR etiketi — bantlama istasyonundan çıkan palet. */
+function Banding({ stackH }: { stackH: number }) {
   return (
     <group>
+      {/* İki çelik çember: üst şerit + iki yan şerit */}
+      {([-0.28, 0.28] as const).map((x) => (
+        <group key={x} position={[x, 0, 0]}>
+          <mesh position={[0, stackH + 0.004, 0]}>
+            <boxGeometry args={[0.035, 0.005, 1.22]} />
+            <meshStandardMaterial color="#1f2937" metalness={0.9} roughness={0.35} />
+          </mesh>
+          {([-0.61, 0.61] as const).map((z) => (
+            <mesh key={z} position={[0, stackH / 2 + 0.02, z]}>
+              <boxGeometry args={[0.035, stackH, 0.005]} />
+              <meshStandardMaterial color="#1f2937" metalness={0.9} roughness={0.35} />
+            </mesh>
+          ))}
+        </group>
+      ))}
+      {/* Köşebentler (koruyucu) */}
+      {([[-0.28, -0.58], [-0.28, 0.58], [0.28, -0.58], [0.28, 0.58]] as const).map(([x, z]) => (
+        <mesh key={`${x},${z}`} position={[x, stackH - 0.015, z]}>
+          <boxGeometry args={[0.06, 0.05, 0.06]} />
+          <meshStandardMaterial color="#eab308" roughness={0.6} />
+        </mesh>
+      ))}
+      {/* QR sevkiyat etiketi */}
+      <group position={[0, stackH * 0.6, 0.615]}>
+        <mesh>
+          <boxGeometry args={[0.14, 0.14, 0.004]} />
+          <meshStandardMaterial color="#f8fafc" roughness={0.4} />
+        </mesh>
+        <mesh position={[0, 0, 0.003]}>
+          <boxGeometry args={[0.09, 0.09, 0.002]} />
+          <meshStandardMaterial color="#0f172a" roughness={0.5} />
+        </mesh>
+        <mesh position={[0.028, 0.028, 0.005]}>
+          <boxGeometry args={[0.025, 0.025, 0.002]} />
+          <meshStandardMaterial color="#f8fafc" roughness={0.4} />
+        </mesh>
+      </group>
+    </group>
+  );
+}
+
+/** Ahşap palet + parça istifi — konumu çağıran belirler (grid, istasyon
+ * veya AGV deck'i). AGV.tsx de taşınan paleti bununla çizer.
+ * `banded`: bantlama istasyonundan geçmiş paletler çemberli görünür. */
+export function PalletWithStack({ stack, banded }: { stack: PalletPiece[]; banded?: boolean }) {
+  const stackH = LAYOUT.palletBaseY + stack.length * 0.024 + 0.012;
+  return (
+    <group>
+      {banded && stack.length > 0 && <Banding stackH={stackH} />}
       <OptionalModel name="pallet">
         {/* Palet tahtaları */}
         {[-0.45, -0.15, 0.15, 0.45].map((z) => (
@@ -68,7 +116,7 @@ export function Pallet() {
           const queuePos = Math.max(0, pending.findIndex((p) => p.id === cp.id));
           return (
             <group key={cp.id} position={[STAGING.x + queuePos * 1.4, 0, STAGING.z]}>
-              <PalletWithStack stack={cp.stack} />
+              <PalletWithStack stack={cp.stack} banded />
             </group>
           );
         }
@@ -77,7 +125,7 @@ export function Pallet() {
         const slot = dropSlotFor(idx);
         return (
           <group key={cp.id} position={[slot.x, 0, slot.z]}>
-            <PalletWithStack stack={cp.stack} />
+            <PalletWithStack stack={cp.stack} banded />
           </group>
         );
       })}
