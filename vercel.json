@@ -1,0 +1,4 @@
+{
+  "buildCommand": "npm run build --workspace=@metalnest/demo-3d",
+  "outputDirectory": "packages/demo-3d/dist"
+}
