@@ -48,7 +48,7 @@ export function VolumetricShafts() {
               blending={AdditiveBlending}
               side={DoubleSide}
               toneMapped={false}
-              opacity={0.28}
+              opacity={0.14}
             />
           </mesh>
           {/* Hüzme içinde asılı toz zerreleri */}
