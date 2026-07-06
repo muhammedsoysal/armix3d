@@ -1,0 +1,56 @@
+import { describe, expect, it } from "vitest";
+import { dropSlotFor, missionLegs, pathLength, pointAlongPath } from "../agvLogic";
+
+describe("pathLength", () => {
+  it("sums segment lengths of a polyline", () => {
+    expect(pathLength([[0, 0], [3, 0], [3, 4]])).toBe(7);
+  });
+  it("is 0 for a single point", () => {
+    expect(pathLength([[2, 2]])).toBe(0);
+  });
+});
+
+describe("pointAlongPath", () => {
+  const path: [number, number][] = [[0, 0], [10, 0], [10, 10]];
+  it("walks the first segment", () => {
+    const p = pointAlongPath(path, 5);
+    expect(p.x).toBeCloseTo(5);
+    expect(p.z).toBeCloseTo(0);
+    expect(p.heading).toBeCloseTo(Math.PI / 2); // +x yönü
+    expect(p.done).toBe(false);
+  });
+  it("crosses into the second segment", () => {
+    const p = pointAlongPath(path, 15);
+    expect(p.x).toBeCloseTo(10);
+    expect(p.z).toBeCloseTo(5);
+    expect(p.heading).toBeCloseTo(0); // +z yönü
+  });
+  it("clamps at the end and reports done", () => {
+    const p = pointAlongPath(path, 999);
+    expect(p.x).toBeCloseTo(10);
+    expect(p.z).toBeCloseTo(10);
+    expect(p.done).toBe(true);
+  });
+});
+
+describe("dropSlotFor", () => {
+  // Pallet.tsx grid kuralıyla birebir aynı olmalı:
+  // col=⌊idx/2⌋, row=idx%2 → x = palletX + 1.8 + col·1.5, z = 0 | -1.2
+  it("matches the Pallet.tsx grid for the first four slots", () => {
+    expect(dropSlotFor(0)).toEqual({ x: 4.2 + 1.8, z: 0 });
+    expect(dropSlotFor(1)).toEqual({ x: 4.2 + 1.8, z: -1.2 });
+    expect(dropSlotFor(2)).toEqual({ x: 4.2 + 1.8 + 1.5, z: 0 });
+    expect(dropSlotFor(3)).toEqual({ x: 4.2 + 1.8 + 1.5, z: -1.2 });
+  });
+});
+
+describe("missionLegs", () => {
+  it("builds pickup→drop→home legs through the corridor lane", () => {
+    const legs = missionLegs({ x: 4.2, z: 1.1 }, { x: 6, z: 0 });
+    // Her bacak en az 2 nokta içerir ve uçları doğru bağlar
+    expect(legs.toPickup[legs.toPickup.length - 1]).toEqual([4.2, 1.1]);
+    expect(legs.toDrop[0]).toEqual([4.2, 1.1]);
+    expect(legs.toDrop[legs.toDrop.length - 1]).toEqual([6, 0]);
+    expect(legs.toHome[0]).toEqual([6, 0]);
+  });
+});

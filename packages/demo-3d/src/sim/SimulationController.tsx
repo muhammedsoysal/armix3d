@@ -112,8 +112,9 @@ export function SimulationController() {
         }
         let completed = s.completedPallets;
         if (palletFull) {
-          console.log("[SIM] Palet doldu — forklift aldı, yeni palet.");
-          completed = [{ id: Date.now(), stack }, ...s.completedPallets].slice(0, 6);
+          console.log("[SIM] Palet doldu — AGV çağrıldı, yeni palet.");
+          // Sona ekle: grid indeksleri stabil kalır (paletler yer değiştirmez)
+          completed = [...s.completedPallets, { id: Date.now(), stack }].slice(-6);
         }
         return {
           palletStack: palletFull ? [] : stack,
