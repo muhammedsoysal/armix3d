@@ -57,18 +57,14 @@ export function ProductionPlanHUD() {
   const rec = plan ? currentRecommendation(simStore.getState()) : null;
   
   const queueItems = plan ? (() => {
-    // Sadece geçmişteki 1, şu anki ve gelecekteki 3 işi göster
-    const startIndex = Math.max(0, recIndex - 1);
-    const endIndex = Math.min(plan.recommendations.length, recIndex + 4);
-    
-    return plan.recommendations.slice(startIndex, endIndex).map((r, i) => {
-      const realIndex = startIndex + i;
+    // Scroll olduğu için tüm işleri gösteriyoruz, slice kaldırıldı
+    return plan.recommendations.map((r, i) => {
       return {
         ...r,
-        realIndex,
-        isPast: realIndex < recIndex,
-        isCurrent: realIndex === recIndex,
-        isFuture: realIndex > recIndex,
+        realIndex: i,
+        isPast: i < recIndex,
+        isCurrent: i === recIndex,
+        isFuture: i > recIndex,
       };
     });
   })() : [];
@@ -99,7 +95,7 @@ export function ProductionPlanHUD() {
 
       {/* Sol Orta: Döngüsel İş Kuyruğu */}
       {plan && (
-        <Panel className="absolute left-6 top-28 w-[340px] border border-white/20 bg-gradient-to-br from-black/80 to-black/40 shadow-2xl backdrop-blur-xl">
+        <Panel className="absolute left-6 top-28 w-[340px] border border-white/20 bg-gradient-to-br from-black/80 to-black/40 shadow-2xl backdrop-blur-xl pointer-events-auto">
           <div className="flex items-center justify-between mb-3 border-b border-white/5 pb-2">
             <div className="flex items-center gap-2">
               <svg className="w-4 h-4 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
@@ -110,7 +106,7 @@ export function ProductionPlanHUD() {
             </div>
           </div>
           
-          <div className="space-y-2 relative">
+          <div className="space-y-2 relative max-h-[350px] overflow-y-auto pr-2 scrollbar-thin scrollbar-track-white/5 scrollbar-thumb-white/20 hover:scrollbar-thumb-sky-400/50">
             {/* Kuyruk öğeleri */}
             {queueItems.map((r, i) => {
               const isPast = r.isPast;
@@ -154,13 +150,6 @@ export function ProductionPlanHUD() {
                 </div>
               );
             })}
-            
-            {/* Kuyruk bitmediyse devam efekti */}
-            {!isPlanCompleted && queueItems.length > 0 && queueItems[queueItems.length - 1].realIndex < plan.recommendations.length - 1 && (
-              <div className="absolute -bottom-2 left-0 right-0 h-10 bg-gradient-to-t from-black/80 to-transparent pointer-events-none flex items-end justify-center pb-1">
-                <span className="text-neutral-500/50 text-[10px] tracking-widest">. . .</span>
-              </div>
-            )}
           </div>
         </Panel>
       )}
