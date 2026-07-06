@@ -1,0 +1,122 @@
+import { useEffect } from "react";
+import { useFrame } from "@react-three/fiber";
+import {
+  DEFAULT_SCORER_WEIGHTS,
+  HeuristicScrapEstimator,
+  ProductionPlanBuilder,
+  createSalesProvider,
+  createStockProvider,
+  getPartDefinitions,
+  machineStateStore,
+  nextMachineState,
+  type DataSource,
+} from "@metalnest/core";
+import {
+  COIL,
+  PHASE_DURATION,
+  PIECES_PER_RECOMMENDATION,
+  coilRadiusFor,
+  coilSetAmplitude,
+  simFrame,
+} from "./constants";
+import { currentPartMeters, currentRecommendation, simStore } from "./simStore";
+
+/**
+ * Simülasyonun kalbi: üretim planını karar motorundan yükler ve makine
+ * döngüsünü (IDLE→FEEDING→CUTTING→LIFTING) plana göre sürer. Sahne hiçbir
+ * zaman resetlenmez; tüm geçişler machineStateStore.transition üzerindendir.
+ */
+export function SimulationController() {
+  useEffect(() => {
+    const source = (import.meta.env.VITE_DATA_SOURCE ?? "mock") as DataSource;
+    const stockProvider = createStockProvider(source);
+    const salesProvider = createSalesProvider(source);
+
+    Promise.all([stockProvider.getStockItems(), salesProvider.getSalesRecords()])
+      .then(([stock, sales]) => {
+        const parts = getPartDefinitions();
+        const plan = new ProductionPlanBuilder(new HeuristicScrapEstimator()).build({
+          parts,
+          stock,
+          sales,
+          weights: DEFAULT_SCORER_WEIGHTS,
+        });
+        simStore
+          .getState()
+          .setPlan(plan, Object.fromEntries(parts.map((p) => [p.sku, p])));
+        console.log(
+          "[PLAN] Karar motoru çıktısı:",
+          plan.recommendations
+            .map((r, i) => `${i + 1}. ${r.sku} (skor ${r.priorityScore}, fire %${r.estimatedScrapPercent})`)
+            .join(" | "),
+        );
+      })
+      .catch((err) => console.error("[PLAN] Üretim planı yüklenemedi:", err));
+  }, []);
+
+  useFrame((_, rawDelta) => {
+    const sim = simStore.getState();
+    if (!sim.plan || sim.plan.recommendations.length === 0) return;
+
+    const delta = Math.min(rawDelta, 0.1); // sekme arka planda kalınca sıçramayı önle
+    const machine = machineStateStore.getState();
+    const rec = currentRecommendation(sim)!;
+    const part = currentPartMeters(sim);
+    const duration = PHASE_DURATION[machine.state];
+
+    if (machine.state === "FEEDING") {
+      const fed = (part.length / duration) * delta;
+      simFrame.totalFedLength += fed;
+      const radius = coilRadiusFor(simFrame.totalFedLength);
+      simFrame.coilAngle += fed / radius;
+      if (radius <= COIL.RMIN + 1e-4) {
+        simFrame.totalFedLength = 0;
+        console.log("[SIM] Rulo tükendi — yeni rulo yüklendi.");
+      }
+    }
+
+    simFrame.progress += delta / duration;
+    if (simFrame.progress < 1) return;
+    simFrame.progress = 0;
+
+    // Faz tamamlandı — yan etkiler + tek geçerli yoldan geçiş
+    if (machine.state === "CUTTING") {
+      // Parça serbest kalınca geri yaylanacak rulo-seti eğriliğini yakala
+      simFrame.bowAmpAtCut = coilSetAmplitude(coilRadiusFor(simFrame.totalFedLength));
+      simFrame.pieceBow = 0; // masada bastırılmış: düz
+      simFrame.pieceBowVel = 0;
+    }
+    if (machine.state === "LIFTING") {
+      simStore.setState((s) => {
+        const stack = [
+          ...s.palletStack,
+          { sku: rec.sku, width: part.width, length: part.length },
+        ];
+        const palletFull = stack.length > 10;
+        let recIndex = s.recIndex;
+        let pieces = s.piecesCutForRec + 1;
+        const target = Math.min(rec.recommendedQuantity, PIECES_PER_RECOMMENDATION);
+        if (pieces >= target) {
+          recIndex = (s.recIndex + 1) % s.plan!.recommendations.length;
+          pieces = 0;
+        }
+        if (palletFull) console.log("[SIM] Palet doldu — forklift aldı, yeni palet.");
+        return {
+          palletStack: palletFull ? [] : stack,
+          piecesCutForRec: pieces,
+          recIndex,
+          totalPiecesCut: s.totalPiecesCut + 1,
+        };
+      });
+    }
+
+    const next = nextMachineState(machine.state);
+    const nextRec = currentRecommendation(simStore.getState())!;
+    machine.transition(next, {
+      sku: next === "FEEDING" ? nextRec.sku : rec.sku,
+      source: "Karar Motoru",
+    });
+  });
+
+  return null;
+}
