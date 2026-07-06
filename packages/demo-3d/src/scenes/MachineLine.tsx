@@ -41,6 +41,7 @@ import { GuideLanes } from "../agv/GuideLanes";
 import { NestingProjection } from "../nesting/NestingProjection";
 import { ScrapBin } from "../nesting/ScrapBin";
 import { Forklift } from "./Forklift";
+import { SlittingLine } from "./SlittingLine";
 
 /** CNC hattının tamamı: rulo → doğrultucu → kesim → vakum kaldırıcı → palet. */
 export function MachineLine() {
@@ -62,6 +63,7 @@ export function MachineLine() {
       <PatrolAGV />
       <GuideLanes />
       <Forklift />
+      <SlittingLine />
     </group>
   );
 }
