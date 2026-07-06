@@ -98,6 +98,7 @@ export function DirectorCamera() {
     };
     controls.addEventListener("controlstart", onControlStart);
     window.addEventListener("pointerdown", onAnyInput);
+    window.addEventListener("pointermove", onAnyInput);
     window.addEventListener("wheel", onAnyInput);
     window.addEventListener("keydown", onAnyInput);
     const idleTimer = setInterval(() => {
@@ -108,6 +109,7 @@ export function DirectorCamera() {
     return () => {
       controls.removeEventListener("controlstart", onControlStart);
       window.removeEventListener("pointerdown", onAnyInput);
+      window.removeEventListener("pointermove", onAnyInput);
       window.removeEventListener("wheel", onAnyInput);
       window.removeEventListener("keydown", onAnyInput);
       clearInterval(idleTimer);

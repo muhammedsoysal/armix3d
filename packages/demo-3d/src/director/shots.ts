@@ -34,7 +34,7 @@ export const SHOTS: Record<ShotId, Shot> = {
   },
   coilFeed: {
     label: "Hat 1 — Rulo Açma & Doğrultma",
-    position: [-7.6, 1.7, 4.6],
+    position: [-8.4, 2.6, 5.8],
     target: [-4.6, 1.1, 0],
     drift: 0.018,
   },
