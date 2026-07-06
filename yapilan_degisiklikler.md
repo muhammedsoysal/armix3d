@@ -36,3 +36,24 @@ Bu dosya, Antigravity AI asistanı tarafından yapılan son güncellemeleri diğ
 ## 8. Domain Kuralları: Sac Genişliği Sınırları (Karar Motoru)
 - **Dosya:** `packages/core/src/engine/ScrapEstimator.ts`
 - Kullanıcının sorusu üzerine karar motoru incelendi: Sistem şu an heuristik formüllerle (grid hesabı) parçanın genişlik (`part.width`) ve uzunluk boyutlarının rulonun genişliğine sığıp sığmadığını zaten kontrol etmektedir. Parça rulodan daha genişse 90 derece döndürerek sığdırmayı dener, iki yönde de sığmıyorsa `count === 0` döner ve bu parçayı üretim planından otomatik çıkartır/reddeder. Yani rulodan daha geniş parçalar sistem tarafından güvenli bir şekilde reddedilmektedir.
+
+## 9. Sınırsız, Lineer ve Kaydırılabilir İş Kuyruğu (Scrollable Queue)
+- **Dosya:** `ProductionPlanHUD.tsx`, `SimulationController.tsx`
+- Sonsuz döngü (modulo) kaldırılarak planın bir **sonu olması** sağlandı. Plan bittiğinde makine `IDLE` moduna geçip tamamen duruyor.
+- Kuyruk artık slice (kesme) işlemiyle kısıtlanmıyor, tüm görevler listeleniyor ve `overflow-y-auto max-h-[350px]` özelliği sayesinde zarif bir scrollbar ile kaydırılabiliyor.
+- İşler tamamlandığında ortada beliren dev bir **"Üretim Tamamlandı"** paneli eklendi (toplam kesim ve palet adetlerini raporlar).
+
+## 10. Sektörel Uyum: Paslanmaz Çelik Mock Verisi
+- **Dosya:** `packages/core/src/data/mockCatalog.ts`
+- Mock verilerdeki DKP sac, Alüminyum gibi jenerik değerler paslanmaz çelik endüstrisine uygun olarak revize edildi: `304 Paslanmaz (BA)`, `316L Paslanmaz`, `430 Paslanmaz (2B)`.
+- Ürün isimleri sektöre uyarlandı: "Asansör Kapı Sacı", "Endüstriyel Gıda Tank Paneli" vb. (Hiçbir şirket ismi geçmez, sadece sektörel gerçekçilik sağlar).
+
+## 11. Endüstriyel Depo Raf Sistemi ve Gezer Vinç
+- **Dosya:** `IndustrialCoilStorage.tsx` (Yeni), `MachineLine.tsx`
+- Basit ahşap takozlar yerine, Three.js primitive objeleriyle devasa **Çelik Karkas Raf Sistemi** yapıldı.
+- Sahanın tepesine çelik bir **Gezer Vinç (Overhead Crane)** sistemi yerleştirilerek fabrika lojistik havası verildi.
+
+## 12. Etkileşimli Akıllı Bobinler (3D Hover Kartları)
+- **Dosya:** `IndustrialCoilStorage.tsx`
+- Raflarda bekleyen rulolara (bobinlere) hover (üzerine gelme) efekti eklendi. Mouse ile üzerine gelindiğinde rulo mavi parlıyor ve bir **Glassmorphism 3D Bilgi Kartı (Html Drei)** beliriyor.
+- Kartta o anki ruloya ait detaylı stok verileri yazıyor (Malzeme Türü, Kalınlık, Stok Adeti, Hangi Üründe Kullanıldığı).
