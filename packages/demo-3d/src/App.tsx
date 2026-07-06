@@ -13,6 +13,7 @@ import { XRayEffect } from "./xray/XRayEffect";
 import { DataPipelines } from "./xray/DataPipelines";
 import { DataBillboards } from "./xray/DataBillboards";
 import { XRayToggle } from "./hud/XRayToggle";
+import { OptimizerThinkingHUD } from "./hud/OptimizerThinkingHUD";
 import { DirectorHUD } from "./hud/DirectorHUD";
 import { directorStore } from "./director/directorStore";
 import { qualityStore } from "./quality/qualityStore";
@@ -50,6 +51,7 @@ export default function App() {
       </div>
       <DirectorHUD />
       <XRayToggle />
+      <OptimizerThinkingHUD />
     </div>
   );
 }
