@@ -124,45 +124,88 @@ export function ProductionPlanHUD() {
       </Panel>
 
       {/* Sol alt: aktif iş */}
-      <Panel className="absolute bottom-6 left-6 w-[440px]">
-        <div className="mb-2 flex items-center gap-2">
-          <span className={`h-2.5 w-2.5 rounded-full ${STATE_COLOR[machineState]} animate-pulse`} />
-          <span className="font-mono text-xs tracking-widest text-neutral-300">
-            {STATE_LABEL[machineState]}
-          </span>
-          <div className="ml-auto h-1 w-24 overflow-hidden rounded bg-white/10">
-            <div
-              className="h-full bg-sky-400/80 transition-[width] duration-100"
-              style={{ width: `${Math.round(phaseProgress * 100)}%` }}
-            />
-          </div>
-        </div>
-
+      <Panel className="absolute bottom-6 left-6 w-[440px] border border-white/20 bg-gradient-to-br from-black/80 to-black/40 shadow-2xl backdrop-blur-xl">
         {rec ? (
           <>
-            <div className="text-[10px] uppercase tracking-wider text-neutral-400">
-              Şu an kesiliyor · Kaynak: Karar Motoru
+            <div className="flex items-center justify-between mb-4 pb-4 border-b border-white/5">
+              <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-full px-3 py-1.5 shadow-[0_0_15px_rgba(0,0,0,0.2)]">
+                <span className={`h-2.5 w-2.5 rounded-full ${STATE_COLOR[machineState]} animate-pulse`} />
+                <span className="font-mono text-xs font-bold tracking-widest text-neutral-200">
+                  {STATE_LABEL[machineState]}
+                </span>
+              </div>
+              <div className="flex flex-col items-end">
+                <span className="text-[10px] uppercase tracking-widest text-neutral-400 mb-1.5">
+                  Aşama İlerlemesi
+                </span>
+                <div className="h-1.5 w-32 overflow-hidden rounded-full bg-white/10 relative">
+                  <div
+                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-sky-500 to-indigo-400 transition-[width] duration-100 ease-linear shadow-[0_0_10px_rgba(56,189,248,0.5)]"
+                    style={{ width: `${Math.round(phaseProgress * 100)}%` }}
+                  />
+                </div>
+              </div>
             </div>
-            <div className="mt-0.5 text-xl font-bold text-white">{rec.productName}</div>
-            <p className="mt-1.5 text-[13px] leading-snug text-neutral-300">{rec.reasoning}</p>
-            <div className="mt-3 flex gap-2 text-[11px] font-medium">
-              <span className="rounded-md bg-orange-400/15 px-2 py-1 text-orange-300">
-                Fire %{rec.estimatedScrapPercent}
-              </span>
-              <span className="rounded-md bg-sky-400/15 px-2 py-1 text-sky-300">
-                Skor {rec.priorityScore.toFixed(2)}
-              </span>
-              <span className="rounded-md bg-emerald-400/15 px-2 py-1 text-emerald-300">
-                Adet {piecesCutForRec + (machineState === "IDLE" ? 0 : 1)}/
-                {Math.min(rec.recommendedQuantity, PIECES_PER_RECOMMENDATION)}
-              </span>
-              {rec.sourceStockItems[0]?.isStale && (
-                <span className="rounded-md bg-red-400/20 px-2 py-1 text-red-300">ATIL STOK ERİTİLİYOR</span>
-              )}
+
+            <div className="text-[10px] uppercase tracking-widest text-sky-400/80 font-semibold mb-1">
+              Aktif Üretim
             </div>
+            <div className="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-white via-neutral-100 to-neutral-400 bg-clip-text text-transparent drop-shadow-sm">
+              {rec.productName}
+            </div>
+            
+            <div className="mt-3 relative pl-4 py-1 border-l-2 border-indigo-500/50">
+              <p className="text-[13px] leading-relaxed text-neutral-300 italic opacity-90">
+                "{rec.reasoning}"
+              </p>
+            </div>
+
+            <div className="mt-5 grid grid-cols-3 gap-3">
+              <div className="flex flex-col gap-1 bg-gradient-to-b from-white/5 to-transparent border border-white/10 rounded-xl p-3 hover:bg-white/10 transition-colors">
+                <div className="flex items-center gap-1.5 text-orange-400/80">
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                  <span className="text-[10px] uppercase font-bold tracking-wider">Fire Oranı</span>
+                </div>
+                <div className="text-lg font-mono font-semibold text-orange-100">
+                  %{rec.estimatedScrapPercent}
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-1 bg-gradient-to-b from-white/5 to-transparent border border-white/10 rounded-xl p-3 hover:bg-white/10 transition-colors">
+                <div className="flex items-center gap-1.5 text-sky-400/80">
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                  <span className="text-[10px] uppercase font-bold tracking-wider">Öncelik</span>
+                </div>
+                <div className="text-lg font-mono font-semibold text-sky-100">
+                  {rec.priorityScore.toFixed(2)}
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-1 bg-gradient-to-b from-white/5 to-transparent border border-white/10 rounded-xl p-3 hover:bg-white/10 transition-colors">
+                <div className="flex items-center gap-1.5 text-emerald-400/80">
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                  <span className="text-[10px] uppercase font-bold tracking-wider">Kesim</span>
+                </div>
+                <div className="text-lg font-mono font-semibold text-emerald-100">
+                  {piecesCutForRec + (machineState === "IDLE" ? 0 : 1)}<span className="text-emerald-500/50 text-sm">/{Math.min(rec.recommendedQuantity, PIECES_PER_RECOMMENDATION)}</span>
+                </div>
+              </div>
+            </div>
+
+            {rec.sourceStockItems[0]?.isStale && (
+              <div className="mt-4 flex items-center justify-center gap-2 rounded-lg bg-red-500/10 border border-red-500/20 py-2 px-3 shadow-[0_0_15px_rgba(239,68,68,0.1)]">
+                <svg className="w-4 h-4 text-red-400 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                <span className="text-[11px] font-bold tracking-widest text-red-300">ATIL STOK ERİTİLİYOR</span>
+              </div>
+            )}
           </>
         ) : (
-          <div className="text-sm text-neutral-400">Üretim planı yükleniyor…</div>
+          <div className="flex h-32 items-center justify-center">
+            <div className="flex items-center gap-3 text-neutral-400">
+              <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+              <span className="text-sm font-medium tracking-wide">Üretim planı yükleniyor…</span>
+            </div>
+          </div>
         )}
       </Panel>
 
