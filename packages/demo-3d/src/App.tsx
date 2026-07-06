@@ -9,6 +9,7 @@ import { QualityControls } from "./hud/QualityControls";
 import { AssetManifestLoader } from "./assets/AssetLoader";
 import { PostFX } from "./fx/PostFX";
 import { DirectorCamera } from "./director/DirectorCamera";
+import { XRayEffect } from "./xray/XRayEffect";
 import { DirectorHUD } from "./hud/DirectorHUD";
 import { directorStore } from "./director/directorStore";
 import { qualityStore } from "./quality/qualityStore";
@@ -33,6 +34,7 @@ export default function App() {
           <MachineLine />
           <SimulationController />
           <DirectorCamera />
+          <XRayEffect />
           <PostFX />
         </PerformanceMonitor>
       </Canvas>
