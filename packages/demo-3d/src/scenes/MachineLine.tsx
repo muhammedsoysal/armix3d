@@ -38,6 +38,7 @@ function Tables() {
 import { IndustrialCoilStorage } from "./IndustrialCoilStorage";
 import { AGV, PatrolAGV } from "../agv/AGV";
 import { GuideLanes } from "../agv/GuideLanes";
+import { NestingProjection } from "../nesting/NestingProjection";
 import { Forklift } from "./Forklift";
 
 /** CNC hattının tamamı: rulo → doğrultucu → kesim → vakum kaldırıcı → palet. */
@@ -49,6 +50,7 @@ export function MachineLine() {
       <Straightener />
       <Tables />
       <Sheet />
+      <NestingProjection />
       <CuttingGantry />
       <Sparks />
       <Smoke />
