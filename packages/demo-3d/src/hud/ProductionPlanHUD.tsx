@@ -53,21 +53,9 @@ export function ProductionPlanHUD() {
   const palletCount = useStore(simStore, (s) => s.palletStack.length);
   const { coilPercent, phaseProgress } = useSimSnapshot();
 
-  const [mockTasks, setMockTasks] = useState([
-    { id: 1, name: "Gövde Yan Panel - SKU-001", status: "Üretildi" },
-    { id: 2, name: "Gövde Yan Panel - SKU-001", status: "Üretildi" },
-    { id: 3, name: "Motor Kapağı - SKU-042", status: "Üretiliyor" },
-    { id: 4, name: "Şasi Alt Plaka - SKU-089", status: "Bekliyor" },
-    { id: 5, name: "Bağlantı Braketi - SKU-112", status: "Bekliyor" },
-  ]);
-
-  const removeTask = (id: number) => {
-    setMockTasks((prev) => prev.filter((t) => t.id !== id));
-  };
-
   const rec = plan ? currentRecommendation(simStore.getState()) : null;
   const upNext = plan
-    ? [1, 2, 3].map((o) => plan.recommendations[(recIndex + o) % plan.recommendations.length])
+    ? [1, 2, 3, 4, 5].map((o) => plan.recommendations[(recIndex + o) % plan.recommendations.length])
     : [];
 
   return (
@@ -94,34 +82,46 @@ export function ProductionPlanHUD() {
         ))}
       </Panel>
 
-      {/* Sol Orta: İş Listesi (Mock Data) */}
-      <Panel className="absolute left-6 top-28 w-[320px] pointer-events-auto">
-        <div className="mb-3 text-[10px] uppercase tracking-wider text-neutral-400">
-          Örnek İş Yükü Listesi
-        </div>
-        <div className="space-y-2">
-          {mockTasks.map((task) => (
-            <div key={task.id} className="flex items-center justify-between text-[13px] bg-white/5 rounded p-2 border border-white/5">
-              <div>
-                <div className="text-neutral-200">{task.name}</div>
-                <div className={`text-[10px] mt-0.5 ${task.status === "Üretildi" ? "text-emerald-400" : task.status === "Üretiliyor" ? "text-orange-400" : "text-neutral-400"}`}>
-                  {task.status}
+      {/* Sol Orta: Döngüsel İş Kuyruğu */}
+      {plan && (
+        <Panel className="absolute left-6 top-28 w-[340px] border border-white/20 bg-gradient-to-br from-black/80 to-black/40 shadow-2xl backdrop-blur-xl">
+          <div className="flex items-center justify-between mb-3 border-b border-white/5 pb-2">
+            <div className="flex items-center gap-2">
+              <svg className="w-4 h-4 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
+              <span className="text-[10px] uppercase font-bold tracking-widest text-sky-400/80">Kuyruktaki İşler</span>
+            </div>
+            <div className="bg-sky-500/20 border border-sky-500/30 px-2 py-0.5 rounded text-[10px] text-sky-300 font-mono tracking-wider">
+              TOPLAM {plan.recommendations.length} (DÖNGÜ)
+            </div>
+          </div>
+          
+          <div className="space-y-2 relative">
+            {/* Kuyruk öğeleri */}
+            {upNext.map((r, i) => (
+              <div key={i} className="flex items-center justify-between bg-white/5 border border-white/10 rounded-lg p-2.5 shadow-inner">
+                <div className="flex items-center gap-3 overflow-hidden">
+                  <div className="flex-shrink-0 w-5 h-5 rounded-full bg-neutral-800 border border-neutral-600 flex items-center justify-center text-[10px] font-mono text-neutral-400">
+                    {((recIndex + i + 1) % plan.recommendations.length) + 1}
+                  </div>
+                  <div className="truncate">
+                    <div className="text-[13px] font-semibold text-neutral-200 truncate">{r.productName}</div>
+                    <div className="text-[10px] text-neutral-500 mt-0.5 truncate">{r.sku}</div>
+                  </div>
+                </div>
+                <div className="flex-shrink-0 flex flex-col items-end pl-2 border-l border-white/10">
+                  <div className="text-[10px] uppercase text-neutral-500 tracking-wider">Adet</div>
+                  <div className="text-[12px] font-mono text-neutral-300 font-bold">{Math.min(r.recommendedQuantity, PIECES_PER_RECOMMENDATION)}</div>
                 </div>
               </div>
-              <button 
-                onClick={() => removeTask(task.id)}
-                className="text-neutral-500 hover:text-red-400 px-2 text-lg leading-none"
-                title="Listeden Kaldır"
-              >
-                ×
-              </button>
+            ))}
+            
+            {/* Kuyruk devam efekti */}
+            <div className="absolute -bottom-2 left-0 right-0 h-10 bg-gradient-to-t from-black/80 to-transparent pointer-events-none flex items-end justify-center pb-1">
+              <span className="text-neutral-500/50 text-[10px] tracking-widest">. . .</span>
             </div>
-          ))}
-          {mockTasks.length === 0 && (
-            <div className="text-xs text-neutral-500 italic py-2">Tüm işler tamamlandı veya silindi.</div>
-          )}
-        </div>
-      </Panel>
+          </div>
+        </Panel>
+      )}
 
       {/* Sol alt: aktif iş */}
       <Panel className="absolute bottom-6 left-6 w-[440px] border border-white/20 bg-gradient-to-br from-black/80 to-black/40 shadow-2xl backdrop-blur-xl">

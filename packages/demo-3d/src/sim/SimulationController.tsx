@@ -92,7 +92,7 @@ export function SimulationController() {
           ...s.palletStack,
           { sku: rec.sku, width: part.width, length: part.length },
         ];
-        const palletFull = stack.length > 10;
+        const palletFull = stack.length > 4;
         let recIndex = s.recIndex;
         let pieces = s.piecesCutForRec + 1;
         const target = Math.min(rec.recommendedQuantity, PIECES_PER_RECOMMENDATION);
