@@ -119,3 +119,9 @@ Bu dosya, Antigravity AI asistanı tarafından yapılan son güncellemeleri diğ
 - **Gerçek GLB pipeline'ı canlı:** `AssetLoader` manifest'i artık transform destekler (`{file, scale, rotationY, position}`); kamyon gerçek bir GLB ile çalışıyor (Cesium Milk Truck, CC-BY — `public/models/ATTRIBUTIONS.md`). Premium model ekleme rehberi: `docs/ASSET_GUIDE.md` (kaynaklar, lisanslar, ölçek/yön ayarı, draco sıkıştırma, sorun giderme).
 - **Vinç animasyonu** (`IndustrialCoilStorage.tsx`): tavan vinci 40 sn'lik döngüde köprüyü gezdirir, kancayı indirir, ruloyu kaldırıp diğer raf hattına aktarır (smoothstep zaman çizelgesi).
 - **Mekânsal ses** (`audio/`, `scripts/generate-audio.mjs`): prosedürel üretilmiş WAV'lar (telifsiz) — 50 Hz tesis uğultusu, kesim tıslaması (yalnız CUTTING), AGV bip'i (görevde). drei PositionalAudio ile 3D konumlu; sağ alttaki 🔊 butonu tarayıcı jest kuralını karşılar.
+
+## 23. İş Değeri Paketi: Çok-Makineli Saha + Canlı Telemetri + Premium Dashboard
+- **Çok-makine mimarisi:** `telemetry/telemetryStore.ts` makine kayıt defteri (CTL-1, SLT-1, LSR-2). Yeni `LaserCell.tsx` (LSR-2 fiber lazer) ana hattan bağımsız kendi döngüsünü sürer; Yarma Hattı artık gerçek bir iş kuyruğu tüketir (SJ-101..104 programları, döngü sonunda advance + parça sayacı).
+- **Canlı API katmanı:** `liveTelemetryService.ts` — WebSocket akışını simüle eden 1 Hz push (CTL-1 durumu GERÇEK makine state'inden; güç/sıcaklık/titreşim/OEE jitter'lı). Gerçek entegrasyonda interval yerine WS/fetch bağlanır, UI değişmez.
+- **Premium Tesis Dashboard'u:** `FactoryDashboard.tsx` — "Tesis" butonu; makine kartları (durum çipi, OEE gradient bar, neon cyan güç sparkline'ı, kW/°C/mm-s/parça metrikleri), SLT-1 iş kuyruğu canlı ilerleme çubuğuyla, "CANLI · WS 1Hz" bağlantı göstergesi.
+- **UX düzeltmesi:** "Üretim Tamamlandı" paneli artık X butonuyla kapatılabilir (plan yenilenince tekrar görünür).
