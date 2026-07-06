@@ -20,6 +20,8 @@ const DEFAULT_SMOOTH = 0.25;
  * 60 sn hareketsizlikte kaldığı yerden devam eder. */
 export function DirectorCamera() {
   const controlsRef = useRef<CameraControlsImpl | null>(null);
+  // IDLE her tekrarında raf kahramanı ↔ yarma hattı arasında dönüşümlü kadraj
+  const idleCountRef = useRef(0);
 
   /** Kadraja kes: konum+hedef yumuşak geçiş, kadraja özel DoF. */
   const cutTo = (shotId: ShotId) => {
@@ -53,10 +55,12 @@ export function DirectorCamera() {
     const unsubMachine = machineStateStore.subscribe((s, prev) => {
       if (!directorStore.getState().active || s.state === prev.state) return;
       const sim = simStore.getState();
+      if (s.state === "IDLE") idleCountRef.current++;
       cutTo(
         shotForEvent(s.state, {
           planCompleted: sim.isPlanCompleted,
           palletJustCompleted: false,
+          idleAlt: idleCountRef.current % 2 === 1,
         }),
       );
     });

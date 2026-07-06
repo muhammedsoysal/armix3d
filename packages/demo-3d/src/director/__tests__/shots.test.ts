@@ -8,6 +8,11 @@ describe("shotForEvent", () => {
   it("pallet completion beats machine state", () => {
     expect(shotForEvent("LIFTING", { planCompleted: false, palletJustCompleted: true })).toBe("palletYard");
   });
+  it("IDLE alternates between rack hero and slitting line", () => {
+    expect(shotForEvent("IDLE", { planCompleted: false, palletJustCompleted: false, idleAlt: true })).toBe(
+      "slittingLine",
+    );
+  });
   it("maps machine states to shots", () => {
     expect(shotForEvent("IDLE", { planCompleted: false, palletJustCompleted: false })).toBe("rackHero");
     expect(shotForEvent("FEEDING", { planCompleted: false, palletJustCompleted: false })).toBe("coilFeed");

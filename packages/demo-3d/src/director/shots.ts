@@ -6,6 +6,8 @@ export type ShotId =
   | "cutCloseUp"
   | "lifterShot"
   | "palletYard"
+  | "slittingLine"
+  | "truckDock"
   | "finale";
 
 export interface Shot {
@@ -60,6 +62,21 @@ export const SHOTS: Record<ShotId, Shot> = {
     target: [4.2, 0.4, -1],
     drift: 0.015,
   },
+  slittingLine: {
+    label: "Yarma Hattı — Dilme Bıçakları",
+    // Bıçak yelpazesi + şeritlerin ayrılışına dinamik yakın plan
+    position: [-3.4, 1.9, 6.3],
+    target: [-5.3, 1.05, 3.5],
+    dof: true,
+    dofDistance: 0.035,
+    drift: 0.028,
+  },
+  truckDock: {
+    label: "Sevkiyat — Yükleme Rampası",
+    position: [7.6, 2.7, 5.6],
+    target: [11.2, 1.0, -0.4],
+    drift: 0.016,
+  },
   finale: {
     label: "Tesis Genel Görünüm — Üretim Tamamlandı",
     position: [10.5, 7, 12],
@@ -71,6 +88,8 @@ export const SHOTS: Record<ShotId, Shot> = {
 export interface ShotEventFlags {
   planCompleted: boolean;
   palletJustCompleted: boolean;
+  /** IDLE kadraj çeşitlemesi: true → yarma hattı, false/yok → raf kahramanı */
+  idleAlt?: boolean;
 }
 
 /** Olay → kadraj seçimi. Öncelik: plan sonu > palet tamamlama > makine fazı.
@@ -87,6 +106,6 @@ export function shotForEvent(state: MachineState, flags: ShotEventFlags): ShotId
       return "lifterShot";
     case "IDLE":
     default:
-      return "rackHero";
+      return flags.idleAlt ? "slittingLine" : "rackHero";
   }
 }
