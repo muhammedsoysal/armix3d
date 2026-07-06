@@ -47,6 +47,8 @@ export function SimulationController() {
         simStore
           .getState()
           .setPlan(plan, Object.fromEntries(parts.map((p) => [p.sku, p])));
+        // What-If sandbox'ının senaryoları gerçek motorla yeniden kurabilmesi için
+        simStore.getState().setPlanInputs({ parts, stock, sales, weights: DEFAULT_SCORER_WEIGHTS });
         console.log(
           "[PLAN] Karar motoru çıktısı:",
           plan.recommendations

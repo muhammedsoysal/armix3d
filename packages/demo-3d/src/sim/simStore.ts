@@ -1,5 +1,21 @@
 import { createStore } from "zustand/vanilla";
-import type { PartDefinition, PlanRecommendation, ProductionPlan } from "@metalnest/core";
+import type {
+  PartDefinition,
+  PlanRecommendation,
+  ProductionPlan,
+  SalesRecord,
+  ScorerWeights,
+  StockItem,
+} from "@metalnest/core";
+
+/** Karar motorunun plan üretirken kullandığı girdiler — What-If sandbox'ı
+ * senaryoları bu girdilerin kopyası üzerinden GERÇEK motorla yeniden kurar. */
+export interface PlanInputs {
+  parts: PartDefinition[];
+  stock: StockItem[];
+  sales: SalesRecord[];
+  weights: ScorerWeights;
+}
 
 export interface PalletPiece {
   sku: string;
@@ -18,7 +34,9 @@ export interface SimStoreState {
   palletStack: PalletPiece[];
   completedPallets: { id: number; stack: PalletPiece[] }[];
   isPlanCompleted: boolean;
+  planInputs: PlanInputs | null;
   setPlan: (plan: ProductionPlan, parts: Record<string, PartDefinition>) => void;
+  setPlanInputs: (inputs: PlanInputs) => void;
 }
 
 export const simStore = createStore<SimStoreState>()((set) => ({
@@ -30,7 +48,9 @@ export const simStore = createStore<SimStoreState>()((set) => ({
   palletStack: [],
   completedPallets: [],
   isPlanCompleted: false,
+  planInputs: null,
   setPlan: (plan, parts) => set({ plan, parts, recIndex: 0, piecesCutForRec: 0, isPlanCompleted: false }),
+  setPlanInputs: (planInputs) => set({ planInputs }),
 }));
 
 export function currentRecommendation(s: SimStoreState): PlanRecommendation | null {
