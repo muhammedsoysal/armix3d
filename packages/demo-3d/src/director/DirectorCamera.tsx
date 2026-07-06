@@ -116,12 +116,26 @@ export function DirectorCamera() {
     };
   }, []);
 
-  // Kadraj içinde yavaş yörünge kayması — durağan planı "canlı" tutar
+  // Kadraj içinde yavaş yörünge kayması — durağan planı "canlı" tutar.
+  // Kayma dar bir yayda (±MAX_DRIFT_ARC) ping-pong yapar: sınırsız birikirse
+  // kamera uzun planlarda yörüngeyi tamamlayıp modellerin İÇİNDEN geçer.
+  const driftAccRef = useRef(0);
+  const driftDirRef = useRef(1);
+  const lastShotRef = useRef<string | null>(null);
   useFrame((_, dt) => {
     const { active, shotId } = directorStore.getState();
     const controls = controlsRef.current;
     if (!active || !shotId || !controls) return;
-    controls.azimuthAngle += SHOTS[shotId].drift * Math.min(dt, 0.05);
+    if (lastShotRef.current !== shotId) {
+      lastShotRef.current = shotId;
+      driftAccRef.current = 0;
+      driftDirRef.current = 1;
+    }
+    const MAX_DRIFT_ARC = 0.09; // rad — kadraj kompozisyonundan sapma sınırı
+    const step = SHOTS[shotId].drift * driftDirRef.current * Math.min(dt, 0.05);
+    driftAccRef.current += step;
+    if (Math.abs(driftAccRef.current) >= MAX_DRIFT_ARC) driftDirRef.current *= -1;
+    controls.azimuthAngle += step;
   });
 
   return (

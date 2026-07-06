@@ -28,8 +28,10 @@ export interface Shot {
 export const SHOTS: Record<ShotId, Shot> = {
   rackHero: {
     label: "Rulo Deposu — Çelik Raf Sistemi",
-    position: [-9.5, 1.2, 4.2],
-    target: [-6, 1.8, -1.6],
+    // Yükseltilmiş + geri çekilmiş: alçak kadraj geçişlerde rulolara
+    // sürtünüyordu (clipping); drift yayı artık dar ama emniyet payı da arttı
+    position: [-10.2, 2.6, 5.4],
+    target: [-6, 1.6, -1.6],
     drift: 0.02,
   },
   coilFeed: {
