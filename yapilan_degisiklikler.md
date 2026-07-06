@@ -77,3 +77,13 @@ Bu dosya, Antigravity AI asistanı tarafından yapılan son güncellemeleri diğ
 ## 16. X-Ray & Hologram Veri Katmanı (Data Layer Toggle)
 - Tüm sahneyi "TRON" tarzı neon çizgili bir dijital ikiz hologramına dönüştüren "X-Ray" modu eklendi.
 - Makineler arasında veri akışını (pipelines) gösteren parlak çizgiler ve makinelerin üzerine canlı simülasyon durumlarını basan "Data Billboards" (Veri Tabelaları) asıldı.
+
+## 17. What-If Senaryo Kum Havuzu (Sandbox)
+- Fabrika yöneticileri için "Acil Sipariş" simülasyon arayüzü eklendi.
+- Sürükle-bırak ile üretim planına acil iş eklendiğinde, Karar Motoru (Decision Engine) anlık olarak yeniden hesaplama yapar.
+- Değişim (Diff) Paneli: Eski plana göre fire oranı, teslim süresi ve ₺ cinsinden zarar/tasarruf değişimi anlık görselleştirildi.
+
+## 18. Dilme Hattı (Slitting Line)
+- **Dosyalar:** `SlittingLine.tsx`
+- Fabrika sahasına devasa ruloların döner dairesel bıçaklarla (spinning circular knives) dar şeritler (ribbons) halinde kesildiği animasyonlu bir dilme makinesi eklendi.
+- Yeni hover kartı eklendi (YARMA HATTI · Giriş 1100mm 304 BA · Çıkış 5 şerit × 190mm).
