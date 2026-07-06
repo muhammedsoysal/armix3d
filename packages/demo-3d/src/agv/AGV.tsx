@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
-import { RoundedBox } from "@react-three/drei";
+import { Html, RoundedBox } from "@react-three/drei";
 import {
   AdditiveBlending,
   type Group,
@@ -13,7 +13,7 @@ import { useStore } from "zustand";
 import { simStore } from "../sim/simStore";
 import { OptionalModel } from "../assets/AssetLoader";
 import { PalletWithStack } from "../scenes/Pallet";
-import { agvStore, type AgvPhase } from "./agvStore";
+import { AGV_PHASE_LABEL, agvStore, type AgvPhase } from "./agvStore";
 import {
   DOCK,
   PATROL_LOOP,
@@ -47,6 +47,57 @@ interface AgvFrame {
   yaw: number;
   deck: number;
   battery: number;
+}
+
+/** Fütüristik hover kartı — koil kartlarıyla aynı glassmorphism ailesi. */
+function AgvHoverCard({ id }: { id: string }) {
+  const phase = useStore(agvStore, (s) => s.phase);
+  const battery = useStore(agvStore, (s) => s.battery);
+  const carrying = useStore(agvStore, (s) => s.carrying);
+  const pending = useStore(agvStore, (s) => s.pending);
+  const batteryColor = battery > 50 ? "bg-emerald-400" : battery > 25 ? "bg-amber-400" : "bg-red-500";
+
+  return (
+    <Html position={[0, 1.15, 0]} center distanceFactor={7} style={{ pointerEvents: "none" }}>
+      <div className="w-64 rounded-xl border border-sky-400/30 bg-gradient-to-br from-slate-900/90 to-sky-950/80 p-4 shadow-[0_0_30px_rgba(56,189,248,0.25)] backdrop-blur-xl animate-in fade-in zoom-in-95 duration-200">
+        <div className="mb-2 flex items-center justify-between border-b border-white/10 pb-2">
+          <span className="text-xs font-bold tracking-[0.25em] text-sky-300">{id}</span>
+          <span className="flex items-center gap-1.5 text-[10px] font-semibold text-emerald-400">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
+            OTONOM
+          </span>
+        </div>
+        <div className="space-y-2 text-[11px]">
+          <div className="flex justify-between">
+            <span className="text-slate-400">Görev:</span>
+            <span className="font-mono font-semibold text-sky-200">{AGV_PHASE_LABEL[phase]}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-slate-400">Yük:</span>
+            <span className="font-mono text-slate-200">
+              {carrying ? `${carrying.stack.length} parça · Palet #${carrying.slotIdx + 1}` : "Boş"}
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-slate-400">Kuyruk:</span>
+            <span className="font-mono text-slate-200">{pending.length} palet</span>
+          </div>
+          <div>
+            <div className="mb-1 flex justify-between">
+              <span className="text-slate-400">Batarya:</span>
+              <span className="font-mono font-bold text-white">%{battery}</span>
+            </div>
+            <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
+              <div
+                className={`h-full rounded-full transition-all duration-500 ${batteryColor}`}
+                style={{ width: `${battery}%` }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </Html>
+  );
 }
 
 /** Yüksek detaylı prosedürel AGV gövdesi. `OptionalModel name="agv"` ile
@@ -133,6 +184,7 @@ export function AGV() {
   const wheelRefs = useRef<Mesh[]>([]);
   const carrying = useStore(agvStore, (s) => s.carrying);
   const phase = useStore(agvStore, (s) => s.phase);
+  const [hovered, setHovered] = useState(false);
 
   const frame = useRef<AgvFrame>({ leg: null, s: 0, pauseT: 0, yaw: Math.PI, deck: 0, battery: 100 });
   const legsRef = useRef<ReturnType<typeof missionLegs> | null>(null);
@@ -238,7 +290,22 @@ export function AGV() {
   });
 
   return (
-    <group ref={rootRef} position={[DOCK.x, 0, DOCK.z]} rotation={[0, Math.PI, 0]}>
+    <group
+      ref={rootRef}
+      position={[DOCK.x, 0, DOCK.z]}
+      rotation={[0, Math.PI, 0]}
+      onPointerOver={(e) => {
+        e.stopPropagation();
+        setHovered(true);
+        document.body.style.cursor = "pointer";
+      }}
+      onPointerOut={(e) => {
+        e.stopPropagation();
+        setHovered(false);
+        document.body.style.cursor = "auto";
+      }}
+    >
+      {hovered && <AgvHoverCard id="AGV-01" />}
       <AgvBody
         bodyColor="#2563eb"
         lightBarRef={lightBarRef}
