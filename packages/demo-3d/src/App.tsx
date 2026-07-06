@@ -9,10 +9,13 @@ import { QualityControls } from "./hud/QualityControls";
 import { AssetManifestLoader } from "./assets/AssetLoader";
 import { PostFX } from "./fx/PostFX";
 import { DirectorCamera } from "./director/DirectorCamera";
+import { DirectorHUD } from "./hud/DirectorHUD";
+import { directorStore } from "./director/directorStore";
 import { qualityStore } from "./quality/qualityStore";
 
 export default function App() {
   const params = useStore(qualityStore, (s) => s.params);
+  const directorActive = useStore(directorStore, (s) => s.active);
 
   return (
     <div className="relative h-full w-full">
@@ -33,8 +36,12 @@ export default function App() {
           <PostFX />
         </PerformanceMonitor>
       </Canvas>
-      <ProductionPlanHUD />
-      <QualityControls />
+      {/* Sunum modunda paneller sinematik kadraja yer açmak için söner */}
+      <div className={`transition-opacity duration-700 ${directorActive ? "opacity-30" : "opacity-100"}`}>
+        <ProductionPlanHUD />
+        <QualityControls />
+      </div>
+      <DirectorHUD />
     </div>
   );
 }
