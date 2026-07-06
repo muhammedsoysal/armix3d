@@ -54,6 +54,11 @@ export function ProductionPlanHUD() {
   const completedPallets = useStore(simStore, (s) => s.completedPallets);
   const { coilPercent, phaseProgress } = useSimSnapshot();
   const isPlanCompleted = useStore(simStore, (s) => s.isPlanCompleted);
+  // Tamamlandı paneli kapatılabilir; yeni plan başlarsa tekrar görünür olur
+  const [completionDismissed, setCompletionDismissed] = useState(false);
+  useEffect(() => {
+    if (!isPlanCompleted) setCompletionDismissed(false);
+  }, [isPlanCompleted]);
 
   const rec = plan ? currentRecommendation(simStore.getState()) : null;
   
@@ -155,9 +160,18 @@ export function ProductionPlanHUD() {
         </Panel>
       )}
 
-      {/* Plan Tamamlandı Bildirimi */}
-      {isPlanCompleted && (
-        <Panel className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] border border-emerald-500/40 bg-gradient-to-br from-emerald-900/90 to-black/90 shadow-[0_0_50px_rgba(16,185,129,0.3)] backdrop-blur-2xl p-8 flex flex-col items-center justify-center text-center animate-in fade-in zoom-in duration-500">
+      {/* Plan Tamamlandı Bildirimi — X veya panele tıklayarak kapatılır */}
+      {isPlanCompleted && !completionDismissed && (
+        <Panel className="pointer-events-auto absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] border border-emerald-500/40 bg-gradient-to-br from-emerald-900/90 to-black/90 shadow-[0_0_50px_rgba(16,185,129,0.3)] backdrop-blur-2xl p-8 flex flex-col items-center justify-center text-center animate-in fade-in zoom-in duration-500">
+          <button
+            onClick={() => setCompletionDismissed(true)}
+            aria-label="Kapat"
+            className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/5 text-neutral-300 transition-all hover:bg-white/15 hover:text-white active:scale-90"
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" d="M6 6l12 12M18 6L6 18" />
+            </svg>
+          </button>
           <div className="w-20 h-20 rounded-full bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center text-emerald-400 mb-6 shadow-[0_0_30px_rgba(16,185,129,0.5)]">
             <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
           </div>

@@ -2,7 +2,9 @@ import { useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
 import { DoubleSide, type Group, type Mesh } from "three";
+import { useStore } from "zustand";
 import { OptionalModel } from "../assets/AssetLoader";
+import { telemetryStore } from "../telemetry/telemetryStore";
 
 /**
  * Yarma Hattı (Slitting Line) — rulo servis merkezlerinin imza makinesi:
@@ -54,9 +56,22 @@ export function SlittingLine() {
   const takeupsRef = useRef<Group>(null!);
   const knivesRef = useRef<Group>(null!);
   const [hovered, setHovered] = useState(false);
+  const lastTRef = useRef(0);
+  const activeJob = useStore(telemetryStore, (s) => s.slitQueue[s.slitActiveIdx]);
 
   useFrame(({ clock }, dt) => {
     const t = cycleT(clock.elapsedTime);
+    // Döngü başa sardı → iş tamamlandı, kuyruktan sıradakine geç + sayaç
+    if (t < lastTRef.current) {
+      const tel = telemetryStore.getState();
+      tel.advanceSlitJob();
+      tel.updateMachine("SLT-1", { partsToday: tel.machines["SLT-1"].partsToday + 1 });
+    }
+    lastTRef.current = t;
+    // İlerleme HUD/dashboard için ~saniyede bir yazılır
+    if (Math.abs(t - telemetryStore.getState().slitProgress) > 0.015) {
+      telemetryStore.getState().setSlitProgress(t);
+    }
     const spin = Math.min(dt, 0.05) * 1.6;
 
     // Ana rulo: incelir + döner
@@ -174,12 +189,16 @@ export function SlittingLine() {
             </div>
             <div className="space-y-1.5 font-mono text-[11px]">
               <div className="flex justify-between">
-                <span className="text-slate-400">Giriş:</span>
-                <span className="text-slate-200">1100mm · 304 BA</span>
+                <span className="text-slate-400">Aktif İş:</span>
+                <span className="font-bold text-sky-200">{activeJob.id}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-400">Çıkış:</span>
-                <span className="text-slate-200">{N_RIBBONS} şerit × {Math.round(RIBBON_W * 1000)}mm</span>
+                <span className="text-slate-400">Program:</span>
+                <span className="text-slate-200">{activeJob.program}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-400">Malzeme:</span>
+                <span className="text-slate-200">{activeJob.material}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-400">Hat hızı:</span>

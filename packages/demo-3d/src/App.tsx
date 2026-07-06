@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import { PerformanceMonitor } from "@react-three/drei";
 import { useStore } from "zustand";
@@ -17,6 +18,8 @@ import { OptimizerThinkingHUD } from "./hud/OptimizerThinkingHUD";
 import { WhatIfHUD } from "./hud/WhatIfHUD";
 import { AudioToggle } from "./hud/AudioToggle";
 import { FactoryAudio } from "./audio/FactoryAudio";
+import { FactoryDashboard } from "./hud/FactoryDashboard";
+import { connectLiveTelemetry } from "./telemetry/liveTelemetryService";
 import { DirectorHUD } from "./hud/DirectorHUD";
 import { directorStore } from "./director/directorStore";
 import { qualityStore } from "./quality/qualityStore";
@@ -24,6 +27,9 @@ import { qualityStore } from "./quality/qualityStore";
 export default function App() {
   const params = useStore(qualityStore, (s) => s.params);
   const directorActive = useStore(directorStore, (s) => s.active);
+
+  // Canlı telemetri akışı (mock WS) — gerçek entegrasyonda SCADA/ERP ucu
+  useEffect(() => connectLiveTelemetry(), []);
 
   return (
     <div className="relative h-full w-full">
@@ -58,6 +64,7 @@ export default function App() {
       <OptimizerThinkingHUD />
       <WhatIfHUD />
       <AudioToggle />
+      <FactoryDashboard />
     </div>
   );
 }
