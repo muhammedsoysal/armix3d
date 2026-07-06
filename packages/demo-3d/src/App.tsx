@@ -14,6 +14,7 @@ import { DataPipelines } from "./xray/DataPipelines";
 import { DataBillboards } from "./xray/DataBillboards";
 import { XRayToggle } from "./hud/XRayToggle";
 import { OptimizerThinkingHUD } from "./hud/OptimizerThinkingHUD";
+import { WhatIfHUD } from "./hud/WhatIfHUD";
 import { DirectorHUD } from "./hud/DirectorHUD";
 import { directorStore } from "./director/directorStore";
 import { qualityStore } from "./quality/qualityStore";
@@ -52,6 +53,7 @@ export default function App() {
       <DirectorHUD />
       <XRayToggle />
       <OptimizerThinkingHUD />
+      <WhatIfHUD />
     </div>
   );
 }
