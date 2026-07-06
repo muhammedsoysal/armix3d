@@ -27,7 +27,7 @@ function InteractiveCoil({ coil }: { coil: typeof coilsData[0] }) {
           metalness={coil.matProps.metalness} 
           roughness={coil.matProps.roughness}
           emissive={hovered ? "#38bdf8" : "#000000"}
-          emissiveIntensity={hovered ? 0.2 : 0}
+          emissiveIntensity={hovered ? 3.5 : 0}
         />
       </mesh>
       
