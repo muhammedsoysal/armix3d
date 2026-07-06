@@ -51,6 +51,7 @@ export function ProductionPlanHUD() {
   const piecesCutForRec = useStore(simStore, (s) => s.piecesCutForRec);
   const totalPieces = useStore(simStore, (s) => s.totalPiecesCut);
   const palletCount = useStore(simStore, (s) => s.palletStack.length);
+  const completedPallets = useStore(simStore, (s) => s.completedPallets);
   const { coilPercent, phaseProgress } = useSimSnapshot();
   const isPlanCompleted = useStore(simStore, (s) => s.isPlanCompleted);
 
