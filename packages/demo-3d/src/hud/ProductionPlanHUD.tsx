@@ -37,7 +37,7 @@ function useSimSnapshot() {
 function Panel({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <div
-      className={`pointer-events-none rounded-2xl border border-white/10 bg-black/55 p-4 text-neutral-200 shadow-xl backdrop-blur-md ${className}`}
+      className={`rounded-2xl border border-white/10 bg-black/55 p-4 text-neutral-200 shadow-xl backdrop-blur-md ${className}`}
     >
       {children}
     </div>
@@ -166,23 +166,7 @@ export function ProductionPlanHUD() {
         )}
       </Panel>
 
-      {/* Sağ alt: sıradaki işler */}
-      {plan && (
-        <Panel className="absolute bottom-6 right-6 w-[300px]">
-          <div className="mb-2 text-[10px] uppercase tracking-wider text-neutral-400">
-            Sıradaki İşler
-          </div>
-          <ol className="space-y-1.5">
-            {upNext.map((r, i) => (
-              <li key={r.sku} className="flex items-baseline gap-2 text-[13px]">
-                <span className="font-mono text-neutral-500">{i + 1}.</span>
-                <span className="flex-1 truncate text-neutral-200">{r.productName}</span>
-                <span className="font-mono text-[11px] text-neutral-400">%{r.estimatedScrapPercent}</span>
-              </li>
-            ))}
-          </ol>
-        </Panel>
-      )}
+
     </div>
   );
 }
