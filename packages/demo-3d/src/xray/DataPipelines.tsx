@@ -1,7 +1,10 @@
-import { useRef } from "react";
+import { useRef, type ElementRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { QuadraticBezierLine } from "@react-three/drei";
 import type { Line2 } from "three-stdlib";
+
+/** drei tip bildirimi ref'i Line2Props olarak işaretler; gerçek instance Line2'dir. */
+type BezierRef = ElementRef<typeof QuadraticBezierLine>;
 import { useStore } from "zustand";
 import { LAYOUT } from "../sim/constants";
 import { xrayStore } from "./xrayStore";
@@ -17,9 +20,9 @@ function Arc({
   mid: [number, number, number];
   end: [number, number, number];
 }) {
-  const ref = useRef<Line2>(null);
+  const ref = useRef<BezierRef>(null);
   useFrame((_, dt) => {
-    const mat = ref.current?.material;
+    const mat = (ref.current as unknown as Line2 | null)?.material;
     if (mat) mat.dashOffset -= 1.6 * Math.min(dt, 0.05);
   });
   return (
