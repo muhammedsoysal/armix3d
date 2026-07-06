@@ -30,25 +30,26 @@ Bu dosya, Antigravity AI asistanı tarafından yapılan son güncellemeleri diğ
   - `constants.ts` içindeki `coilSetAmplitude` fonksiyonunun ürettiği maksimum bükülme değeri azaltıldı (0.077'den daha makul seviyelere çekildi).
   - `VacuumLifter.tsx` içindeki deformasyon formülünden enine bükülme (Z ekseni / `v*v`) faktörü tamamen çıkarıldı. Artık sac sadece uzunlamasına esniyor (gerçekçi sac davranışı).
 
-## 6. Birden Fazla Paletin Ekranda Görünmesi
+## 6. Birden Fazla Paletin Ekranda Görünmesi ve Hızlandırılması
 - **Dosyalar:** `simStore.ts`, `SimulationController.tsx`, `Pallet.tsx`
-- **Değişiklik:** Dolup kaldırılan paletlerin ekrandan tamamen silinmesi yerine sıraya dizilmesi sağlandı.
+- **Değişiklik:** Dolup kaldırılan paletlerin ekrandan tamamen silinmesi yerine sıraya dizilmesi sağlandı ve palet dolma hızı artırıldı.
 - **Detay:** 
+  - Simülasyonda 11 parça beklemek uzun sürdüğü için, bir paletin dolma limiti `11`'den `5` parçaya düşürüldü. Artık çok daha hızlı palet dolacak.
   - `simStore.ts` içine `completedPallets` (Tamamlanan Paletler) dizisi eklendi.
-  - `SimulationController.tsx` dosyasında, palet dolduğunda (stack.length > 10), bu palet silinmek yerine `completedPallets` listesine (maksimum 3 tane olacak şekilde) ekleniyor.
-  - `Pallet.tsx` dosyasında, aktif paletin sağ tarafına `completedPallets` listesindeki paletlerin de render edilmesi eklendi.
+  - Dolup kenara alınan paletler artık sağa doğru diziliyor, böylece çok sayıda paletin sıraya girdiği görsel olarak test edilebiliyor.
 
-## 7. Örnek (Mock) İş Yükü Listesi ve Silme Özelliği
+## 7. Arayüzün Modernizasyonu ve Aktif İş Paneli
 - **Dosya:** `packages/demo-3d/src/hud/ProductionPlanHUD.tsx`
-- **Değişiklik:** Ekrana "Örnek İş Yükü Listesi" eklendi ve fazla veri yükü basitleştirildi.
+- **Değişiklik:** Ekranın sol altındaki "Aktif İş" paneli tamamen modern "Glassmorphism" tasarımıyla yenilendi.
 - **Detay:** 
-  - HUD paneline React `useState` ile 5 maddelik statik bir mock data listesi konuldu (Gövde Yan Panel, Motor Kapağı vs.).
-  - Her maddenin yanına bir "x" (sil) butonu eklendi. Tıklandığında `removeTask` fonksiyonu çalışarak o maddeyi stateden (ekrandan) siliyor.
-  - Tıklanabilirlik için panele `pointer-events-auto` sınıfı eklendi.
+  - Panel arka planına yarı şeffaf buzlu cam (backdrop-blur) ve renk geçişleri eklendi.
+  - Kesilen ürünün ismine şık bir degrade (gradient) yazı tipi uygulandı.
+  - Fire Oranı, Öncelik Skoru ve Kesim Adeti istatistikleri için modern tasarımlı ikonlar ve hover animasyonları eklendi.
+  - Aşama ilerleme çubuğu ışıklı ve daha şık bir animasyona çevrildi.
 
-## 8. Arayüz Düzeltmeleri (Çift Liste ve Tıklanamama Sorunu)
+## 8. İş Kuyruğu Listesinin Yenilenmesi (Gerçek Veri)
 - **Dosya:** `packages/demo-3d/src/hud/ProductionPlanHUD.tsx`
-- **Değişiklik:** Eski iş listesinin kaldırılması ve yeni listenin tıklanabilir yapılması.
+- **Değişiklik:** Kullanıcının talebi üzerine statik mock iş listesi kaldırıldı, yerine gerçek Karar Motorundan gelen kuyruk listesi detaylıca eklendi.
 - **Detay:** 
-  - Panel bileşenine sabit olarak gömülü gelen `pointer-events-none` sınıfı kaldırıldı. Böylece silme çarpılarına (`x`) fare ile başarıyla tıklanabilmesi (silme işleminin çalışması) sağlandı.
-  - Ekranın sağ alt köşesinde bulunan eski (Claude'un orijinal olarak koyduğu) 'Sıradaki İşler' listesi koddan tamamen silindi. Sadece yeni eklenen Örnek İş Yükü Listesi bırakılarak ekrandaki liste karmaşası ve kopyalanması önlendi.
+  - Listede "TOPLAM X (DÖNGÜ)" şeklinde bir ibare eklenerek üretim planının kaç parçalık sürekli bir döngüde çalıştığı netleştirildi.
+  - Gelecek olan sıradaki 5 iş, sol üstte modern bir tasarımla (isim, sku ve kesilecek adet ile) kuyruk formatında gösterilmeye başlandı.
