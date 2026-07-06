@@ -45,3 +45,10 @@ Bu dosya, Antigravity AI asistanı tarafından yapılan son güncellemeleri diğ
   - HUD paneline React `useState` ile 5 maddelik statik bir mock data listesi konuldu (Gövde Yan Panel, Motor Kapağı vs.).
   - Her maddenin yanına bir "x" (sil) butonu eklendi. Tıklandığında `removeTask` fonksiyonu çalışarak o maddeyi stateden (ekrandan) siliyor.
   - Tıklanabilirlik için panele `pointer-events-auto` sınıfı eklendi.
+
+## 8. Arayüz Düzeltmeleri (Çift Liste ve Tıklanamama Sorunu)
+- **Dosya:** `packages/demo-3d/src/hud/ProductionPlanHUD.tsx`
+- **Değişiklik:** Eski iş listesinin kaldırılması ve yeni listenin tıklanabilir yapılması.
+- **Detay:** 
+  - Panel bileşenine sabit olarak gömülü gelen `pointer-events-none` sınıfı kaldırıldı. Böylece silme çarpılarına (`x`) fare ile başarıyla tıklanabilmesi (silme işleminin çalışması) sağlandı.
+  - Ekranın sağ alt köşesinde bulunan eski (Claude'un orijinal olarak koyduğu) 'Sıradaki İşler' listesi koddan tamamen silindi. Sadece yeni eklenen Örnek İş Yükü Listesi bırakılarak ekrandaki liste karmaşası ve kopyalanması önlendi.
