@@ -39,6 +39,7 @@ import { IndustrialCoilStorage } from "./IndustrialCoilStorage";
 import { AGV, PatrolAGV } from "../agv/AGV";
 import { GuideLanes } from "../agv/GuideLanes";
 import { NestingProjection } from "../nesting/NestingProjection";
+import { ScrapBin } from "../nesting/ScrapBin";
 import { Forklift } from "./Forklift";
 
 /** CNC hattının tamamı: rulo → doğrultucu → kesim → vakum kaldırıcı → palet. */
@@ -51,6 +52,7 @@ export function MachineLine() {
       <Tables />
       <Sheet />
       <NestingProjection />
+      <ScrapBin />
       <CuttingGantry />
       <Sparks />
       <Smoke />

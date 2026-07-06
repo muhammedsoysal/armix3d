@@ -18,8 +18,11 @@ import {
   coilRadiusFor,
   coilSetAmplitude,
   simFrame,
+  LAYOUT,
 } from "./constants";
-import { currentPartMeters, currentRecommendation, simStore } from "./simStore";
+import { currentPart, currentPartMeters, currentRecommendation, simStore } from "./simStore";
+import { computeNest } from "../nesting/nestingMath";
+import { scrapStore } from "../nesting/scrapStore";
 
 /**
  * Simülasyonun kalbi: üretim planını karar motorundan yükler ve makine
@@ -90,6 +93,16 @@ export function SimulationController() {
       simFrame.bowAmpAtCut = coilSetAmplitude(coilRadiusFor(simFrame.totalFedLength));
       simFrame.pieceBow = 0; // masada bastırılmış: düz
       simFrame.pieceBowVel = 0;
+
+      const p = currentPart(sim);
+      if (p) {
+        const sheetW = LAYOUT.sheetWidth * 1000;
+        const partW = part.width * 1000;
+        const partL = part.length * 1000;
+        const kerfMm = 5;
+        const nest = computeNest(partW, partL, sheetW, partL, kerfMm);
+        scrapStore.getState().addCut(nest, sheetW, partL, LAYOUT.sheetThickness * 1000);
+      }
     }
     if (machine.state === "LIFTING") {
       simStore.setState((s) => {
