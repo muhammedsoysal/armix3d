@@ -6,9 +6,10 @@ import { OptionalModel } from "../assets/AssetLoader";
 /** Ahşap palet + kesilen parçaların istifi (palet dolunca forklift alır). */
 export function Pallet() {
   const stack = useStore(simStore, (s) => s.palletStack);
+  const completedPallets = useStore(simStore, (s) => s.completedPallets);
 
-  return (
-    <group position={[LAYOUT.palletX, 0, 0]}>
+  const renderPalletWithStack = (palletStack: any[], offsetX: number) => (
+    <group position={[LAYOUT.palletX + offsetX, 0, 0]}>
       <OptionalModel name="pallet">
         {/* Palet tahtaları */}
         {[-0.45, -0.15, 0.15, 0.45].map((z) => (
@@ -26,16 +27,28 @@ export function Pallet() {
       </OptionalModel>
 
       {/* Kesilen parça istifi */}
-      {stack.map((piece, i) => (
+      {palletStack.map((piece, i) => (
         <mesh
           key={i}
           position={[0, LAYOUT.palletBaseY + i * 0.024, 0]}
           rotation={[0, (i % 2 === 0 ? 1 : -1) * 0.02, 0]}
           castShadow
         >
-          <boxGeometry args={[piece.length, 0.012, piece.width]} />
+          <boxGeometry args={[piece.length, 0.012, LAYOUT.sheetWidth]} />
           <meshStandardMaterial color="#c9ced5" metalness={0.85} roughness={0.32} />
         </mesh>
+      ))}
+    </group>
+  );
+
+  return (
+    <group>
+      {/* Aktif palet */}
+      {renderPalletWithStack(stack, 0)}
+
+      {/* Tamamlanıp kenara alınan paletler */}
+      {completedPallets.map((cp, idx) => (
+        <group key={cp.id}>{renderPalletWithStack(cp.stack, 1.4 * (idx + 1))}</group>
       ))}
     </group>
   );

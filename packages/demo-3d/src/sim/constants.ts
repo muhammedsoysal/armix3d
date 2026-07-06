@@ -18,7 +18,7 @@ export const LAYOUT = {
 export const COIL = {
   R0: 0.85,
   RMIN: 0.25,
-  THICKNESS: 0.005,
+  THICKNESS: 0.035, // Visually depletes very fast!
   WIDTH: 1.3,
 } as const;
 

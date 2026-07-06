@@ -100,9 +100,14 @@ export function SimulationController() {
           recIndex = (s.recIndex + 1) % s.plan!.recommendations.length;
           pieces = 0;
         }
-        if (palletFull) console.log("[SIM] Palet doldu — forklift aldı, yeni palet.");
+        let completed = s.completedPallets;
+        if (palletFull) {
+          console.log("[SIM] Palet doldu — forklift aldı, yeni palet.");
+          completed = [{ id: Date.now(), stack }, ...s.completedPallets].slice(0, 3);
+        }
         return {
           palletStack: palletFull ? [] : stack,
+          completedPallets: completed,
           piecesCutForRec: pieces,
           recIndex,
           totalPiecesCut: s.totalPiecesCut + 1,

@@ -120,7 +120,7 @@ export function VacuumLifter() {
       pieceRef.current.visible = true;
       pieceRef.current.position.set(pose.pieceX, pose.pieceY - 0.006, 0);
       pieceRef.current.rotation.z = Math.sin(simFrame.progress * 26) * 0.018 * pose.sway;
-      pieceRef.current.scale.set(part.length, 1, part.width);
+      pieceRef.current.scale.set(part.length, 1, LAYOUT.sheetWidth);
     } else {
       pieceRef.current.visible = false;
       // bekleme pozisyonu: kesim alanı üstü

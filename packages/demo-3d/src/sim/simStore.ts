@@ -16,6 +16,7 @@ export interface SimStoreState {
   piecesCutForRec: number;
   totalPiecesCut: number;
   palletStack: PalletPiece[];
+  completedPallets: { id: number; stack: PalletPiece[] }[];
   setPlan: (plan: ProductionPlan, parts: Record<string, PartDefinition>) => void;
 }
 
@@ -26,6 +27,7 @@ export const simStore = createStore<SimStoreState>()((set) => ({
   piecesCutForRec: 0,
   totalPiecesCut: 0,
   palletStack: [],
+  completedPallets: [],
   setPlan: (plan, parts) => set({ plan, parts, recIndex: 0, piecesCutForRec: 0 }),
 }));
 

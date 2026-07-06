@@ -53,6 +53,18 @@ export function ProductionPlanHUD() {
   const palletCount = useStore(simStore, (s) => s.palletStack.length);
   const { coilPercent, phaseProgress } = useSimSnapshot();
 
+  const [mockTasks, setMockTasks] = useState([
+    { id: 1, name: "Gövde Yan Panel - SKU-001", status: "Üretildi" },
+    { id: 2, name: "Gövde Yan Panel - SKU-001", status: "Üretildi" },
+    { id: 3, name: "Motor Kapağı - SKU-042", status: "Üretiliyor" },
+    { id: 4, name: "Şasi Alt Plaka - SKU-089", status: "Bekliyor" },
+    { id: 5, name: "Bağlantı Braketi - SKU-112", status: "Bekliyor" },
+  ]);
+
+  const removeTask = (id: number) => {
+    setMockTasks((prev) => prev.filter((t) => t.id !== id));
+  };
+
   const rec = plan ? currentRecommendation(simStore.getState()) : null;
   const upNext = plan
     ? [1, 2, 3].map((o) => plan.recommendations[(recIndex + o) % plan.recommendations.length])
@@ -80,6 +92,35 @@ export function ProductionPlanHUD() {
             <div className="font-mono text-xl font-semibold text-white">{value}</div>
           </div>
         ))}
+      </Panel>
+
+      {/* Sol Orta: İş Listesi (Mock Data) */}
+      <Panel className="absolute left-6 top-28 w-[320px] pointer-events-auto">
+        <div className="mb-3 text-[10px] uppercase tracking-wider text-neutral-400">
+          Örnek İş Yükü Listesi
+        </div>
+        <div className="space-y-2">
+          {mockTasks.map((task) => (
+            <div key={task.id} className="flex items-center justify-between text-[13px] bg-white/5 rounded p-2 border border-white/5">
+              <div>
+                <div className="text-neutral-200">{task.name}</div>
+                <div className={`text-[10px] mt-0.5 ${task.status === "Üretildi" ? "text-emerald-400" : task.status === "Üretiliyor" ? "text-orange-400" : "text-neutral-400"}`}>
+                  {task.status}
+                </div>
+              </div>
+              <button 
+                onClick={() => removeTask(task.id)}
+                className="text-neutral-500 hover:text-red-400 px-2 text-lg leading-none"
+                title="Listeden Kaldır"
+              >
+                ×
+              </button>
+            </div>
+          ))}
+          {mockTasks.length === 0 && (
+            <div className="text-xs text-neutral-500 italic py-2">Tüm işler tamamlandı veya silindi.</div>
+          )}
+        </div>
       </Panel>
 
       {/* Sol alt: aktif iş */}
