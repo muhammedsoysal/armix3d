@@ -11,11 +11,12 @@ import { OptionalModel } from "../assets/AssetLoader";
  * ana rulo incelir, şerit ruloları kalınlaşır, sonra döngü başa döner.
  */
 
-// Hat yerleşimi (dünya koordinatı): ana hattın arkasında, ona paralel
-const LINE_Z = -3.6;
-const UNCOILER_X = -5.2;
-const SLITTER_X = -2.4;
-const RECOILER_X = -0.2;
+// Hat yerleşimi (dünya koordinatı): ön-sol boş saha, ana hatta paralel —
+// varsayılan kameradan görünür, devriye AGV'si önünden geçer
+const LINE_Z = 3.5;
+const UNCOILER_X = -8.0;
+const SLITTER_X = -5.3;
+const RECOILER_X = -2.9;
 const PASS_Y = 1.05; // şerit geçiş yüksekliği
 const STRIP_W = 1.1; // ana şerit eni (m)
 const N_RIBBONS = 5;
@@ -128,21 +129,27 @@ export function SlittingLine() {
           <meshStandardMaterial color="#052e12" emissive="#22c55e" emissiveIntensity={2.4} toneMapped={false} />
         </mesh>
 
-        {/* ŞERİTLER: yarıcıdan çıkıp yelpaze gibi ayrılarak sarıcılara */}
-        {slots.map((z, k) => {
+        {/* ŞERİTLER: bıçak çıkışında bitişik, sarıcıda aralıklı — yelpaze.
+            Düz yat (Rx -90) + Y ekseni etrafında hedefe döndürme grubu. */}
+        {slots.map((z1, k) => {
           const x0 = SLITTER_X + 0.26;
           const x1 = RECOILER_X;
-          const len = Math.hypot(x1 - x0, z * 0.35);
-          const yaw = Math.atan2(z * 0.35, x1 - x0);
+          // Bıçak çıkışı: şeritler boşluksuz yan yana
+          const z0 = (k - (N_RIBBONS - 1) / 2) * RIBBON_W;
+          const dx = x1 - x0;
+          const dz = z1 - z0;
+          const len = Math.hypot(dx, dz);
           return (
-            <mesh
+            <group
               key={k}
-              position={[(x0 + x1) / 2, PASS_Y + 0.002 * k, z * 0.82]}
-              rotation={[-Math.PI / 2, 0, -yaw]}
+              position={[(x0 + x1) / 2, PASS_Y + 0.001 * k, (z0 + z1) / 2]}
+              rotation={[0, -Math.atan2(dz, dx), 0]}
             >
-              <planeGeometry args={[len, RIBBON_W]} />
-              <meshStandardMaterial color="#d5dae0" metalness={0.85} roughness={0.28} side={DoubleSide} />
-            </mesh>
+              <mesh rotation={[-Math.PI / 2, 0, 0]}>
+                <planeGeometry args={[len, RIBBON_W]} />
+                <meshStandardMaterial color="#d5dae0" metalness={0.85} roughness={0.28} side={DoubleSide} />
+              </mesh>
+            </group>
           );
         })}
 
