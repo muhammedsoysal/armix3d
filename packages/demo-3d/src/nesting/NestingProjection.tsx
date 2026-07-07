@@ -4,8 +4,8 @@ import { CanvasTexture, DoubleSide, type Mesh, type MeshBasicMaterial } from "th
 import { machineStateStore } from "@metalnest/core";
 import { LAYOUT, simFrame } from "../sim/constants";
 import { currentPart, simStore } from "../sim/simStore";
+import { packGuillotine, type PackResult } from "@metalnest/core";
 import { cuttingHeadZ } from "../scenes/CuttingGantry";
-import { computeNest, type Nest } from "./nestingMath";
 
 const KERF_MM = 5; // core HeuristicScrapEstimator ile aynı
 const SHEET_W_MM = LAYOUT.sheetWidth * 1000;
@@ -33,11 +33,12 @@ function hatch(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h
   ctx.restore();
 }
 
-/** Nest yerleşimini canvas'a çizer. headZmm: kesim kafasının sac-eni
- * koordinatında anlık konumu (mm); geçtiği hücreler yeşile döner. */
+/** Giyotin yerleşimini canvas'a çizer: dolu alan cyan, yerleşim dışı kalan
+ * HER piksel kırmızı taramalı fire (giyotin boşlukları dahil — dürüst gösterim).
+ * headZmm: kesim kafasının sac-eni koordinatında anlık konumu (mm). */
 export function paintNest(
   ctx: CanvasRenderingContext2D,
-  nest: Nest,
+  pack: PackResult,
   pieceLmm: number,
   headZmm: number | null,
 ) {
@@ -47,23 +48,32 @@ export function paintNest(
   ctx.fillStyle = "rgba(3,12,24,0.50)";
   ctx.fillRect(0, 0, CW, CH);
 
-  // Fire bölgeleri: en yönü artığı + boy yönü artığı
-  if (nest.trimWmm > 0.5) hatch(ctx, 0, nest.usedWmm * sy, CW, nest.trimWmm * sy);
-  const usedL = nest.rows > 0 ? nest.rows * (nest.cells[0]?.l ?? 0) + (nest.rows - 1) * KERF_MM : 0;
-  if (pieceLmm - usedL > 0.5) hatch(ctx, usedL * sx, 0, (pieceLmm - usedL) * sx, nest.usedWmm * sy);
+  // Tüm zemin fire taraması — parçalar üstüne çizilince kalan = gerçek fire
+  hatch(ctx, 0, 0, CW, CH);
 
-  // Parça hücreleri
-  for (const c of nest.cells) {
-    const x = c.x0 * sx;
-    const y = c.z0 * sy;
-    const w = c.l * sx;
-    const h = c.w * sy;
-    const cut = headZmm !== null && headZmm >= c.z0 + c.w; // kafa hücreyi geçti
-    ctx.fillStyle = cut ? "rgba(34,197,94,0.32)" : "rgba(56,189,248,0.12)";
+  // Parça yerleşimleri (Placement: x=en, y=boy — canvas: x=boy, y=en)
+  for (const p of pack.placements) {
+    const x = p.y * sx;
+    const y = p.x * sy;
+    const w = p.l * sx;
+    const h = p.w * sy;
+    const cut = headZmm !== null && headZmm >= p.x + p.w; // kafa hücreyi geçti
+    ctx.fillStyle = cut ? "rgba(34,197,94,0.85)" : "rgba(8,47,73,0.92)";
+    ctx.fillRect(x, y, w, h);
+    ctx.fillStyle = cut ? "rgba(34,197,94,0.25)" : "rgba(56,189,248,0.14)";
     ctx.fillRect(x, y, w, h);
     ctx.strokeStyle = cut ? "#4ade80" : "#38bdf8";
     ctx.lineWidth = 2;
     ctx.strokeRect(x, y, w, h);
+    // Döndürülmüş parçalara köşe işareti — karışık yönelim görünür olsun
+    if (p.rotated) {
+      ctx.fillStyle = "#7dd3fc";
+      ctx.beginPath();
+      ctx.moveTo(x + 2, y + 2);
+      ctx.lineTo(x + 12, y + 2);
+      ctx.lineTo(x + 2, y + 12);
+      ctx.fill();
+    }
   }
 
   // Kesim kafası izi: en boyunca parlak çizgi
@@ -125,8 +135,9 @@ export function NestingProjection() {
     if (key !== lastKey.current || (state === "CUTTING" && repaintAcc.current > 0.1)) {
       lastKey.current = key;
       repaintAcc.current = 0;
-      const nest = computeNest(pw, pl, SHEET_W_MM, pieceLmm, KERF_MM);
-      paintNest(ctx, nest, pieceLmm, headZmm);
+      const maxQty = Math.ceil(((SHEET_W_MM + KERF_MM) * (pieceLmm + KERF_MM)) / (pw * pl));
+      const pack = packGuillotine([{ id: part.sku, w: pw, l: pl, qty: maxQty }], SHEET_W_MM, pieceLmm, KERF_MM);
+      paintNest(ctx, pack, pieceLmm, headZmm);
       texture.needsUpdate = true;
     }
   });

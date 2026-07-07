@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useStore } from "zustand";
 import {
-  HeuristicScrapEstimator,
+  GuillotineScrapEstimator,
   ProductionPlanBuilder,
   type PartDefinition,
   type ProductionPlan,
@@ -70,7 +70,7 @@ export function WhatIfHUD() {
 
   const runScenario = (part: PartDefinition, rushQty: number) => {
     const newSales = injectRushOrder(planInputs.sales, part, rushQty);
-    const newPlan = new ProductionPlanBuilder(new HeuristicScrapEstimator()).build({
+    const newPlan = new ProductionPlanBuilder(new GuillotineScrapEstimator()).build({
       parts: planInputs.parts,
       stock: planInputs.stock,
       sales: newSales,

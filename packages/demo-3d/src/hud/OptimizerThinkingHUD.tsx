@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { useStore } from "zustand";
 import { LAYOUT } from "../sim/constants";
 import { currentPart, simStore } from "../sim/simStore";
-import { nestCandidates, type NestCandidate } from "../nesting/nestingMath";
+import { packGuillotine } from "@metalnest/core";
+import { nestCandidates, computeNest, type NestCandidate } from "../nesting/nestingMath";
 
 const KERF_MM = 5;
 const SHEET_W_MM = LAYOUT.sheetWidth * 1000;
@@ -79,6 +80,16 @@ export function OptimizerThinkingHUD() {
   const winner = cands.find((c) => c.chosen)!;
   const shown = phase.kind === "thinking" ? cands[phase.idx] : winner;
 
+  // MATEMATİKSEL KANIT: eski grid motoru vs yeni giyotin motoru, aynı parça
+  let proof: { gridPct: number; guilloPct: number } | null = null;
+  if (phase.kind === "locked" && part) {
+    const { width: pw, length: pl } = part.partDimensions;
+    const gridPct = Math.round(computeNest(pw, pl, SHEET_W_MM, pl, KERF_MM).scrapRatio * 1000) / 10;
+    const maxQty = Math.ceil(((SHEET_W_MM + KERF_MM) * (pl + KERF_MM)) / (pw * pl));
+    const guilloPct = packGuillotine([{ id: part.sku, w: pw, l: pl, qty: maxQty }], SHEET_W_MM, pl, KERF_MM).scrapPct;
+    proof = { gridPct, guilloPct };
+  }
+
   return (
     <div className="pointer-events-none absolute left-1/2 top-6 z-30 -translate-x-1/2">
       <div
@@ -110,6 +121,20 @@ export function OptimizerThinkingHUD() {
               </span>
             )}
           </div>
+          {proof && (
+            <div className="mt-1.5 rounded-md border border-emerald-400/25 bg-emerald-500/10 px-2 py-1 font-mono text-[10px]">
+              <span className="text-slate-400">Grid motor: </span>
+              <span className="text-red-400 line-through">%{proof.gridPct}</span>
+              <span className="mx-1.5 text-slate-500">→</span>
+              <span className="text-slate-400">Guillotine v2: </span>
+              <span className="font-bold text-emerald-400">%{proof.guilloPct}</span>
+              {proof.gridPct > proof.guilloPct && (
+                <span className="ml-1.5 font-bold text-emerald-300">
+                  (−{Math.round((proof.gridPct - proof.guilloPct) * 10) / 10} puan)
+                </span>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -10,14 +10,19 @@ function buildInputs(): ScoringInput[] {
   const estimator = new HeuristicScrapEstimator();
   const stock = getMockStockItems();
   const salesBySku = new Map(getMockSalesRecords().map((s) => [s.sku, s]));
-  return getPartDefinitions().map((part) => {
-    const bestStock = stock.find((s) => s.materialType === part.materialType)!;
-    return {
-      part,
-      sales: salesBySku.get(part.sku)!,
-      bestStock,
-      scrapPercent: estimator.estimateScrapPercent(part, bestStock),
-    };
+  // Planner davranışını aynala: stoğu/satışı olmayan parçalar plana girmez
+  return getPartDefinitions().flatMap((part) => {
+    const bestStock = stock.find((s) => s.materialType === part.materialType);
+    const sales = salesBySku.get(part.sku);
+    if (!bestStock || !sales) return [];
+    return [
+      {
+        part,
+        sales,
+        bestStock,
+        scrapPercent: estimator.estimateScrapPercent(part, bestStock),
+      },
+    ];
   });
 }
 
@@ -100,7 +105,10 @@ describe("ProductionPlanBuilder", () => {
 
   it("tüm ürünler için öneri üretir, reasoning Türkçe ve dolu", () => {
     const plan = build({ salesWeight: 0.5, staleStockWeight: 0.3, wasteWeight: 0.2 });
-    expect(plan.recommendations.length).toBe(getPartDefinitions().length);
+    // Paslanmaz veri revizyonundan beri her parçanın stok karşılığı yok —
+    // planner stok+satışı olanları önerir (buildInputs ile aynı kural)
+    expect(plan.recommendations.length).toBe(buildInputs().length);
+    expect(plan.recommendations.length).toBeGreaterThan(0);
     for (const rec of plan.recommendations) {
       expect(rec.recommendedQuantity).toBeGreaterThan(0);
       expect(rec.sourceStockItems.length).toBeGreaterThan(0);

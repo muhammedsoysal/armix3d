@@ -27,3 +27,4 @@ export {
   type MachineStateStoreState,
   type TransitionContext,
 } from "./stateMachine/MachineStateStore";
+export { packGuillotine, GuillotineScrapEstimator, type PackPiece, type Placement, type PackResult } from "./engine/GuillotineNester";

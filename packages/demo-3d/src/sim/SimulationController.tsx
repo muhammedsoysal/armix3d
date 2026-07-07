@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import {
   DEFAULT_SCORER_WEIGHTS,
-  HeuristicScrapEstimator,
+  GuillotineScrapEstimator,
   ProductionPlanBuilder,
   createSalesProvider,
   createStockProvider,
@@ -38,7 +38,8 @@ export function SimulationController() {
     Promise.all([stockProvider.getStockItems(), salesProvider.getSalesRecords()])
       .then(([stock, sales]) => {
         const parts = getPartDefinitions();
-        const plan = new ProductionPlanBuilder(new HeuristicScrapEstimator()).build({
+        // v2 motor: giyotin kısıtlı çok-varyantlı nesting (grid'den asla kötü değil)
+        const plan = new ProductionPlanBuilder(new GuillotineScrapEstimator()).build({
           parts,
           stock,
           sales,
