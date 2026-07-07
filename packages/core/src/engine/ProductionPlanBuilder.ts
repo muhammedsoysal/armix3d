@@ -9,6 +9,7 @@ import type {
 import type { IScrapEstimator } from "./ScrapEstimator";
 import { PriorityScorer, stockAgeDays, type ScoringInput } from "./PriorityScorer";
 import { ReasoningTextBuilder } from "./ReasoningTextBuilder";
+import { forecastFromSales, forecastSentence } from "./Forecast";
 
 export interface BuildPlanParams {
   parts: PartDefinition[];
@@ -55,7 +56,8 @@ export class ProductionPlanBuilder {
         sourceStockItems: [item.bestStock],
         estimatedScrapPercent: item.scrapPercent,
         priorityScore: item.priorityScore,
-        reasoning: this.reasoningBuilder.build(item),
+        // Şablon gerekçe + Holt talep tahmini (trend ve %90 güven aralığı)
+        reasoning: this.reasoningBuilder.build(item) + forecastSentence(forecastFromSales(item.sales)),
       };
     });
 

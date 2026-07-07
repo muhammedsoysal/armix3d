@@ -14,6 +14,11 @@ export function getPartDefinitions(): PartDefinition[] {
     { sku: "PRT-006", productName: "Medikal Ekipman Tepsisi 700×500", materialType: "316L Paslanmaz 1.5mm", partDimensions: { width: 495, length: 695 } },
     { sku: "PRT-007", productName: "Mimari Dekoratif Panel 200×200", materialType: "304 Paslanmaz (SB) 1.5mm", partDimensions: { width: 195, length: 195 } },
     { sku: "PRT-008", productName: "Bağlantı Flanşı 150×100", materialType: "304 Paslanmaz 3.0mm", partDimensions: { width: 95, length: 145 } },
+    // Akıllı Grupla için aynı malzemeyi PAYLAŞAN SKU'lar — büyük panellerin
+    // artığını dolduracak küçük/orta parçalar (Tetris karışımı)
+    { sku: "PRT-009", productName: "Montaj Braketi 180×120", materialType: "304 Paslanmaz (BA) 1.5mm", partDimensions: { width: 115, length: 175 } },
+    { sku: "PRT-010", productName: "Kontrol Kapağı 350×250", materialType: "304 Paslanmaz (BA) 1.5mm", partDimensions: { width: 245, length: 345 } },
+    { sku: "PRT-011", productName: "Sensör Plakası 220×160", materialType: "316L Paslanmaz 2.0mm", partDimensions: { width: 155, length: 215 } },
   ];
 }
 
@@ -31,6 +36,9 @@ export function getMockSalesRecords(): SalesRecord[] {
     { sku: "PRT-005", productName: "Fırın Taban Sacı 250×250", unitsSoldLast30Days: 32, unitsSoldLast90Days: 88, revenueLast30Days: 90_800, trend: "stable" },
     { sku: "PRT-006", productName: "Medikal Ekipman Tepsisi 700×500", unitsSoldLast30Days: 20, unitsSoldLast90Days: 75, revenueLast30Days: 87_000, trend: "falling" },
     { sku: "PRT-007", productName: "Mimari Dekoratif Panel 200×200", unitsSoldLast30Days: 12, unitsSoldLast90Days: 40, revenueLast30Days: 23_200, trend: "stable" },
+    { sku: "PRT-009", productName: "Montaj Braketi 180×120", unitsSoldLast30Days: 140, unitsSoldLast90Days: 350, revenueLast30Days: 42_000, trend: "rising" },
+    { sku: "PRT-010", productName: "Kontrol Kapağı 350×250", unitsSoldLast30Days: 55, unitsSoldLast90Days: 170, revenueLast30Days: 66_000, trend: "stable" },
+    { sku: "PRT-011", productName: "Sensör Plakası 220×160", unitsSoldLast30Days: 88, unitsSoldLast90Days: 210, revenueLast30Days: 61_600, trend: "rising" },
   ];
 }
 
