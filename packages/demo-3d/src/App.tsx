@@ -20,6 +20,7 @@ import { AudioToggle } from "./hud/AudioToggle";
 import { FactoryAudio } from "./audio/FactoryAudio";
 import { FactoryDashboard } from "./hud/FactoryDashboard";
 import { TraceabilityHUD } from "./hud/TraceabilityHUD";
+import { ShiftReport } from "./hud/ShiftReport";
 import { connectLiveTelemetry } from "./telemetry/liveTelemetryService";
 import { DirectorHUD } from "./hud/DirectorHUD";
 import { directorStore } from "./director/directorStore";
@@ -67,6 +68,7 @@ export default function App() {
       <AudioToggle />
       <FactoryDashboard />
       <TraceabilityHUD />
+      <ShiftReport />
     </div>
   );
 }

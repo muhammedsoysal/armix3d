@@ -104,7 +104,7 @@ export function FactoryDashboard() {
       </button>
 
       {open && (
-        <div className="pointer-events-auto absolute right-6 top-[428px] z-30 max-h-[calc(100vh-460px)] w-[380px] space-y-3 overflow-y-auto rounded-3xl border border-white/10 bg-black/60 p-4 shadow-2xl backdrop-blur-2xl">
+        <div className="pointer-events-auto absolute right-[196px] top-[176px] z-40 max-h-[calc(100vh-220px)] w-[380px] space-y-3 overflow-y-auto rounded-3xl border border-white/10 bg-black/60 p-4 shadow-2xl backdrop-blur-2xl">
           <div className="flex items-center justify-between px-1">
             <span className="text-[10px] font-bold tracking-[0.3em] text-slate-300">TESİS KONTROL</span>
             <span className="flex items-center gap-1.5 font-mono text-[9px] text-slate-400">

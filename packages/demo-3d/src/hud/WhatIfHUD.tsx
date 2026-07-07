@@ -70,6 +70,20 @@ export function WhatIfHUD() {
 
   if (!planInputs || !plan) return null;
 
+  // Skor ağırlıkları: slider oynadıkça GERÇEK motor canlı yeniden planlar
+  const applyWeights = (patch: Partial<typeof planInputs.weights>) => {
+    const weights = { ...planInputs.weights, ...patch };
+    const newPlan = new ProductionPlanBuilder(new GuillotineScrapEstimator()).build({
+      parts: planInputs.parts,
+      stock: planInputs.stock,
+      sales: planInputs.sales,
+      weights,
+    });
+    const partsRecord = Object.fromEntries(planInputs.parts.map((p) => [p.sku, p]));
+    simStore.getState().setPlan(newPlan, partsRecord);
+    simStore.getState().setPlanInputs({ ...planInputs, weights });
+  };
+
   const runSmartBatch = () => {
     // Talep = plandaki önerilen adetler; levha 1200×2500 (mock stok standardı)
     const demand = Object.fromEntries(
@@ -137,6 +151,33 @@ export function WhatIfHUD() {
           <div className="mb-3 text-[11px] text-slate-400">
             Ürünü <span className="text-slate-200">kuyruğa sürükle</span> (veya tıkla) — Karar
             Motoru gerçek verilerle yeniden planlar.
+          </div>
+          {/* Karar Motoru ağırlıkları — oynat, kuyruk canlı yeniden sıralansın */}
+          <div className="mb-3 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2">
+            <div className="mb-1.5 text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">
+              Motor Ağırlıkları — canlı
+            </div>
+            {([
+              ["Satış hızı", "salesWeight"],
+              ["Atıl stok", "staleStockWeight"],
+              ["Fire cezası", "wasteWeight"],
+            ] as const).map(([label, key]) => (
+              <div key={key} className="mb-1 flex items-center gap-2">
+                <span className="w-20 text-[10px] text-slate-400">{label}</span>
+                <input
+                  type="range"
+                  min={0}
+                  max={1}
+                  step={0.05}
+                  defaultValue={planInputs.weights[key]}
+                  onChange={(e) => applyWeights({ [key]: Number(e.target.value) })}
+                  className="h-1 flex-1 accent-violet-400"
+                />
+                <span className="w-8 text-right font-mono text-[10px] text-violet-300">
+                  {planInputs.weights[key].toFixed(2)}
+                </span>
+              </div>
+            ))}
           </div>
           <button
             onClick={runSmartBatch}
