@@ -9,6 +9,7 @@ import {
 } from "@metalnest/core";
 import { simStore } from "../sim/simStore";
 import { diffPlans, injectRushOrder, type PlanDiff } from "../whatif/whatIfMath";
+import { computeSmartBatches, type MaterialBatch } from "../whatif/smartBatch";
 
 const QTY_PRESETS = [20, 50, 100] as const;
 
@@ -65,8 +66,18 @@ export function WhatIfHUD() {
   const [qty, setQty] = useState<number>(50);
   const [dragSku, setDragSku] = useState<string | null>(null);
   const [scenario, setScenario] = useState<Scenario | null>(null);
+  const [batches, setBatches] = useState<MaterialBatch[] | null>(null);
 
   if (!planInputs || !plan) return null;
+
+  const runSmartBatch = () => {
+    // Talep = plandaki önerilen adetler; levha 1200×2500 (mock stok standardı)
+    const demand = Object.fromEntries(
+      plan.recommendations.map((r) => [r.sku, Math.min(r.recommendedQuantity, 12)]),
+    );
+    setBatches(computeSmartBatches(planInputs.parts, demand, 1200, 2500, 5));
+    console.log("[BATCH] Akıllı gruplama hesaplandı");
+  };
 
   const runScenario = (part: PartDefinition, rushQty: number) => {
     const newSales = injectRushOrder(planInputs.sales, part, rushQty);
@@ -126,6 +137,12 @@ export function WhatIfHUD() {
             Ürünü <span className="text-slate-200">kuyruğa sürükle</span> (veya tıkla) — Karar
             Motoru gerçek verilerle yeniden planlar.
           </div>
+          <button
+            onClick={runSmartBatch}
+            className="mb-3 w-full rounded-xl border border-emerald-400/40 bg-emerald-500/15 py-2 text-xs font-bold text-emerald-300 transition-all hover:bg-emerald-500/25 active:scale-95"
+          >
+            ⚡ Akıllı Grupla — çok-SKU levha optimizasyonu
+          </button>
           <div className="mb-3 flex items-center gap-2">
             <span className="text-[11px] text-slate-400">Adet:</span>
             {QTY_PRESETS.map((q) => (
@@ -180,6 +197,62 @@ export function WhatIfHUD() {
             <div className="mt-1 text-sm font-bold text-violet-200">Kuyruğa Bırak</div>
             <div className="text-[11px] text-violet-300/80">Karar Motoru yeniden planlayacak</div>
           </div>
+        </div>
+      )}
+
+      {/* Akıllı gruplama sonucu */}
+      {batches && (
+        <div className="pointer-events-auto absolute left-1/2 top-1/2 z-40 w-[460px] -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-emerald-400/40 bg-gradient-to-br from-slate-950/95 to-emerald-950/85 p-6 shadow-[0_0_50px_rgba(16,185,129,0.3)] backdrop-blur-2xl">
+          <div className="mb-1 text-[10px] font-bold tracking-[0.25em] text-emerald-300">
+            AKILLI GRUPLAMA — GUILLOTINE ÇOK-SKU NESTING
+          </div>
+          <div className="mb-4 text-sm text-slate-300">
+            Aynı malzemedeki siparişler ortak levhalara paketlendi:
+          </div>
+          <div className="space-y-2">
+            {batches.map((b) => (
+              <div key={b.material} className="rounded-xl border border-white/10 bg-black/30 px-4 py-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[12px] font-semibold text-white">{b.material}</span>
+                  <span className="font-mono text-[10px] text-slate-400">{b.sheets.length} levha</span>
+                </div>
+                <div className="mt-1 font-mono text-[11px]">
+                  <span className="text-slate-400">Fire: </span>
+                  <span className="text-red-400 line-through">%{b.naiveScrapPct}</span>
+                  <span className="mx-1.5 text-slate-500">→</span>
+                  <span className="font-bold text-emerald-400">%{b.avgScrapPct}</span>
+                  {b.naiveScrapPct > b.avgScrapPct && (
+                    <span className="ml-2 font-bold text-emerald-300">
+                      −{Math.round((b.naiveScrapPct - b.avgScrapPct) * 10) / 10} puan
+                    </span>
+                  )}
+                </div>
+                {/* İlk levhanın mini yerleşimi */}
+                {b.sheets[0] && (
+                  <svg width={200} height={56} className="mt-2 rounded border border-white/10 bg-slate-950">
+                    {b.sheets[0].placements.map((p, i) => (
+                      <rect
+                        key={i}
+                        x={(p.y / 2500) * 200}
+                        y={(p.x / 1200) * 56}
+                        width={(p.l / 2500) * 200}
+                        height={(p.w / 1200) * 56}
+                        fill="rgba(56,189,248,0.25)"
+                        stroke="#38bdf8"
+                        strokeWidth={1}
+                      />
+                    ))}
+                  </svg>
+                )}
+              </div>
+            ))}
+          </div>
+          <button
+            onClick={() => setBatches(null)}
+            className="mt-5 w-full rounded-xl border border-white/15 bg-white/5 py-2.5 text-sm font-semibold text-slate-300 transition-all hover:bg-white/10 active:scale-95"
+          >
+            Kapat
+          </button>
         </div>
       )}
 
