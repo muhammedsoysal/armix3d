@@ -1,6 +1,7 @@
 import { Environment, Grid, Lightformer, MeshReflectorMaterial } from "@react-three/drei";
 import { useStore } from "zustand";
 import { qualityStore } from "../quality/qualityStore";
+import { xrayStore } from "../xray/xrayStore";
 import { VolumetricShafts } from "./VolumetricShafts";
 
 /** Fabrika ortamı: zemin, sis, ışıklar ve prosedürel environment map
@@ -8,6 +9,7 @@ import { VolumetricShafts } from "./VolumetricShafts";
  * Gölge çözünürlüğü ve env-map boyutu kalite ayarından gelir. */
 export function Factory() {
   const params = useStore(qualityStore, (s) => s.params);
+  const xrayActive = useStore(xrayStore, (s) => s.active);
 
   return (
     <>
@@ -42,8 +44,11 @@ export function Factory() {
       <VolumetricShafts />
 
       {/* Zemin: orta/ultra kalitede cilalı beton yansıması (AAA görünümün
-          bel kemiği) — düşük kalitede standart mat zemin */}
-      {params.bloom ? (
+          bel kemiği) — düşük kalitede standart mat zemin.
+          X-Ray'de KAPALI: reflektör sahneyi ikinci kez render eder; hologram
+          süpürmesiyle birleşince FPS çöküyordu, ayrıca şematik dünyada
+          fotogerçekçi yansıma görsel olarak da yanlış. */}
+      {params.bloom && !xrayActive ? (
         <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow userData={{ noXray: true }}>
           <planeGeometry args={[90, 90]} />
           <MeshReflectorMaterial

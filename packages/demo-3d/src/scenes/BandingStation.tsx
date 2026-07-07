@@ -49,8 +49,8 @@ export function BandingStation() {
             <meshStandardMaterial color="#0f172a" metalness={0.6} roughness={0.4} />
           </mesh>
         </group>
-        {/* Durum lambası */}
-        <mesh ref={lampRef} position={[0, 1.58, 0.8]}>
+        {/* Durum lambası — materyali her kare mutasyona uğrar → noXray */}
+        <mesh ref={lampRef} position={[0, 1.58, 0.8]} userData={{ noXray: true }}>
           <sphereGeometry args={[0.05, 12, 8]} />
           <meshStandardMaterial color="#052e12" emissive="#16a34a" emissiveIntensity={1.4} toneMapped={false} />
         </mesh>

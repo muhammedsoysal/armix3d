@@ -61,6 +61,7 @@ export function XRayEffect() {
   const shellRef = useRef<Mesh>(null!);
   const wave = useRef<WaveState>({ mode: null, t: 0, origin: new Vector3() });
   const swapped = useRef(new Map<Mesh, Material | Material[]>());
+  const sweepAcc = useRef(0);
   const tmp = useMemo(() => new Vector3(), []);
 
   const holo = useMemo(
@@ -111,8 +112,13 @@ export function XRayEffect() {
       }
     }
 
-    // Malzeme süpürmesi: cephe geçtikçe çevir / geri al
-    if (w.mode === "in" || (active && w.mode === null)) {
+    // Malzeme süpürmesi: dalga sırasında her kare (animasyon), sonrasında
+    // yalnız yeni doğan mesh'leri yakalamak için 0.5 sn'de bir — aktif modda
+    // her kare tam traverse etmek büyümüş sahnede FPS'i çökertiyordu.
+    sweepAcc.current += dt;
+    const steadySweep = active && w.mode === null && sweepAcc.current > 0.5;
+    if (steadySweep) sweepAcc.current = 0;
+    if (w.mode === "in" || steadySweep) {
       scene.traverse((obj) => {
         if (!(obj instanceof Mesh) || obj.userData.noXray || swapped.current.has(obj)) return;
         // three-stdlib Line2/LineSegments2 Mesh'ten türer; instanced çizgi
