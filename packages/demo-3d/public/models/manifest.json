@@ -1,3 +1,4 @@
 {
-  "truck": { "file": "cesium-milk-truck.glb", "scale": 1.15, "rotationY": -1.5708, "position": [0, 0, -0.6] }
+  "truck": { "file": "truck-flat.glb", "scale": 2.6, "rotationY": 3.1416, "position": [0, 0, -0.5] },
+  "barrel": { "file": "barrel.glb", "scale": 1.4 }
 }

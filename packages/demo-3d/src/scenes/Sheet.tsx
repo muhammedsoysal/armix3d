@@ -65,11 +65,12 @@ export function Sheet() {
   return (
     <>
       <mesh ref={curveRef} geometry={curveGeometry}>
-        <meshStandardMaterial color="#cdd2d9" metalness={0.85} roughness={0.32} side={DoubleSide} />
+        {/* Parlak paslanmaz: düşük roughness + güçlü env yansıması */}
+        <meshStandardMaterial color="#d6dbe2" metalness={0.95} roughness={0.16} envMapIntensity={1.5} side={DoubleSide} />
       </mesh>
       <mesh ref={flatRef} position={[0, LAYOUT.tableY + LAYOUT.sheetThickness / 2, 0]} castShadow>
         <boxGeometry args={[1, LAYOUT.sheetThickness, LAYOUT.sheetWidth]} />
-        <meshStandardMaterial color="#cdd2d9" metalness={0.85} roughness={0.32} />
+        <meshStandardMaterial color="#d6dbe2" metalness={0.95} roughness={0.16} envMapIntensity={1.5} />
       </mesh>
     </>
   );

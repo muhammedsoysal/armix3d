@@ -132,8 +132,9 @@ export function CuttingGantry() {
         </mesh>
         {/* Lazer ışını */}
         <mesh ref={beamRef} position={[0, 1.05, 0]} visible={false}>
-          <cylinderGeometry args={[0.011, 0.018, 0.42, 10]} />
-          <meshBasicMaterial color="#ffc46b" toneMapped={false} transparent opacity={0.95} />
+          <cylinderGeometry args={[0.016, 0.028, 0.42, 10]} />
+          {/* toneMapped=false + doygun renk → bloom'da gerçek lazer koru */}
+          <meshBasicMaterial color="#ffdf9e" toneMapped={false} transparent opacity={0.98} />
         </mesh>
       </group>
       <pointLight ref={lightRef} position={[0, 1.05, 0]} color="#ff9040" distance={4} visible={false} />

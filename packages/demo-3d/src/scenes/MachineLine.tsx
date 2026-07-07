@@ -48,6 +48,7 @@ import { AndonTower } from "./AndonTower";
 import { QCScanner } from "./QCScanner";
 import { Worker } from "./Worker";
 import { LaserCell } from "./LaserCell";
+import { Drums } from "./Drums";
 
 /** CNC hattının tamamı: rulo → doğrultucu → kesim → vakum kaldırıcı → palet. */
 export function MachineLine() {
@@ -76,6 +77,7 @@ export function MachineLine() {
       <QCScanner />
       <Worker />
       <LaserCell />
+      <Drums />
     </group>
   );
 }

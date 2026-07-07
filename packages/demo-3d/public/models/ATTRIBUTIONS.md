@@ -2,7 +2,8 @@
 
 | Manifest adı | Dosya | Kaynak | Lisans |
 |---|---|---|---|
-| truck | cesium-milk-truck.glb | Khronos glTF-Sample-Assets (Cesium Milk Truck) | CC-BY 4.0 — © Cesium (https://cesium.com/) |
+| truck | truck-flat.glb | Kenney (pmndrs market-assets) | CC0 — atıf gerekmez |
+| barrel | barrel.glb | Kenney (pmndrs market-assets) | CC0 — atıf gerekmez |
+| (yedek) | cesium-milk-truck.glb | Khronos glTF-Sample-Assets | CC-BY 4.0 — © Cesium |
 
-CC-BY modeller fuar kioskunda kullanılabilir; bu dosya atıf yükümlülüğünü karşılamak için repoda tutulur.
-Yeni model eklerken bu tabloya satır ekleyin. CC0 modellerde atıf zorunlu değildir ama önerilir.
+Draco sıkıştırması kurulumda açıldı (offline kiosk decoder gerektirmez).
