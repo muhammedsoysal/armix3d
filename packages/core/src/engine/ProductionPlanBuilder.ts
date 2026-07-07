@@ -87,13 +87,22 @@ export class ProductionPlanBuilder {
     return { recommendations, totalEstimatedScrapPercent, staleStockClearedPercent };
   }
 
-  /** Malzemesi uyan stoklar içinden önce atıl (stale), sonra en yaşlı olanı seç. */
+  /** Malzemesi uyan stoklar içinden seçim — öncelik sırası:
+   *  1) EN AZ FİRE: parça bu stokta en verimli nasıl yerleşiyorsa o
+   *     (aynı parça 1000mm ruloda %40, 1500mm'de %8 fire verebilir!)
+   *  2) Fire eşitse: atıl (stale) stok — depoyu eritmek için
+   *  3) Hâlâ eşitse: en yaşlı stok (FIFO)
+   * Böylece çok satan ürünler otomatik olarak en verimli stoktan kesilir. */
   private pickBestStock(part: PartDefinition, stock: StockItem[], now: Date): StockItem | null {
     const candidates = stock.filter(
       (s) => s.materialType === part.materialType && s.quantityAvailable > 0,
     );
     if (candidates.length === 0) return null;
     return candidates.sort((a, b) => {
+      const scrapDiff =
+        this.scrapEstimator.estimateScrapPercent(part, a) -
+        this.scrapEstimator.estimateScrapPercent(part, b);
+      if (Math.abs(scrapDiff) > 0.5) return scrapDiff; // %0.5'ten büyük fark: fire kazanır
       if (!!a.isStale !== !!b.isStale) return a.isStale ? -1 : 1;
       return stockAgeDays(b, now) - stockAgeDays(a, now);
     })[0];

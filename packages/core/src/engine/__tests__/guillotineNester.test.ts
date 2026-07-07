@@ -90,3 +90,35 @@ describe("GuillotineScrapEstimator vs Heuristic grid", () => {
     );
   });
 });
+
+describe("fire-öncelikli stok seçimi (ProductionPlanBuilder)", () => {
+  it("aynı malzemede EN AZ fire veren stoğu seçer — yaşça büyük ama israflı olanı değil", async () => {
+    const { ProductionPlanBuilder } = await import("../ProductionPlanBuilder");
+    const part: PartDefinition = {
+      sku: "P-700",
+      productName: "Panel 700×500",
+      materialType: "304",
+      partDimensions: { width: 700, length: 500 },
+    };
+    // ESKİ stok dar (1000mm: 700'lük parça tek sütun → yüksek fire),
+    // YENİ stok geniş (1500mm: döndürülmüş 2-3 sütun → düşük fire)
+    const badOld: StockItem = {
+      sku: "DAR-ESKI", materialType: "304",
+      dimensions: { width: 1000, length: 2000, thickness: 1.5 },
+      quantityAvailable: 10, arrivalDate: new Date("2026-01-01"), unitCost: 900, isStale: true,
+    };
+    const goodNew: StockItem = {
+      sku: "GENIS-YENI", materialType: "304",
+      dimensions: { width: 1500, length: 2000, thickness: 1.5 },
+      quantityAvailable: 10, arrivalDate: new Date("2026-06-20"), unitCost: 950,
+    };
+    const plan = new ProductionPlanBuilder(new GuillotineScrapEstimator()).build({
+      parts: [part],
+      stock: [badOld, goodNew],
+      sales: [{ sku: "P-700", productName: "P", unitsSoldLast30Days: 100, unitsSoldLast90Days: 300, revenueLast30Days: 0, trend: "rising" }],
+      weights: { salesWeight: 0.5, staleStockWeight: 0.3, wasteWeight: 0.2 },
+      now: new Date("2026-07-07"),
+    });
+    expect(plan.recommendations[0].sourceStockItems[0].sku).toBe("GENIS-YENI");
+  });
+});
