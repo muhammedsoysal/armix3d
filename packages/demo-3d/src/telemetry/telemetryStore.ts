@@ -1,4 +1,5 @@
 import { createStore } from "zustand/vanilla";
+import { naiveTrimPct, planSlitting } from "@metalnest/core";
 
 export type MachineStatus = "RUNNING" | "IDLE" | "UNLOADING" | "ALARM";
 
@@ -23,6 +24,9 @@ export interface SlitJob {
   program: string;
   material: string;
   mults: number;
+  /** Bu desen kaç rulodan koşulacak */
+  runs: number;
+  trimMm: number;
 }
 
 /** Çok-makineli tesis telemetrisi. Veri `liveTelemetryService` üzerinden
@@ -56,12 +60,35 @@ function machine(id: string, name: string, kind: string): MachineTelemetry {
   };
 }
 
-export const SLIT_JOBS: SlitJob[] = [
-  { id: "SJ-101", program: "1250 → 5×244mm", material: "304 BA 1.5mm", mults: 5 },
-  { id: "SJ-102", program: "1250 → 3×410mm", material: "316L 2.0mm", mults: 3 },
-  { id: "SJ-103", program: "1000 → 4×245mm", material: "430 2B 1.0mm", mults: 4 },
-  { id: "SJ-104", program: "1250 → 6×203mm", material: "304 2B 1.2mm", mults: 6 },
+/** Dilme sipariş defteri (mock — ERP'den gelecek) ve 1D CSP optimizasyonu. */
+const SLIT_ORDERS = [
+  { widthMm: 244, qty: 20 },
+  { widthMm: 410, qty: 12 },
+  { widthMm: 203, qty: 18 },
+  { widthMm: 245, qty: 16 },
 ];
+const SLIT_COIL_W = 1250;
+const SLIT_KERF = 5;
+
+const slitPlan = planSlitting(SLIT_ORDERS, SLIT_COIL_W, SLIT_KERF);
+
+/** MATEMATİKSEL KANIT: optimize trim vs naif (tek-genişlik desenler) trim. */
+export const SLIT_TRIM_PROOF = {
+  optimizedPct: slitPlan.totalTrimPct,
+  naivePct: naiveTrimPct(SLIT_ORDERS, SLIT_COIL_W, SLIT_KERF),
+};
+
+export const SLIT_JOBS: SlitJob[] = slitPlan.patterns.map((p, i) => ({
+  id: `SJ-${101 + i}`,
+  program: `${SLIT_COIL_W} → ${p.widths.join("+")}mm`,
+  material: "304 BA 1.5mm",
+  mults: p.widths.length,
+  runs: p.runs,
+  trimMm: p.trimMm,
+}));
+console.log(
+  `[SLIT-CSP] ${SLIT_JOBS.length} optimal desen · trim %${SLIT_TRIM_PROOF.optimizedPct} (naif %${SLIT_TRIM_PROOF.naivePct})`,
+);
 
 export const telemetryStore = createStore<TelemetryStoreState>()((set) => ({
   machines: {

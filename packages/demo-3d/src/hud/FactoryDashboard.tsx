@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { useStore } from "zustand";
-import { telemetryStore, type MachineStatus, type MachineTelemetry } from "../telemetry/telemetryStore";
+import {
+  SLIT_TRIM_PROOF,
+  telemetryStore,
+  type MachineStatus,
+  type MachineTelemetry,
+} from "../telemetry/telemetryStore";
 
 const STATUS_META: Record<MachineStatus, { label: string; dot: string; text: string }> = {
   RUNNING: { label: "ÜRETİMDE", dot: "bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.9)]", text: "text-emerald-300" },
@@ -112,8 +117,15 @@ export function FactoryDashboard() {
           ))}
           {/* Yarma hattı iş kuyruğu */}
           <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-slate-900/80 to-slate-950/90 p-4">
-            <div className="mb-2 text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">
-              SLT-1 İş Kuyruğu
+            <div className="mb-2 flex items-center justify-between">
+              <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">
+                SLT-1 İş Kuyruğu · 1D-CSP
+              </span>
+              <span className="font-mono text-[9px]">
+                <span className="text-emerald-400 font-bold">trim %{SLIT_TRIM_PROOF.optimizedPct}</span>
+                <span className="mx-1 text-slate-600">vs</span>
+                <span className="text-red-400 line-through">%{SLIT_TRIM_PROOF.naivePct}</span>
+              </span>
             </div>
             <div className="space-y-1.5">
               {slitQueue.map((j, i) => {

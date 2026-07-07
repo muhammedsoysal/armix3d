@@ -28,3 +28,4 @@ export {
   type TransitionContext,
 } from "./stateMachine/MachineStateStore";
 export { packGuillotine, GuillotineScrapEstimator, type PackPiece, type Placement, type PackResult } from "./engine/GuillotineNester";
+export { planSlitting, naiveTrimPct, type SlitOrder, type SlitPlan, type SlitPatternPlan } from "./engine/SlitOptimizer";

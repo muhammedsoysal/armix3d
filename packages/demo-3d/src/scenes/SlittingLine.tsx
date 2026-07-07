@@ -4,7 +4,7 @@ import { Html } from "@react-three/drei";
 import { DoubleSide, type Group, type Mesh } from "three";
 import { useStore } from "zustand";
 import { OptionalModel } from "../assets/AssetLoader";
-import { telemetryStore } from "../telemetry/telemetryStore";
+import { SLIT_TRIM_PROOF, telemetryStore } from "../telemetry/telemetryStore";
 
 /**
  * Yarma Hattı (Slitting Line) — rulo servis merkezlerinin imza makinesi:
@@ -201,8 +201,15 @@ export function SlittingLine() {
                 <span className="text-slate-200">{activeJob.material}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-400">Hat hızı:</span>
-                <span className="text-emerald-400">120 m/dk</span>
+                <span className="text-slate-400">Desen trim:</span>
+                <span className="text-slate-200">{activeJob.trimMm}mm · {activeJob.runs} rulo</span>
+              </div>
+              <div className="mt-1 rounded border border-emerald-400/30 bg-emerald-500/10 px-2 py-1">
+                <span className="text-slate-400">1D-CSP: </span>
+                <span className="font-bold text-emerald-400">%{SLIT_TRIM_PROOF.optimizedPct}</span>
+                <span className="text-slate-500"> (naif </span>
+                <span className="text-red-400 line-through">%{SLIT_TRIM_PROOF.naivePct}</span>
+                <span className="text-slate-500">)</span>
               </div>
             </div>
           </div>
