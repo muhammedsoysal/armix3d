@@ -26,6 +26,7 @@ import {
   pointAlongPath,
   type FloorPath,
 } from "./agvLogic";
+import { cellOf, traffic } from "./trafficControl";
 
 const SPEED = 1.15; // m/s
 const LIFT_DURATION = 1.2; // s
@@ -251,6 +252,13 @@ export function AGV() {
       case "TO_DROP":
       case "TO_HOME": {
         if (!f.leg) break;
+        // WHCA*: önümüzdeki pencereyi (şimdi + 1 hücre ileri) rezerve et;
+        // reddedilirse bu kare bekle (çarpışmasızlık garantisi)
+        const now = pointAlongPath(f.leg, f.s);
+        const ahead = pointAlongPath(f.leg, f.s + 1.0);
+        if (!traffic.request("AGV-01", [cellOf(now.x, now.z), cellOf(ahead.x, ahead.z)])) {
+          break; // yol dolu — durum ışığı zaten faz renginde, bekliyoruz
+        }
         moving = true;
         f.s += SPEED * dt;
         f.battery = Math.max(5, f.battery - 0.45 * dt);
@@ -361,8 +369,21 @@ export function AGV() {
   );
 }
 
-/** AGV-02: tesis çevresinde sonsuz devriye — zemini "yaşayan" hale getirir. */
-export function PatrolAGV() {
+/** Devriye AGV'si — tesis çevresinde döngü; trafik kontrolüne kayıtlı:
+ * kesişimlerde birbirini ve AGV-01'i bekler (WHCA* pencereli rezervasyon). */
+export function PatrolAGV({
+  id = "AGV-02",
+  loop = PATROL_LOOP,
+  speed = 0.9,
+  bodyColor = "#475569",
+  startS = 0,
+}: {
+  id?: string;
+  loop?: FloorPath;
+  speed?: number;
+  bodyColor?: string;
+  startS?: number;
+}) {
   const rootRef = useRef<Group>(null!);
   const lightBarRef = useRef<Mesh>(null!);
   const beaconRef = useRef<Mesh>(null!);
@@ -370,18 +391,22 @@ export function PatrolAGV() {
   const glowRef = useRef<Mesh>(null!);
   const wheelRefs = useRef<Mesh[]>([]);
   const yawRef = useRef(0);
-  const sRef = useRef(0);
-  const total = useMemo(() => pathLength(PATROL_LOOP), []);
+  const sRef = useRef(startS);
+  const total = useMemo(() => pathLength(loop), [loop]);
 
   useFrame(({ clock }, rawDt) => {
     const dt = Math.min(rawDt, 0.05);
-    sRef.current = (sRef.current + 0.9 * dt) % total;
-    const p = pointAlongPath(PATROL_LOOP, sRef.current);
+    // Pencere rezervasyonu: mevcut + 1 m ileri; dolu ise bu kare bekle
+    const nowP = pointAlongPath(loop, sRef.current);
+    const aheadP = pointAlongPath(loop, (sRef.current + 1.0) % total);
+    const granted = traffic.request(id, [cellOf(nowP.x, nowP.z), cellOf(aheadP.x, aheadP.z)]);
+    if (granted) sRef.current = (sRef.current + speed * dt) % total;
+    const p = pointAlongPath(loop, sRef.current);
     rootRef.current.position.set(p.x, 0, p.z);
     const dYaw = ((p.heading - yawRef.current + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
     yawRef.current += dYaw * Math.min(1, dt * 6);
     rootRef.current.rotation.y = yawRef.current;
-    for (const w of wheelRefs.current) w.rotation.x += (0.9 * dt) / WHEEL_R;
+    if (granted) for (const w of wheelRefs.current) w.rotation.x += (speed * dt) / WHEEL_R;
     const t = clock.elapsedTime;
     if (beaconRef.current) {
       (beaconRef.current.material as MeshStandardMaterial).emissiveIntensity = 3 + 2 * Math.sin(t * 7 + 1.7);
@@ -391,9 +416,9 @@ export function PatrolAGV() {
   });
 
   return (
-    <group ref={rootRef} position={[PATROL_LOOP[0][0], 0, PATROL_LOOP[0][1]]}>
+    <group ref={rootRef} position={[loop[0][0], 0, loop[0][1]]}>
       <AgvBody
-        bodyColor="#475569"
+        bodyColor={bodyColor}
         lightBarRef={lightBarRef}
         beaconRef={beaconRef}
         beaconLightRef={beaconLightRef}

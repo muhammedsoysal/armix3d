@@ -105,3 +105,13 @@ export const PATROL_LOOP: FloorPath = [
   [9.5, -4.6],
   [9.5, 4.6],
 ];
+
+/** İç devriye halkası (AGV-03) — dış halkayla z=±4.6 şeritlerini PAYLAŞIR:
+ * ortak segmentlerde WHCA* rezervasyonu araçları sıraya sokar (canlı kanıt). */
+export const INNER_LOOP: FloorPath = [
+  [6.2, 4.6],
+  [-2.6, 4.6],
+  [-2.6, -4.6],
+  [6.2, -4.6],
+  [6.2, 4.6],
+];

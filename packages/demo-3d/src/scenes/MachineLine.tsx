@@ -37,6 +37,7 @@ function Tables() {
 
 import { IndustrialCoilStorage } from "./IndustrialCoilStorage";
 import { AGV, PatrolAGV } from "../agv/AGV";
+import { INNER_LOOP } from "../agv/agvLogic";
 import { GuideLanes } from "../agv/GuideLanes";
 import { NestingProjection } from "../nesting/NestingProjection";
 import { ScrapBin } from "../nesting/ScrapBin";
@@ -68,6 +69,7 @@ export function MachineLine() {
       <Pallet />
       <AGV />
       <PatrolAGV />
+      <PatrolAGV id="AGV-03" loop={INNER_LOOP} speed={0.75} bodyColor="#7c3aed" startS={12} />
       <GuideLanes />
       <Forklift />
       <SlittingLine />
