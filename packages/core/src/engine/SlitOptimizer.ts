@@ -108,16 +108,8 @@ function planMixedGreedy(orders: SlitOrder[], coilWmm: number, kerfMm: number): 
   };
 }
 
-/** Naif taban çizgisi: her genişlik KENDİ deseninde (tek-genişlik) dilinir. */
+/** Naif taban çizgisi: her genişlik KENDİ deseninde (tek-genişlik) dilinir.
+ * planNaive ile birebir aynı hesap — son rulonun eksik dolumu dahil (dürüst). */
 export function naiveTrimPct(orders: SlitOrder[], coilWmm: number, kerfMm: number): number {
-  let trim = 0;
-  let total = 0;
-  for (const o of orders) {
-    const perCoil = Math.max(1, Math.floor((coilWmm + kerfMm) / (o.widthMm + kerfMm)));
-    const runs = Math.ceil(o.qty / perCoil);
-    const used = perCoil * o.widthMm + kerfMm * (perCoil - 1);
-    trim += (coilWmm - used) * runs;
-    total += coilWmm * runs;
-  }
-  return total > 0 ? Math.round((trim / total) * 1000) / 10 : 0;
+  return planNaive(orders, coilWmm, kerfMm).totalTrimPct;
 }
