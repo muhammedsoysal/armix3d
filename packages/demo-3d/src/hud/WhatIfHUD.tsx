@@ -127,9 +127,10 @@ export function WhatIfHUD() {
         Senaryo
       </button>
 
-      {/* Ürün paleti */}
+      {/* Ürün paleti — buton kolonunun SOLUNDA açılır (Tesis butonuyla
+          çakışmaz), kısa ekranlarda kendi içinde kaydırılır */}
       {open && !scenario && (
-        <div className="pointer-events-auto absolute right-6 top-[364px] z-30 w-80 rounded-2xl border border-violet-400/30 bg-slate-950/85 p-4 shadow-2xl backdrop-blur-xl">
+        <div className="pointer-events-auto absolute right-[196px] top-[240px] z-40 max-h-[calc(100vh-280px)] w-80 overflow-y-auto rounded-2xl border border-violet-400/30 bg-slate-950/90 p-4 shadow-2xl backdrop-blur-xl">
           <div className="mb-1 text-[10px] font-bold tracking-[0.25em] text-violet-300">
             ACİL SİPARİŞ SENARYOSU
           </div>
