@@ -55,6 +55,32 @@ function bestPattern(
 }
 
 export function planSlitting(orders: SlitOrder[], coilWmm: number, kerfMm: number): SlitPlan {
+  // İki aday plan: karışık-açgözlü + naif tek-genişlik. Açgözlü karıştırma,
+  // düzgün bölünen sipariş defterlerinde kuyruk artıkları yüzünden
+  // KAYBEDEBİLİR — düşüğü seçerek "asla naif'ten kötü değil" garanti edilir.
+  const mixed = planMixedGreedy(orders, coilWmm, kerfMm);
+  const naive = planNaive(orders, coilWmm, kerfMm);
+  return mixed.totalTrimPct <= naive.totalTrimPct ? mixed : naive;
+}
+
+function planNaive(orders: SlitOrder[], coilWmm: number, kerfMm: number): SlitPlan {
+  const patterns: SlitPatternPlan[] = [];
+  for (const o of orders) {
+    const perCoil = Math.max(1, Math.floor((coilWmm + kerfMm) / (o.widthMm + kerfMm)));
+    let left = o.qty;
+    while (left > 0) {
+      const n = Math.min(perCoil, left);
+      const used = n * o.widthMm + kerfMm * (n - 1);
+      patterns.push({ widths: Array(n).fill(o.widthMm), runs: 1, trimMm: coilWmm - used });
+      left -= n;
+    }
+  }
+  const totalTrim = patterns.reduce((s, p) => s + p.trimMm * p.runs, 0);
+  const total = patterns.reduce((s, p) => s + coilWmm * p.runs, 0);
+  return { patterns, totalTrimPct: total > 0 ? Math.round((totalTrim / total) * 1000) / 10 : 0 };
+}
+
+function planMixedGreedy(orders: SlitOrder[], coilWmm: number, kerfMm: number): SlitPlan {
   const widths = [...new Set(orders.map((o) => o.widthMm))].sort((a, b) => b - a);
   const remaining = new Map(orders.map((o) => [o.widthMm, o.qty]));
   const patterns: SlitPatternPlan[] = [];

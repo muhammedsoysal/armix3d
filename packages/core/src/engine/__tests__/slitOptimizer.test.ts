@@ -22,6 +22,19 @@ describe("planSlitting (1D cutting stock)", () => {
     expect(plan.totalTrimPct).toBeLessThan(5);
   });
 
+  it("is NEVER worse than the naive single-width baseline (demo order book)", () => {
+    // Bu defterde tek-genişlik desenler neredeyse mükemmel — açgözlü
+    // karıştırıcının kaybettiği gerçek vaka (regresyon testi)
+    const orders = [
+      { widthMm: 244, qty: 20 },
+      { widthMm: 410, qty: 12 },
+      { widthMm: 203, qty: 18 },
+      { widthMm: 245, qty: 16 },
+    ];
+    const plan = planSlitting(orders, 1250, 5);
+    expect(plan.totalTrimPct).toBeLessThanOrEqual(naiveTrimPct(orders, 1250, 5));
+  });
+
   it("satisfies all demand", () => {
     const orders = [
       { widthMm: 244, qty: 20 },
