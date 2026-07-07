@@ -4,6 +4,7 @@ import { simStore, type PalletPiece } from "../sim/simStore";
 import { OptionalModel } from "../assets/AssetLoader";
 import { agvStore } from "../agv/agvStore";
 import { truckStore } from "../truck/truckStore";
+import { selectPallet } from "../hud/TraceabilityHUD";
 import { STAGING, dropSlotFor } from "../agv/agvLogic";
 
 /** Çemberleme + köşebent + QR etiketi — bantlama istasyonundan çıkan palet. */
@@ -123,10 +124,17 @@ export function Pallet() {
           );
         }
 
-        // Teslim edildi: stok grid hücresi (append sıralı → indeks stabil)
+        // Teslim edildi: stok grid hücresi (append sıralı → indeks stabil).
+        // Tıklama → izlenebilirlik paneli (heat no, operatör, sertifika)
         const slot = dropSlotFor(idx);
         return (
-          <group key={cp.id} position={[slot.x, 0, slot.z]}>
+          <group
+            key={cp.id}
+            position={[slot.x, 0, slot.z]}
+            onClick={(e) => { e.stopPropagation(); selectPallet(cp.id); }}
+            onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = "pointer"; }}
+            onPointerOut={() => { document.body.style.cursor = "auto"; }}
+          >
             <PalletWithStack stack={cp.stack} banded />
           </group>
         );

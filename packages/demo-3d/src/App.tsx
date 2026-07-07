@@ -19,6 +19,7 @@ import { WhatIfHUD } from "./hud/WhatIfHUD";
 import { AudioToggle } from "./hud/AudioToggle";
 import { FactoryAudio } from "./audio/FactoryAudio";
 import { FactoryDashboard } from "./hud/FactoryDashboard";
+import { TraceabilityHUD } from "./hud/TraceabilityHUD";
 import { connectLiveTelemetry } from "./telemetry/liveTelemetryService";
 import { DirectorHUD } from "./hud/DirectorHUD";
 import { directorStore } from "./director/directorStore";
@@ -65,6 +66,7 @@ export default function App() {
       <WhatIfHUD />
       <AudioToggle />
       <FactoryDashboard />
+      <TraceabilityHUD />
     </div>
   );
 }
