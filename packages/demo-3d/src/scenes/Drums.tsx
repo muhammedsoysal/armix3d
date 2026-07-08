@@ -19,8 +19,8 @@ export function Drums() {
   return (
     <group>
       {/* Lazer hücresi yanı */}
-      <Drum position={[4.4, 0, -3.3]} />
-      <Drum position={[4.75, 0, -2.95]} rotationY={0.8} />
+      <Drum position={[6.3, 0, -3.2]} />
+      <Drum position={[6.6, 0, -2.85]} rotationY={0.8} />
       {/* Yarma hattı arkası */}
       <Drum position={[-9.2, 0, 4.3]} rotationY={2.1} />
       <Drum position={[-9.5, 0, 3.85]} />

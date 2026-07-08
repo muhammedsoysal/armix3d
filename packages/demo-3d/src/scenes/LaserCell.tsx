@@ -11,7 +11,7 @@ const CUT_S = 9;
 const UNLOAD_S = 2.5;
 const CYCLE_S = CUT_S + UNLOAD_S;
 
-export function LaserCell({ position = [3.0, 0, -3.0] as [number, number, number] }) {
+export function LaserCell({ position = [4.6, 0, -3.8] as [number, number, number] }) {
   const headRef = useRef<Group>(null!);
   const beamRef = useRef<Mesh>(null!);
   const lightRef = useRef<PointLight>(null!);

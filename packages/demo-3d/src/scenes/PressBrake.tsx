@@ -7,7 +7,7 @@ import { OptionalModel } from "../assets/AssetLoader";
  * inen koç (ram): GLB statik, hareket bizim; hibrit desenin ders kitabı. */
 const CYCLE = 6.5;
 
-export function PressBrake({ position = [-1.8, 0, -2.4] as [number, number, number] }) {
+export function PressBrake({ position = [1.4, 0, -4.0] as [number, number, number] }) {
   const ramRef = useRef<Group>(null!);
   const lampRef = useRef<Mesh>(null!);
 
@@ -63,7 +63,7 @@ export function PressBrake({ position = [-1.8, 0, -2.4] as [number, number, numb
 export function Conveyors() {
   return (
     <group>
-      {[[0.4, -2.6, 0.12], [1.7, -2.75, 0.08]].map(([x, z, r], i) => (
+      {[[2.6, -3.9, 0.05], [3.6, -3.85, 0.02]].map(([x, z, r], i) => (
         <group key={i} position={[x, 0, z]} rotation={[0, r as number, 0]}>
           <OptionalModel name="conveyor">
             <mesh position={[0, 0.35, 0]} castShadow>

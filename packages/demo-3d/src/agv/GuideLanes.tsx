@@ -11,13 +11,13 @@ const LOGISTICS_LANES: [number, number][][] = [
   // Ana koridor
   [
     [8.2, 3.2],
-    [4.2, 2.2],
+    [5.4, 2.2],
     [8.5, 2.2],
   ],
   // İstasyon sapağı
   [
-    [4.2, 2.2],
-    [4.2, 1.35],
+    [5.4, 2.2],
+    [5.4, 1.35],
   ],
   // Bitmiş Ürün Deposu sapakları
   [

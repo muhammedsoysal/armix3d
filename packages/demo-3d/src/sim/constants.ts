@@ -2,14 +2,16 @@ import type { MachineState } from "@metalnest/core";
 
 /** Hat yerleşimi (metre). Sac +X yönünde akar. */
 export const LAYOUT = {
-  coilX: -6,
+  // Ferah yerleşim: makineler arası gerçek fiziksel boşluk (clipping yok,
+  // Siemens/NVIDIA sınıfı "büyük tesis" hissi)
+  coilX: -8.2,
   coilAxleY: 1.3,
-  straightenerX: -3.6,
+  straightenerX: -5.2,
   tableY: 0.86,
   cutX: 0,
   sheetWidth: 1.2,
   sheetThickness: 0.008,
-  palletX: 4.2,
+  palletX: 5.4,
   palletBaseY: 0.16,
 } as const;
 
