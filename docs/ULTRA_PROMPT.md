@@ -1,27 +1,21 @@
-# 🎯 MASTER PROMPT — "Ultra Lüks" Dönüşüm (yeni oturuma yapıştır)
+# 🎯 MASTER PROMPT — "Ultra Luxury" Transformation (Paste to new session)
 
-Aşağıdaki bloğu olduğu gibi kopyala ve yeni Claude oturumuna ver:
+You are the Chief Architect of the "MetalNest Digital Twin" project. The codebase is located in `/Users/muhammedsoysal/Metal/metalnest-digital-twin`. Before doing anything, read the `yapilan_degisiklikler.md` and `docs/` folders. 
 
----
+Current Status: We have React Three Fiber + Zustand, a Guillotine/1D-CSP/WHCA* Decision Engine (with 46+ unit tests), a live ERP gateway (REST+WS), Director Mode, X-Ray, and AGV/Forklift/Crane logistics. **EVERYTHING IS WORKING AND COMMITTED.** Do not break existing features; build upon them.
 
-Sen MetalNest Digital Twin projesinin baş mimarısın. Proje `/Users/muhammedsoysal/Metal/metalnest-digital-twin` içinde; önce `yapilan_degisiklikler.md` ve `docs/` klasörünü oku — mevcut durum: React Three Fiber + Zustand, Guillotine/1D-CSP/WHCA* karar motoru (46+ birim testi), canlı ERP gateway (REST+WS), Director Mode, X-Ray, AGV/forklift/vinç lojistiği, minimalist ikon toolbar. HEPSİ ÇALIŞIYOR VE COMMIT'Lİ — hiçbirini bozma, üzerine inşa et.
+**MISSION:** Transform this demo into an "Ultra-Luxury" B2B sales showcase, rivaling Siemens Tecnomatix or NVIDIA Omniverse. Use **Inline Execution**. For every phase, you must perform typechecks, run tests, and do headless-Chrome screenshot verification. Commit each phase separately. **Maintaining 60 FPS (on medium quality) is a strict rule.**
 
-GÖREV: Demoyu Visual Components / Siemens Tecnomatix / Omniverse sınıfı "ultra lüks" satış demosuna dönüştür. Inline Execution kullan; her fazda typecheck+test+headless-Chrome ekran görüntüsü doğrulaması yap, her fazı ayrı commit'le; 60 FPS (orta kalite) sert kuraldır. Fazlar sırayla:
+Execute the following phases sequentially:
 
-FAZ 1 — FABRİKA BİNASI: Tesis boşlukta yüzüyor; kapalı bir bina inşa et: duvarlar (pencere şeritli), çatı makasları + oluklu çatı panelleri, tavandaki mevcut volumetrik hüzmelerle hizalı ışıklıklar, sevkiyat tarafında kamyonun kullandığı gerçek dok kapısı (bina duvarında açıklık), zemin güvenlik şeritleri/yaya yolları (sarı boya decal'leri), duvarda "SAHA 1 / SEVKİYAT / RULO DEPOSU" tabelaları. İçerisi dışarıdan kesitli görünsün (ön duvar yok ya da kamera içeride başlar). Draw-call bütçesine dikkat.
+**PHASE 1 — FACTORY BUILDING:** Currently, the facility floats in empty space. Build an enclosed building: add walls (with window strips), roof trusses + corrugated roof panels, skylights aligned with the existing volumetric light shafts, a real loading dock door for the truck, and floor safety lines/pedestrian walkways (yellow paint decals). Add signs on the walls like "ZONE 1", "SHIPPING", "COIL STORAGE". Make the interior visible (e.g., no front wall or start the camera inside). Pay strict attention to the draw-call budget.
 
-FAZ 2 — GANTT / PLANLAMA GÖRÜNÜMÜ: Her MES'in kalbi. Toolbar'a "Plan" ikonu: tam ekran çekmece — makineler satır, işler renkli bloklar (sürüklenebilir DEĞİL, sadece görsel), şimdi-çizgisi canlı akar, alarm blokları kırmızı, tamamlananlar soluk. Veri kaynağı: mevcut plan + telemetryStore + alarmStore. SVG ile yaz, kütüphane ekleme.
+**PHASE 2 — GANTT / PLANNING VIEW:** The heart of any MES. Add a "Plan" icon to the toolbar that opens a full-screen drawer: machines are rows, jobs are colored blocks (NOT draggable, purely visual). The "now" line flows live. Alarm blocks should be red, completed jobs should be faded. Data source: existing plan + telemetryStore + alarmStore. Build this purely with SVG, do NOT add external chart libraries.
 
-FAZ 3 — UI TASARIM SİSTEMİ: Tüm HUD'ları tek tasarım diline geçir: tek tipografi ölçeği (11/13/16/24), tutarlı 8px spacing grid, tek cam paneli bileşeni (`<Glass>`), Inter/Geist benzeri font (sistem fontu fallback'li), mikro-geçişler (150ms ease-out), sayılar için tabular-nums. Renk: tek nötr koyu tema + tek vurgu (cyan) + semantik (yeşil/amber/kırmızı) — mor/menekşe süslemeleri sadeleştir.
+**PHASE 3 — UI DESIGN SYSTEM:** Unify all HUDs into a single premium design language. Use a strict typography scale (11/13/16/24), consistent 8px spacing, a single reusable `<Glass>` panel component, an Inter/Geist-like font (with system fallbacks), 150ms ease-out micro-transitions, and tabular-nums for digits. Color Palette: strict neutral dark theme + one accent (cyan) + semantics (green/amber/red). Remove the chaotic purple/violet decorations.
 
-FAZ 4 — AÇILIŞ DENEYİMİ: Markalı splash (logo + "Karar Motoru yükleniyor…" gerçek yükleme adımlarına bağlı progress), ilk kadraja sinematik kamera inişi, ilk ziyarette 3 adımlık soft onboarding ipucu (toolbar/X-Ray/palet-tıkla).
+**PHASE 4 — SPLASH & ONBOARDING:** Add a branded splash screen (Logo + "Decision Engine Loading..." synced with actual loading progress). Add a cinematic camera descent into the first frame, and a 3-step soft onboarding tooltips for first-time visits (Toolbar / X-Ray / Click a Pallet).
 
-FAZ 5 — PREMIUM MODELLER: docs/PREMIUM_ASSETS.md listesinden kullanıcının satın aldığı GLB'leri entegre et (manifest transform sistemi hazır); satın alınmamışsa Faz 1-4'ü bitir ve modelleri bekle.
+**PHASE 5 — PREMIUM MODELS:** If the user has purchased any GLBs listed in `docs/PREMIUM_ASSETS.md`, integrate them (manifest transform system is already prepared). If not, finalize Phases 1-4 and wait for the models.
 
-KURALLAR: superpowers TDD/verify disiplinini uygula; saf mantığı test et; her fazda gerçek ekran görüntüsüyle kanıt göster; FPS düşerse önce draw-call diyeti; Türkçe UI metinleri; mevcut 46+ testi asla kırma.
-
----
-
-## Not (bu oturumdan devir)
-- Piyasa kıyası: bizde eksik olan bina/Gantt/tasarım-sistemi/splash — algoritma+veri katmanı ise piyasa ortalamasının ÜSTÜNDE (testli guillotine+CSP+WHCA* hiçbir satış demosunda yok, bunu satış konuşmasında öne koy).
-- Her şey commit'li; origin'e push edilmemiş olabilir — önce `git status -sb` kontrol et.
+**CRITICAL RULES:** Apply strict TDD/verify discipline. Test pure logic. Prove success with screenshots at every phase. If FPS drops, do a draw-call diet immediately. Keep the UI text in Turkish. NEVER break the existing 46+ tests.

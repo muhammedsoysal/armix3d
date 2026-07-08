@@ -3,6 +3,7 @@ import { useStore } from "zustand";
 import { qualityStore } from "../quality/qualityStore";
 import { xrayStore } from "../xray/xrayStore";
 import { VolumetricShafts } from "./VolumetricShafts";
+import { FactoryBuilding } from "./FactoryBuilding";
 
 /** Fabrika ortamı: zemin, sis, ışıklar ve prosedürel environment map
  * (dosya/network bağımlılığı yok — fuar makinesi offline çalışabilir).
@@ -42,6 +43,7 @@ export function Factory() {
       </Environment>
 
       <VolumetricShafts />
+      <FactoryBuilding />
 
       {/* Zemin: orta/ultra kalitede cilalı beton yansıması (AAA görünümün
           bel kemiği) — düşük kalitede standart mat zemin.
