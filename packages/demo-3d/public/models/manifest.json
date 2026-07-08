@@ -1,3 +1,6 @@
 {
-  "truck": { "file": "truck-flat.glb", "scale": 2.6, "rotationY": 3.1416, "position": [0, 0, -0.5] }
+  "truck": { "file": "truck-flat.glb", "scale": 2.6, "rotationY": 3.1416, "position": [0, 0, -0.5] },
+  "laser-cell": { "file": "laser-cell.glb", "scale": 2.1, "rotationY": 1.5708 },
+  "press-brake": { "file": "press-brake.glb", "scale": 2.1 },
+  "conveyor": { "file": "conveyor.glb", "scale": 1.6 }
 }

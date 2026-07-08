@@ -24,13 +24,14 @@ export function LaserCell({ position = [3.0, 0, -3.0] as [number, number, number
     c.t = (c.t + dt) % CYCLE_S;
     const cutting = c.t < CUT_S;
 
-    // Kesim kafası: masa üzerinde Lissajous tarama (parça konturu hissi)
-    if (cutting) {
+    // Kesim kafası: masa üzerinde Lissajous tarama — GLB takılıyken
+    // placeholder kafa yoktur (ref null), ışıma+lamba yine de yaşar
+    if (cutting && headRef.current) {
       const u = c.t / CUT_S;
       headRef.current.position.x = 0.42 * Math.sin(u * Math.PI * 6);
       headRef.current.position.z = 0.3 * Math.sin(u * Math.PI * 4 + 1.2);
     }
-    beamRef.current.visible = cutting;
+    if (beamRef.current) beamRef.current.visible = cutting;
     lightRef.current.visible = cutting;
     if (cutting) lightRef.current.intensity = 6 + Math.random() * 5;
 
@@ -87,18 +88,19 @@ export function LaserCell({ position = [3.0, 0, -3.0] as [number, number, number
             <meshBasicMaterial color="#67e8f9" toneMapped={false} transparent opacity={0.95} />
           </mesh>
         </group>
-        <pointLight ref={lightRef} position={[0, 0.7, 0]} color="#22d3ee" distance={3} visible={false} />
-        {/* Durum lambası */}
-        <mesh ref={lampRef} position={[0.85, 1.62, 0]} userData={{ noXray: true }}>
-          <sphereGeometry args={[0.05, 12, 8]} />
-          <meshStandardMaterial color="#083344" emissive="#22d3ee" emissiveIntensity={2} toneMapped={false} />
-        </mesh>
+
         {/* Makine etiketi */}
         <mesh position={[0, 1.05, 0.47]}>
           <boxGeometry args={[0.5, 0.16, 0.02]} />
           <meshStandardMaterial color="#0f172a" roughness={0.5} />
         </mesh>
       </OptionalModel>
+      {/* GLB takılıyken de yaşayan parçalar: kesim ışıması + durum lambası */}
+      <pointLight ref={lightRef} position={[0, 0.7, 0]} color="#22d3ee" distance={3} visible={false} />
+      <mesh ref={lampRef} position={[0.85, 1.62, 0]} userData={{ noXray: true }}>
+        <sphereGeometry args={[0.05, 12, 8]} />
+        <meshStandardMaterial color="#083344" emissive="#22d3ee" emissiveIntensity={2} toneMapped={false} />
+      </mesh>
     </group>
   );
 }

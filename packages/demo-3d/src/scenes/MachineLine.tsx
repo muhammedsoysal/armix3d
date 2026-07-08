@@ -51,6 +51,7 @@ import { Worker } from "./Worker";
 import { LaserCell } from "./LaserCell";
 import { Drums } from "./Drums";
 import { FinishedGoodsWarehouse } from "./FinishedGoodsWarehouse";
+import { PressBrake, Conveyors } from "./PressBrake";
 
 /** CNC hattının tamamı: rulo → doğrultucu → kesim → vakum kaldırıcı → palet. */
 export function MachineLine() {
@@ -82,6 +83,8 @@ export function MachineLine() {
       <LaserCell />
       <Drums />
       <FinishedGoodsWarehouse />
+      <PressBrake />
+      <Conveyors />
     </group>
   );
 }
