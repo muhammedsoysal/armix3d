@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useStore } from "zustand";
 import {
   SLIT_TRIM_PROOF,
@@ -6,6 +5,7 @@ import {
   type MachineStatus,
   type MachineTelemetry,
 } from "../telemetry/telemetryStore";
+import { uiStore } from "./uiStore";
 
 const STATUS_META: Record<MachineStatus, { label: string; dot: string; text: string }> = {
   RUNNING: { label: "ÜRETİMDE", dot: "bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.9)]", text: "text-emerald-300" },
@@ -80,7 +80,7 @@ function MachineCard({ m }: { m: MachineTelemetry }) {
 /** Tesis Kontrol Paneli — çok-makineli canlı telemetri (mock WS, 1 Hz).
  * Enterprise MES görünümü: durum çipleri, OEE, neon sparkline, iş kuyruğu. */
 export function FactoryDashboard() {
-  const [open, setOpen] = useState(false);
+  const open = useStore(uiStore, (s) => s.openPanel === "dashboard");
   const machines = useStore(telemetryStore, (s) => s.machines);
   const connected = useStore(telemetryStore, (s) => s.connected);
   const source = useStore(telemetryStore, (s) => s.source);
@@ -91,22 +91,8 @@ export function FactoryDashboard() {
 
   return (
     <>
-      <button
-        onClick={() => setOpen((o) => !o)}
-        className={`pointer-events-auto absolute right-6 top-[368px] z-30 flex items-center gap-2.5 rounded-2xl border px-5 py-3 text-sm font-semibold backdrop-blur-md transition-all active:scale-95 ${
-          open
-            ? "border-emerald-400/60 bg-emerald-500/20 text-emerald-200 shadow-lg shadow-emerald-500/25"
-            : "border-white/10 bg-black/55 text-neutral-200 hover:bg-white/10"
-        }`}
-      >
-        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" d="M4 4h7v7H4zM13 4h7v4h-7zM13 11h7v9h-7zM4 14h7v6H4z" />
-        </svg>
-        Tesis
-      </button>
-
       {open && (
-        <div className="pointer-events-auto absolute right-[196px] top-[176px] z-40 max-h-[calc(100vh-220px)] w-[380px] space-y-3 overflow-y-auto rounded-3xl border border-white/10 bg-black/60 p-4 shadow-2xl backdrop-blur-2xl">
+        <div className="pointer-events-auto absolute right-16 top-1/2 z-40 max-h-[82vh] w-[380px] -translate-y-1/2 space-y-3 overflow-y-auto rounded-3xl border border-white/10 bg-black/60 p-4 shadow-2xl backdrop-blur-2xl">
           <div className="flex items-center justify-between px-1">
             <span className="text-[10px] font-bold tracking-[0.3em] text-slate-300">TESİS KONTROL</span>
             <span className="flex items-center gap-1.5 font-mono text-[9px] text-slate-400">

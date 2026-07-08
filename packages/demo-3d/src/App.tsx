@@ -13,7 +13,6 @@ import { DirectorCamera } from "./director/DirectorCamera";
 import { XRayEffect } from "./xray/XRayEffect";
 import { DataPipelines } from "./xray/DataPipelines";
 import { DataBillboards } from "./xray/DataBillboards";
-import { XRayToggle } from "./hud/XRayToggle";
 import { OptimizerThinkingHUD } from "./hud/OptimizerThinkingHUD";
 import { WhatIfHUD } from "./hud/WhatIfHUD";
 import { AudioToggle } from "./hud/AudioToggle";
@@ -21,6 +20,7 @@ import { FactoryAudio } from "./audio/FactoryAudio";
 import { FactoryDashboard } from "./hud/FactoryDashboard";
 import { TraceabilityHUD } from "./hud/TraceabilityHUD";
 import { ShiftReport } from "./hud/ShiftReport";
+import { Toolbar } from "./hud/Toolbar";
 import { connectLiveTelemetry } from "./telemetry/liveTelemetryService";
 import { DirectorHUD } from "./hud/DirectorHUD";
 import { directorStore } from "./director/directorStore";
@@ -62,11 +62,11 @@ export default function App() {
         <QualityControls />
       </div>
       <DirectorHUD />
-      <XRayToggle />
       <OptimizerThinkingHUD />
       <WhatIfHUD />
       <AudioToggle />
       <FactoryDashboard />
+      <Toolbar />
       <TraceabilityHUD />
       <ShiftReport />
     </div>

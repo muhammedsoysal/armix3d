@@ -50,6 +50,7 @@ import { QCScanner } from "./QCScanner";
 import { Worker } from "./Worker";
 import { LaserCell } from "./LaserCell";
 import { Drums } from "./Drums";
+import { FinishedGoodsWarehouse } from "./FinishedGoodsWarehouse";
 
 /** CNC hattının tamamı: rulo → doğrultucu → kesim → vakum kaldırıcı → palet. */
 export function MachineLine() {
@@ -80,6 +81,7 @@ export function MachineLine() {
       <Worker />
       <LaserCell />
       <Drums />
+      <FinishedGoodsWarehouse />
     </group>
   );
 }

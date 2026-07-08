@@ -46,13 +46,17 @@ export function pointAlongPath(path: FloorPath, s: number): PathPoint {
   return { x: last[0], z: last[1], heading, done: true };
 }
 
-/** Tamamlanan paletin stok grid'indeki yeri — Pallet.tsx ile birebir aynı kural. */
+/** Bitmiş Ürün Deposu (sevkiyat sahası) — adanmış bölge: hat çıkışının
+ * sağ-arkası, kamyon rampasına komşu. 3 sıra × N sütun grid. */
+export const FG_WAREHOUSE = { x0: 8.4, z0: -0.6, colStep: 1.5, rowStep: 1.6, rows: 3 } as const;
+
+/** Tamamlanan paletin depo hücresi — Pallet.tsx ile birebir aynı kural. */
 export function dropSlotFor(idx: number): { x: number; z: number } {
-  const row = idx % 2;
-  const col = Math.floor(idx / 2);
+  const row = idx % FG_WAREHOUSE.rows;
+  const col = Math.floor(idx / FG_WAREHOUSE.rows);
   return {
-    x: LAYOUT.palletX + 1.8 + col * 1.5,
-    z: row === 0 ? 0 : -1.2,
+    x: FG_WAREHOUSE.x0 + col * FG_WAREHOUSE.colStep,
+    z: FG_WAREHOUSE.z0 - row * FG_WAREHOUSE.rowStep,
   };
 }
 

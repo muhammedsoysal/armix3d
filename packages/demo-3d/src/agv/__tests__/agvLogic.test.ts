@@ -34,13 +34,16 @@ describe("pointAlongPath", () => {
 });
 
 describe("dropSlotFor", () => {
-  // Pallet.tsx grid kuralıyla birebir aynı olmalı:
-  // col=⌊idx/2⌋, row=idx%2 → x = palletX + 1.8 + col·1.5, z = 0 | -1.2
-  it("matches the Pallet.tsx grid for the first four slots", () => {
-    expect(dropSlotFor(0)).toEqual({ x: 4.2 + 1.8, z: 0 });
-    expect(dropSlotFor(1)).toEqual({ x: 4.2 + 1.8, z: -1.2 });
-    expect(dropSlotFor(2)).toEqual({ x: 4.2 + 1.8 + 1.5, z: 0 });
-    expect(dropSlotFor(3)).toEqual({ x: 4.2 + 1.8 + 1.5, z: -1.2 });
+  // Bitmiş Ürün Deposu: 3 sıra × N sütun (x0=8.4, z0=-0.6)
+  it("fills the finished-goods warehouse column-major", () => {
+    const near = (s: { x: number; z: number }, x: number, z: number) => {
+      expect(s.x).toBeCloseTo(x);
+      expect(s.z).toBeCloseTo(z);
+    };
+    near(dropSlotFor(0), 8.4, -0.6);
+    near(dropSlotFor(1), 8.4, -2.2);
+    near(dropSlotFor(2), 8.4, -3.8);
+    near(dropSlotFor(3), 9.9, -0.6);
   });
 });
 

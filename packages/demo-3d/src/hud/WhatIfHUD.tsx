@@ -10,6 +10,7 @@ import {
 import { simStore } from "../sim/simStore";
 import { diffPlans, injectRushOrder, type PlanDiff } from "../whatif/whatIfMath";
 import { computeSmartBatches, type MaterialBatch } from "../whatif/smartBatch";
+import { uiStore } from "./uiStore";
 
 const QTY_PRESETS = [20, 50, 100] as const;
 
@@ -62,7 +63,7 @@ function DiffRow({
 export function WhatIfHUD() {
   const planInputs = useStore(simStore, (s) => s.planInputs);
   const plan = useStore(simStore, (s) => s.plan);
-  const [open, setOpen] = useState(false);
+  const open = useStore(uiStore, (s) => s.openPanel === "whatif");
   const [qty, setQty] = useState<number>(50);
   const [dragSku, setDragSku] = useState<string | null>(null);
   const [scenario, setScenario] = useState<Scenario | null>(null);
@@ -121,30 +122,15 @@ export function WhatIfHUD() {
       `[WHATIF] Acil sipariş uygulandı: ${scenario.part.sku} ×${scenario.qty} — plan yeniden düzenlendi.`,
     );
     setScenario(null);
-    setOpen(false);
+    uiStore.getState().toggle("whatif");
   };
 
   return (
     <>
-      {/* Anahtar buton */}
-      <button
-        onClick={() => setOpen((o) => !o)}
-        className={`pointer-events-auto absolute right-6 top-[304px] z-30 flex items-center gap-2.5 rounded-2xl border px-5 py-3 text-sm font-semibold backdrop-blur-md transition-all active:scale-95 ${
-          open
-            ? "border-violet-400/60 bg-violet-500/20 text-violet-200 shadow-lg shadow-violet-500/25"
-            : "border-white/10 bg-black/55 text-neutral-200 hover:bg-white/10"
-        }`}
-      >
-        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 3h6M10 3v5.2L4.7 17a2 2 0 001.8 3h11a2 2 0 001.8-3L14 8.2V3" />
-        </svg>
-        Senaryo
-      </button>
-
       {/* Ürün paleti — buton kolonunun SOLUNDA açılır (Tesis butonuyla
           çakışmaz), kısa ekranlarda kendi içinde kaydırılır */}
       {open && !scenario && (
-        <div className="pointer-events-auto absolute right-[196px] top-[240px] z-40 max-h-[calc(100vh-280px)] w-80 overflow-y-auto rounded-2xl border border-violet-400/30 bg-slate-950/90 p-4 shadow-2xl backdrop-blur-xl">
+        <div className="pointer-events-auto absolute right-16 top-1/2 z-40 max-h-[80vh] w-80 -translate-y-1/2 overflow-y-auto rounded-2xl border border-violet-400/30 bg-slate-950/90 p-4 shadow-2xl backdrop-blur-xl">
           <div className="mb-1 text-[10px] font-bold tracking-[0.25em] text-violet-300">
             ACİL SİPARİŞ SENARYOSU
           </div>

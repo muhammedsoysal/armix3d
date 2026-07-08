@@ -11,8 +11,6 @@ import { SHOTS } from "../director/shots";
 export function DirectorHUD() {
   const active = useStore(directorStore, (s) => s.active);
   const shotId = useStore(directorStore, (s) => s.shotId);
-  const activate = useStore(directorStore, (s) => s.activate);
-  const deactivate = useStore(directorStore, (s) => s.deactivate);
   const machineState = useStore(machineStateStore, (s) => s.state);
   const plan = useStore(simStore, (s) => s.plan);
   const recIndex = useStore(simStore, (s) => s.recIndex);
@@ -80,20 +78,6 @@ export function DirectorHUD() {
         </div>
       )}
 
-      {/* Manuel anahtar — Kalite panelinin altında */}
-      <button
-        onClick={() => (active ? deactivate() : activate())}
-        className={`pointer-events-auto absolute right-6 top-44 z-30 flex items-center gap-2.5 rounded-2xl border px-5 py-3 text-sm font-semibold backdrop-blur-md transition-all active:scale-95 ${
-          active
-            ? "border-red-500/50 bg-red-500/20 text-red-300 shadow-lg shadow-red-500/20"
-            : "border-white/10 bg-black/55 text-neutral-200 hover:bg-white/10"
-        }`}
-      >
-        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z" />
-        </svg>
-        {active ? "Sunumu Durdur" : "Sunum Modu"}
-      </button>
     </>
   );
 }

@@ -1,14 +1,14 @@
-import { useState } from "react";
 import { useStore } from "zustand";
 import { simStore } from "../sim/simStore";
 import { scrapStore } from "../nesting/scrapStore";
 import { truckStore } from "../truck/truckStore";
 import { SLIT_TRIM_PROOF, telemetryStore } from "../telemetry/telemetryStore";
+import { uiStore } from "./uiStore";
 
 /** Vardiya Sonu Raporu — patronun masasına koyacağı kağıt. window.print()
  * ile yerel "PDF olarak kaydet" kullanılır: sıfır bağımlılık, offline çalışır. */
 export function ShiftReport() {
-  const [open, setOpen] = useState(false);
+  const open = useStore(uiStore, (s) => s.openPanel === "report");
   const totalPieces = useStore(simStore, (s) => s.totalPiecesCut);
   const pallets = useStore(simStore, (s) => s.completedPallets.length);
   const loaded = useStore(truckStore, (s) => s.loadedIds.length);
@@ -20,13 +20,6 @@ export function ShiftReport() {
 
   return (
     <>
-      <button
-        onClick={() => setOpen(true)}
-        className="pointer-events-auto absolute right-6 top-[432px] z-30 flex items-center gap-2.5 rounded-2xl border border-white/10 bg-black/55 px-5 py-3 text-sm font-semibold text-neutral-200 backdrop-blur-md hover:bg-white/10 active:scale-95"
-      >
-        📄 Rapor
-      </button>
-
       {open && (
         <div className="pointer-events-auto absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
           {/* Yazdırmada yalnızca rapor görünür */}
@@ -90,7 +83,7 @@ export function ShiftReport() {
               <button onClick={() => window.print()} className="flex-1 rounded-lg bg-slate-900 py-2.5 text-sm font-bold text-white hover:bg-slate-700">
                 🖨️ Yazdır / PDF Kaydet
               </button>
-              <button onClick={() => setOpen(false)} className="flex-1 rounded-lg border border-slate-300 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-100">
+              <button onClick={() => uiStore.getState().toggle("report")} className="flex-1 rounded-lg border border-slate-300 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-100">
                 Kapat
               </button>
             </div>

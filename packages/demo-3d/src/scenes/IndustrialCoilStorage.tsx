@@ -205,7 +205,9 @@ function OverheadCrane() {
 /** Bekleyen rulo stok alanı ana bileşeni */
 export function IndustrialCoilStorage() {
   return (
-    <group>
+    // Adanmış Rulo Deposu bölgesi: ana hattan geriye ve sola çekildi —
+    // makine sahası nefes alır, depo ayrı bir "bina" gibi okunur
+    <group position={[-3.5, 0, -3.5]}>
       <SteelRacks />
       <OverheadCrane />
       {coilsData.map((coil) => (
