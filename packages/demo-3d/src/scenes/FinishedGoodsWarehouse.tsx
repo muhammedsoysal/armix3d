@@ -9,9 +9,10 @@ import { FG_WAREHOUSE } from "../agv/agvLogic";
 export function FinishedGoodsWarehouse() {
   const pallets = useMemo(() => {
     const out: { x: number; z: number; rot: number; stack: PalletPiece[] }[] = [];
-    // 4 sütun × 6 sıra = 24 dekor palet, dinamik bölgenin (z ≥ -3.8) arkasında
+    // 4 sütun × 3 sıra = 12 dekor palet (draw-call bütçesi: 24 palet FPS'i
+    // 27'ye düşürüyordu; çember yalnız ön sırada — arka sıralar sade)
     for (let col = 0; col < 4; col++) {
-      for (let row = 0; row < 6; row++) {
+      for (let row = 0; row < 3; row++) {
         const idx = col * 6 + row;
         const h = 3 + ((idx * 7) % 9); // 3..11 parça — değişken istif yüksekliği
         const stack: PalletPiece[] = Array.from({ length: h }, (_, i) => ({
@@ -39,7 +40,7 @@ export function FinishedGoodsWarehouse() {
       </mesh>
       {pallets.map((p, i) => (
         <group key={i} position={[p.x, 0, p.z]} rotation={[0, p.rot, 0]}>
-          <PalletWithStack stack={p.stack} banded />
+          <PalletWithStack stack={p.stack} banded={p.z > -6} />
         </group>
       ))}
     </group>
