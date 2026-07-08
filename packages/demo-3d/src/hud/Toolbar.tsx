@@ -74,7 +74,7 @@ export function Toolbar() {
       <Btn
         title="Senaryo Sandbox (acil sipariş, ağırlıklar, Akıllı Grupla)"
         active={openPanel === "whatif"}
-        activeClass="border-violet-400/60 bg-violet-500/20 text-violet-300"
+        activeClass="border-cyan-400/60 bg-cyan-500/20 text-cyan-300"
         onClick={() => toggle("whatif")}
       >
         <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={sw}>

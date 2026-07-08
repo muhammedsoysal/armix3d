@@ -130,8 +130,8 @@ export function WhatIfHUD() {
       {/* Ürün paleti — buton kolonunun SOLUNDA açılır (Tesis butonuyla
           çakışmaz), kısa ekranlarda kendi içinde kaydırılır */}
       {open && !scenario && (
-        <div className="pointer-events-auto absolute right-16 top-1/2 z-40 max-h-[80vh] w-80 -translate-y-1/2 overflow-y-auto rounded-2xl border border-violet-400/30 bg-slate-950/90 p-4 shadow-2xl backdrop-blur-xl">
-          <div className="mb-1 text-[10px] font-bold tracking-[0.25em] text-violet-300">
+        <div className="pointer-events-auto absolute right-16 top-1/2 z-40 max-h-[80vh] w-80 -translate-y-1/2 overflow-y-auto rounded-2xl border border-cyan-400/30 bg-slate-950/90 p-4 shadow-2xl backdrop-blur-xl">
+          <div className="mb-1 text-[10px] font-bold tracking-[0.25em] text-cyan-300">
             ACİL SİPARİŞ SENARYOSU
           </div>
           <div className="mb-3 text-[11px] text-slate-400">
@@ -157,9 +157,9 @@ export function WhatIfHUD() {
                   step={0.05}
                   defaultValue={planInputs.weights[key]}
                   onChange={(e) => applyWeights({ [key]: Number(e.target.value) })}
-                  className="h-1 flex-1 accent-violet-400"
+                  className="h-1 flex-1 accent-cyan-400"
                 />
-                <span className="w-8 text-right font-mono text-[10px] text-violet-300">
+                <span className="w-8 text-right font-mono text-[10px] text-cyan-300">
                   {planInputs.weights[key].toFixed(2)}
                 </span>
               </div>
@@ -178,7 +178,7 @@ export function WhatIfHUD() {
                 key={q}
                 onClick={() => setQty(q)}
                 className={`rounded-lg px-3 py-1 font-mono text-xs transition-colors ${
-                  qty === q ? "bg-violet-500 text-white" : "bg-white/5 text-slate-300 hover:bg-white/10"
+                  qty === q ? "bg-cyan-500 text-white" : "bg-white/5 text-slate-300 hover:bg-white/10"
                 }`}
               >
                 {q}
@@ -196,7 +196,7 @@ export function WhatIfHUD() {
                 }}
                 onDragEnd={() => setDragSku(null)}
                 onClick={() => runScenario(p, qty)}
-                className="cursor-grab rounded-xl border border-white/10 bg-white/5 px-3 py-2 transition-colors hover:border-violet-400/50 hover:bg-violet-500/10 active:cursor-grabbing"
+                className="cursor-grab rounded-xl border border-white/10 bg-white/5 px-3 py-2 transition-colors hover:border-cyan-400/50 hover:bg-cyan-500/10 active:cursor-grabbing"
               >
                 <div className="text-[12px] font-semibold text-slate-100">{p.productName}</div>
                 <div className="font-mono text-[10px] text-slate-500">
@@ -218,12 +218,12 @@ export function WhatIfHUD() {
             const part = planInputs.parts.find((p) => p.sku === sku);
             if (part) runScenario(part, qty);
           }}
-          className="pointer-events-auto absolute left-6 top-24 z-40 flex h-72 w-[360px] items-center justify-center rounded-2xl border-2 border-dashed border-violet-400/70 bg-violet-500/15 backdrop-blur-sm"
+          className="pointer-events-auto absolute left-6 top-24 z-40 flex h-72 w-[360px] items-center justify-center rounded-2xl border-2 border-dashed border-cyan-400/70 bg-cyan-500/15 backdrop-blur-sm"
         >
           <div className="text-center">
             <div className="text-2xl">📥</div>
             <div className="mt-1 text-sm font-bold text-violet-200">Kuyruğa Bırak</div>
-            <div className="text-[11px] text-violet-300/80">Karar Motoru yeniden planlayacak</div>
+            <div className="text-[11px] text-cyan-300/80">Karar Motoru yeniden planlayacak</div>
           </div>
         </div>
       )}
@@ -286,12 +286,12 @@ export function WhatIfHUD() {
 
       {/* Fark paneli */}
       {scenario && (
-        <div className="pointer-events-auto absolute left-1/2 top-1/2 z-40 w-[430px] -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-violet-400/40 bg-gradient-to-br from-slate-950/95 to-violet-950/85 p-6 shadow-[0_0_50px_rgba(139,92,246,0.3)] backdrop-blur-2xl">
-          <div className="mb-1 text-[10px] font-bold tracking-[0.25em] text-violet-300">
+        <div className="pointer-events-auto absolute left-1/2 top-1/2 z-40 w-[430px] -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-cyan-400/40 bg-gradient-to-br from-slate-950/95 to-cyan-950/85 p-6 shadow-[0_0_50px_rgba(139,92,246,0.3)] backdrop-blur-2xl">
+          <div className="mb-1 text-[10px] font-bold tracking-[0.25em] text-cyan-300">
             SENARYO SONUCU — KARAR MOTORU
           </div>
           <div className="mb-4 text-lg font-bold text-white">
-            {scenario.part.productName} <span className="font-mono text-violet-300">×{scenario.qty} acil</span>
+            {scenario.part.productName} <span className="font-mono text-cyan-300">×{scenario.qty} acil</span>
           </div>
           <div className="divide-y divide-white/5 rounded-xl border border-white/10 bg-black/30 px-4 py-1">
             <DiffRow
@@ -324,7 +324,7 @@ export function WhatIfHUD() {
           <div className="mt-5 flex gap-3">
             <button
               onClick={apply}
-              className="flex-1 rounded-xl bg-violet-500 py-2.5 text-sm font-bold text-white shadow-lg shadow-violet-500/30 transition-all hover:bg-violet-400 active:scale-95"
+              className="flex-1 rounded-xl bg-cyan-500 py-2.5 text-sm font-bold text-white shadow-lg shadow-cyan-500/30 transition-all hover:bg-cyan-400 active:scale-95"
             >
               Planı Uygula
             </button>
