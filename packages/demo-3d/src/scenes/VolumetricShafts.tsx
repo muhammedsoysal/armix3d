@@ -23,9 +23,11 @@ function makeShaftTexture(): CanvasTexture {
 
 // Çatı ışıklıklarının yerleri: hat üstü, rulo deposu üstü, palet sahası üstü
 const SHAFTS: { x: number; z: number; topR: number; bottomR: number; h: number }[] = [
-  { x: 0, z: 0, topR: 0.5, bottomR: 2.2, h: 9 },
-  { x: -6, z: -2, topR: 0.6, bottomR: 2.6, h: 9 },
-  { x: 4.2, z: 1, topR: 0.45, bottomR: 2.0, h: 9 },
+  { x: 0, z: 0, topR: 0.5, bottomR: 2.4, h: 11.6 },
+  { x: -6, z: -2, topR: 0.6, bottomR: 2.8, h: 11.6 },
+  { x: 4.2, z: 1, topR: 0.45, bottomR: 2.2, h: 11.6 },
+  { x: -14, z: -8, topR: 0.6, bottomR: 3.0, h: 11.6 },
+  { x: 12, z: -6, topR: 0.55, bottomR: 2.6, h: 11.6 },
 ];
 
 export function VolumetricShafts() {

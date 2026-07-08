@@ -11,6 +11,10 @@ const coilsData = [
   { id: "C3", z: -3.5, x: 1, radius: 0.75, width: 1.0, color: "#9ba4b5", matProps: { metalness: 0.9, roughness: 0.25 }, material: "430 2B Paslanmaz", thickness: "1.0mm", quantity: 45, useCase: "Davlumbaz Gövdesi" },
   { id: "C4", z: -5.5, x: -3, radius: 1.05, width: 1.2, color: "#7a828a", matProps: { metalness: 0.8, roughness: 0.5 }, material: "304 Paslanmaz", thickness: "3.0mm", quantity: 8, useCase: "Ağır Makine Şasi" },
   { id: "C5", z: -5.5, x: -0.5, radius: 0.8, width: 1.5, color: "#c6cbd1", matProps: { metalness: 0.98, roughness: 0.1 }, material: "304 SB Paslanmaz", thickness: "1.2mm", quantity: 30, useCase: "Mimari Dekorasyon" },
+  { id: "C6", z: -5.5, x: 2.2, radius: 0.9, width: 1.3, color: "#9aa2ad", matProps: { metalness: 0.9, roughness: 0.3 }, material: "304 BA Paslanmaz", thickness: "1.5mm", quantity: 18, useCase: "Kontrol Kapağı" },
+  { id: "C7", z: -7.5, x: -3.5, radius: 1.0, width: 1.4, color: "#848c96", matProps: { metalness: 0.85, roughness: 0.45 }, material: "316L Paslanmaz", thickness: "2.0mm", quantity: 22, useCase: "Sensör Plakası" },
+  { id: "C8", z: -7.5, x: -0.8, radius: 0.82, width: 1.2, color: "#b3bac3", matProps: { metalness: 0.95, roughness: 0.18 }, material: "430 2B Paslanmaz", thickness: "1.0mm", quantity: 40, useCase: "Davlumbaz" },
+  { id: "C9", z: -7.5, x: 1.8, radius: 0.95, width: 1.5, color: "#8b949e", matProps: { metalness: 0.88, roughness: 0.35 }, material: "304 2B Paslanmaz", thickness: "2.0mm", quantity: 14, useCase: "Fırın Sacı" },
 ];
 
 function InteractiveCoil({ coil }: { coil: typeof coilsData[0] }) {
@@ -80,7 +84,8 @@ function InteractiveCoil({ coil }: { coil: typeof coilsData[0] }) {
 function SteelRacks() {
   const rackPositions = [
     { z: -3.5, length: 7 },
-    { z: -5.5, length: 7 }
+    { z: -5.5, length: 7 },
+    { z: -7.5, length: 7 }
   ];
 
   return (
@@ -230,7 +235,7 @@ export function IndustrialCoilStorage() {
   return (
     // Adanmış Rulo Deposu bölgesi: ana hattan geriye ve sola çekildi —
     // makine sahası nefes alır, depo ayrı bir "bina" gibi okunur
-    <group position={[-3.5, 0, -3.5]}>
+    <group position={[-8, 0, -5.5]}>
       <SteelRacks />
       <OverheadCrane />
       {coilsData.map((coil) => (

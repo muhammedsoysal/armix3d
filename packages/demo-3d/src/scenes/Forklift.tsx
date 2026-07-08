@@ -9,11 +9,11 @@ import { cellOf, traffic } from "../agv/trafficControl";
 /** İkmal mekiği rotası: yarma hattı yanı ↔ rulo deposu (yeni depo bölgesi).
  * Duraklarda çatal iner/kalkar; depodan dönüşte çatalda RULO taşır. */
 const ROUTE: FloorPath = [
-  [-9.6, 2.6],   // yarma hattı yanı (bırakma)
-  [-10.6, 0],
-  [-10.6, -7.0], // rulo deposu (alma)
-  [-10.6, 0],
-  [-9.6, 2.6],
+  [-10.2, 2.6],   // yarma hattı yanı (bırakma)
+  [-12.5, 0],
+  [-12.5, -10.5], // rulo deposu (alma) — yeni derin depo
+  [-12.5, 0],
+  [-10.2, 2.6],
 ];
 /** [rota mesafesi, bekleme sn, çatal hedefi 0|1, rulo al/bırak] */
 const STOPS: [number, number, number, "pick" | "drop" | null][] = [

@@ -103,11 +103,11 @@ export function missionLegs(
 
 /** Tesis çevresi devriye halkası (AGV-02). Raf sahası arkasından dolaşır. */
 export const PATROL_LOOP: FloorPath = [
-  [9.5, 4.6],
-  [-9.8, 4.6],
-  [-9.8, -4.6],
-  [9.5, -4.6],
-  [9.5, 4.6],
+  [18, 7.5],
+  [-18, 7.5],
+  [-18, -13],
+  [18, -13],
+  [18, 7.5],
 ];
 
 /** İç devriye halkası (AGV-03) — dış halkayla z=±4.6 şeritlerini PAYLAŞIR:

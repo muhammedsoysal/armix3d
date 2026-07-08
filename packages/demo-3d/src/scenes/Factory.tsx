@@ -83,7 +83,7 @@ export function Factory() {
         sectionSize={2.5}
         cellColor="#232a38"
         sectionColor="#33405c"
-        fadeDistance={62}
+        fadeDistance={95}
       />
     </>
   );

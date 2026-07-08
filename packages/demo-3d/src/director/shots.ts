@@ -7,6 +7,7 @@ export type ShotId =
   | "lifterShot"
   | "palletYard"
   | "slittingLine"
+  | "grandTour"
   | "truckDock"
   | "finale";
 
@@ -71,6 +72,13 @@ export const SHOTS: Record<ShotId, Shot> = {
     dofDistance: 0.035,
     drift: 0.028,
   },
+  grandTour: {
+    label: "Tesis Turu — Kuş Bakışı",
+    // Katedral ölçeği gösteren süpürme: yüksek ve geniş
+    position: [24, 15, 26],
+    target: [-2, 1, -3],
+    drift: 0.02,
+  },
   truckDock: {
     label: "Sevkiyat — Yükleme Rampası",
     position: [7.6, 2.7, 5.6],
@@ -90,6 +98,8 @@ export interface ShotEventFlags {
   palletJustCompleted: boolean;
   /** IDLE kadraj çeşitlemesi: true → yarma hattı, false/yok → raf kahramanı */
   idleAlt?: boolean;
+  /** 3'lü IDLE rotasyonu: 0 raf, 1 yarma, 2 tesis turu (idleAlt'tan öncelikli) */
+  idleVariant?: number;
 }
 
 /** Olay → kadraj seçimi. Öncelik: plan sonu > palet tamamlama > makine fazı.
@@ -105,7 +115,9 @@ export function shotForEvent(state: MachineState, flags: ShotEventFlags): ShotId
     case "LIFTING":
       return "lifterShot";
     case "IDLE":
-    default:
-      return flags.idleAlt ? "slittingLine" : "rackHero";
+    default: {
+      const v = flags.idleVariant ?? (flags.idleAlt ? 1 : 0);
+      return v % 3 === 1 ? "slittingLine" : v % 3 === 2 ? "grandTour" : "rackHero";
+    }
   }
 }

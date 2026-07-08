@@ -52,7 +52,7 @@ export function DirectorCamera() {
   useEffect(() => {
     const c = controlsRef.current;
     if (!c) return;
-    c.setLookAt(18, 17, 28, -0.8, 1, 0, false); // yüksek açılış pozu
+    c.setLookAt(30, 26, 44, -0.8, 1, 0, false); // yüksek açılış pozu — katedral ölçek
     const unsub = introStore.subscribe((s, prev) => {
       if (s.phase === "descending" && prev.phase === "loading") {
         c.smoothTime = 1.1;
@@ -76,7 +76,7 @@ export function DirectorCamera() {
         shotForEvent(s.state, {
           planCompleted: sim.isPlanCompleted,
           palletJustCompleted: false,
-          idleAlt: idleCountRef.current % 2 === 1,
+          idleVariant: idleCountRef.current % 3,
         }),
       );
     });
@@ -171,7 +171,7 @@ export function DirectorCamera() {
       ref={controlsRef}
       makeDefault
       minDistance={4}
-      maxDistance={20}
+      maxDistance={36}
       maxPolarAngle={Math.PI / 2.05}
       smoothTime={DEFAULT_SMOOTH}
     />
