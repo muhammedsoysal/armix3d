@@ -47,10 +47,10 @@ function InteractiveCoil({ coil }: { coil: typeof coilsData[0] }) {
       {/* HTML Hover Kartı */}
       {hovered && (
         <Html position={[0, coil.radius + 0.5, 0]} center zIndexRange={[100, 0]}>
-          <div className="bg-gradient-to-br from-black/90 to-sky-950/90 border border-sky-500/40 rounded-xl p-4 shadow-[0_0_30px_rgba(14,165,233,0.3)] backdrop-blur-md w-64 text-white font-sans animate-in fade-in zoom-in duration-200 pointer-events-none select-none">
+          <div className="bg-gradient-to-br from-slate-950/95 to-cyan-950/80 border border-cyan-400/30 rounded-xl p-4 shadow-[0_0_30px_rgba(34,211,238,0.25)] backdrop-blur-md w-64 text-white font-sans animate-in fade-in zoom-in duration-200 pointer-events-none select-none">
             <div className="flex items-center gap-2 mb-2 pb-2 border-b border-white/10">
-              <div className="w-2 h-2 rounded-full bg-sky-400 animate-pulse" />
-              <div className="text-[10px] font-bold text-sky-400 uppercase tracking-widest">{coil.id} STOK RULOSU</div>
+              <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+              <div className="text-[10px] font-bold text-cyan-300 uppercase tracking-widest">{coil.id} STOK RULOSU</div>
             </div>
             <div className="space-y-2">
               <div className="flex justify-between items-center">
@@ -67,7 +67,7 @@ function InteractiveCoil({ coil }: { coil: typeof coilsData[0] }) {
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-xs text-neutral-400">Kullanım:</span>
-                <span className="text-xs bg-sky-500/20 text-sky-200 px-2 py-0.5 rounded border border-sky-500/30 truncate max-w-[120px]">{coil.useCase}</span>
+                <span className="text-xs bg-cyan-500/15 text-cyan-200 px-2 py-0.5 rounded border border-cyan-400/25 truncate max-w-[120px]">{coil.useCase}</span>
               </div>
             </div>
           </div>

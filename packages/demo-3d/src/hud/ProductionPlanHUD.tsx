@@ -86,7 +86,7 @@ export function ProductionPlanHUD() {
       </div>
 
       {/* Sağ üst: hat metrikleri */}
-      <Panel className="absolute right-6 top-5 flex gap-6">
+      <Panel className="absolute right-6 top-5 flex w-[400px] justify-between gap-4">
         {[
           ["Rulo Doluluk", `%${coilPercent}`],
           ["Paletteki Parça", String(palletCount)],
@@ -101,7 +101,7 @@ export function ProductionPlanHUD() {
 
       {/* Sol Orta: Döngüsel İş Kuyruğu */}
       {plan && (
-        <Panel className="absolute left-6 top-28 w-[340px] border border-white/20 bg-gradient-to-br from-black/80 to-black/40 shadow-2xl backdrop-blur-xl pointer-events-auto">
+        <Panel className="absolute left-6 top-[104px] w-[400px] border border-white/10 bg-gradient-to-br from-black/80 to-black/40 shadow-2xl backdrop-blur-xl pointer-events-auto">
           <div className="flex items-center justify-between mb-3 border-b border-white/5 pb-2">
             <div className="flex items-center gap-2">
               <svg className="w-4 h-4 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
@@ -112,7 +112,7 @@ export function ProductionPlanHUD() {
             </div>
           </div>
           
-          <div className="space-y-2 relative max-h-[350px] overflow-y-auto pr-2 scrollbar-thin scrollbar-track-white/5 scrollbar-thumb-white/20 hover:scrollbar-thumb-sky-400/50">
+          <div className="space-y-2 relative max-h-[calc(100vh-560px)] min-h-[120px] overflow-y-auto pr-2 scrollbar-thin scrollbar-track-white/5 scrollbar-thumb-white/20 hover:scrollbar-thumb-sky-400/50">
             {/* Kuyruk öğeleri */}
             {queueItems.map((r, i) => {
               const isPast = r.isPast;
@@ -192,7 +192,7 @@ export function ProductionPlanHUD() {
       )}
 
       {/* Sol alt: aktif iş */}
-      <Panel className="absolute bottom-6 left-6 w-[440px] border border-white/20 bg-gradient-to-br from-black/80 to-black/40 shadow-2xl backdrop-blur-xl">
+      <Panel className="absolute bottom-6 left-6 w-[400px] border border-white/10 bg-gradient-to-br from-black/80 to-black/40 shadow-2xl backdrop-blur-xl">
         {rec ? (
           <>
             <div className="flex items-center justify-between mb-4 pb-4 border-b border-white/5">

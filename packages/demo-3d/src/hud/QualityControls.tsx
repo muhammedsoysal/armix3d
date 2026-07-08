@@ -37,7 +37,7 @@ export function QualityControls() {
   const fps = useFps();
 
   return (
-    <div className="pointer-events-auto absolute right-6 top-24 flex items-center gap-2 rounded-2xl border border-white/10 bg-black/55 p-2 backdrop-blur-md">
+    <div className="pointer-events-auto absolute right-6 top-[86px] flex w-[400px] items-center justify-between gap-2 rounded-2xl border border-white/10 bg-black/55 p-2 backdrop-blur-md">
       {LEVELS.map(({ id, label }) => (
         <button
           key={id}

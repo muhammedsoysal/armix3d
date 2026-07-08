@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { PalletWithStack } from "./Pallet";
 import type { PalletPiece } from "../sim/simStore";
-import { FG_WAREHOUSE } from "../agv/agvLogic";
+import { FG_WAREHOUSE, dropSlotFor } from "../agv/agvLogic";
 
 /** Bitmiş Ürün Deposu dekoru: dinamik AGV hücrelerinin arkasını dolduran
  * düzinelerce hazır (bantlı) palet — tesis dolu ve üretken görünür.
@@ -38,6 +38,17 @@ export function FinishedGoodsWarehouse() {
         <planeGeometry args={[7.5, 10.5]} />
         <meshStandardMaterial color="#0d1117" roughness={0.95} />
       </mesh>
+      {/* Dinamik AGV hücrelerinin park çizgileri */}
+      {Array.from({ length: 6 }, (_, i) => dropSlotFor(i)).map((slot, i) => (
+        <group key={`cell${i}`} position={[slot.x, 0.0092, slot.z]}>
+          {([[0, 0.72, 1.5, 0.06], [0, -0.72, 1.5, 0.06], [0.72, 0, 0.06, 1.5], [-0.72, 0, 0.06, 1.5]] as const).map(([cx, cz, cw, cd], k) => (
+            <mesh key={k} position={[cx, 0, cz]} rotation={[-Math.PI / 2, 0, 0]}>
+              <planeGeometry args={[cw, cd]} />
+              <meshStandardMaterial color="#4a7a5a" roughness={0.9} transparent opacity={0.6} />
+            </mesh>
+          ))}
+        </group>
+      ))}
       {pallets.map((p, i) => (
         <group key={i} position={[p.x, 0, p.z]} rotation={[0, p.rot, 0]}>
           <PalletWithStack stack={p.stack} banded={p.z > -6} />
