@@ -4,6 +4,9 @@ import { qualityStore } from "../quality/qualityStore";
 import { xrayStore } from "../xray/xrayStore";
 import { VolumetricShafts } from "./VolumetricShafts";
 import { FactoryBuilding } from "./FactoryBuilding";
+import { CeilingLights } from "./CeilingLights";
+import { FloorZones } from "./FloorZones";
+import { WallDetails } from "./WallDetails";
 
 /** Fabrika ortamı: zemin, sis, ışıklar ve prosedürel environment map
  * (dosya/network bağımlılığı yok — fuar makinesi offline çalışabilir).
@@ -44,6 +47,9 @@ export function Factory() {
 
       <VolumetricShafts />
       <FactoryBuilding />
+      <CeilingLights />
+      <FloorZones />
+      <WallDetails />
 
       {/* Zemin: orta/ultra kalitede cilalı beton yansıması (AAA görünümün
           bel kemiği) — düşük kalitede standart mat zemin.
@@ -81,8 +87,8 @@ export function Factory() {
         infiniteGrid
         cellSize={0.5}
         sectionSize={2.5}
-        cellColor="#232a38"
-        sectionColor="#33405c"
+        cellColor="#161b24"
+        sectionColor="#222b3d"
         fadeDistance={95}
       />
     </>
