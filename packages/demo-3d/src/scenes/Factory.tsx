@@ -58,7 +58,7 @@ export function Factory() {
           fotogerçekçi yansıma görsel olarak da yanlış. */}
       {params.bloom && !xrayActive ? (
         <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow userData={{ noXray: true }}>
-          <planeGeometry args={[90, 90]} />
+          <planeGeometry args={[150, 150]} />
           <MeshReflectorMaterial
             resolution={params.envResolution >= 256 ? 1024 : 512}
             blur={[300, 80]}
@@ -75,7 +75,7 @@ export function Factory() {
         </mesh>
       ) : (
         <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-          <planeGeometry args={[90, 90]} />
+          <planeGeometry args={[150, 150]} />
           <meshStandardMaterial color="#13161c" roughness={0.92} metalness={0.05} />
         </mesh>
       )}
@@ -89,7 +89,7 @@ export function Factory() {
         sectionSize={2.5}
         cellColor="#161b24"
         sectionColor="#222b3d"
-        fadeDistance={95}
+        fadeDistance={140}
       />
     </>
   );

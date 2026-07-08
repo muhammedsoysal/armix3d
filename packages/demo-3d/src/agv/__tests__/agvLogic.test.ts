@@ -40,10 +40,10 @@ describe("dropSlotFor", () => {
       expect(s.x).toBeCloseTo(x);
       expect(s.z).toBeCloseTo(z);
     };
-    near(dropSlotFor(0), 8.4, -0.6);
-    near(dropSlotFor(1), 8.4, -2.2);
-    near(dropSlotFor(2), 8.4, -3.8);
-    near(dropSlotFor(3), 9.9, -0.6);
+    near(dropSlotFor(0), 11.0, -0.6);
+    near(dropSlotFor(1), 11.0, -2.2);
+    near(dropSlotFor(2), 11.0, -3.8);
+    near(dropSlotFor(3), 12.5, -0.6);
   });
 });
 

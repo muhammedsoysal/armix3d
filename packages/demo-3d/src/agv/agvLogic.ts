@@ -48,7 +48,7 @@ export function pointAlongPath(path: FloorPath, s: number): PathPoint {
 
 /** Bitmiş Ürün Deposu (sevkiyat sahası) — adanmış bölge: hat çıkışının
  * sağ-arkası, kamyon rampasına komşu. 3 sıra × N sütun grid. */
-export const FG_WAREHOUSE = { x0: 8.4, z0: -0.6, colStep: 1.5, rowStep: 1.6, rows: 3 } as const;
+export const FG_WAREHOUSE = { x0: 11.0, z0: -0.6, colStep: 1.5, rowStep: 1.6, rows: 3 } as const;
 
 /** Tamamlanan paletin depo hücresi — Pallet.tsx ile birebir aynı kural. */
 export function dropSlotFor(idx: number): { x: number; z: number } {
@@ -103,19 +103,21 @@ export function missionLegs(
 
 /** Tesis çevresi devriye halkası (AGV-02). Raf sahası arkasından dolaşır. */
 export const PATROL_LOOP: FloorPath = [
-  [18, 7.5],
-  [-18, 7.5],
-  [-18, -13],
-  [18, -13],
-  [18, 7.5],
+  [26, 11],
+  [-26, 11],
+  [-26, -19],
+  [26, -19],
+  [26, 11],
 ];
 
 /** İç devriye halkası (AGV-03) — dış halkayla z=±4.6 şeritlerini PAYLAŞIR:
  * ortak segmentlerde WHCA* rezervasyonu araçları sıraya sokar (canlı kanıt). */
 export const INNER_LOOP: FloorPath = [
-  [6.2, 4.6],
-  [-2.6, 4.6],
-  [-2.6, -4.6],
-  [6.2, -4.6],
-  [6.2, 4.6],
+  // Güney servis halkası: pres/lazer adasının çevresi — ana hattı KESMEZ,
+  // makinelerden ≥1 m açıklıkla geçer (clipping sıfır)
+  [7.6, -2.3],
+  [-4.0, -2.3],
+  [-4.0, -6.6],
+  [7.6, -6.6],
+  [7.6, -2.3],
 ];

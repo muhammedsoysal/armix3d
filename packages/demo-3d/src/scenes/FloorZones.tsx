@@ -68,16 +68,16 @@ export function FloorZones() {
       {/* Ana üretim hattı — gri-mavi epoksi */}
       <Zone x={-1.5} z={-0.2} w={19} d={5.6} color="#151b26" code="A1" />
       {/* Rulo deposu — koyu kahve-gri */}
-      <Zone x={-9.5} z={-9} w={12} d={9.5} color="#1a1712" code="B1" border="#7a6a4a" />
+      <Zone x={-12.5} z={-12} w={14} d={11} color="#1a1712" code="B1" border="#7a6a4a" />
       {/* Yarma hattı */}
       <Zone x={-5.4} z={3.6} w={8.5} d={3.2} color="#141e22" code="A2" />
       {/* Lazer + pres istasyon adası */}
       <Zone x={3.2} z={-3.9} w={8} d={3.4} color="#161d29" code="A3" />
       {/* Bitmiş ürün deposu — yeşilimsi sevkiyat epoksisi */}
-      <Zone x={10.6} z={-4.8} w={7.6} d={10} color="#121d18" code="C1" border="#4a7a5a" />
+      <Zone x={13.2} z={-4.8} w={9} d={10.5} color="#121d18" code="C1" border="#4a7a5a" />
       {/* Yaya yolu — yeşil bant (koridor kuzeyi) */}
       <mesh position={[-2, 0.0042, 2.2]} rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[26, 1.1]} />
+        <planeGeometry args={[34, 1.1]} />
         <meshStandardMaterial color="#0e2417" roughness={0.9} transparent opacity={0.9} />
       </mesh>
     </group>

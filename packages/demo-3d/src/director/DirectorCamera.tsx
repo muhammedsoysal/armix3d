@@ -52,7 +52,7 @@ export function DirectorCamera() {
   useEffect(() => {
     const c = controlsRef.current;
     if (!c) return;
-    c.setLookAt(30, 26, 44, -0.8, 1, 0, false); // yüksek açılış pozu — katedral ölçek
+    c.setLookAt(40, 34, 58, -0.8, 1, 0, false); // yüksek açılış pozu — katedral ölçek
     const unsub = introStore.subscribe((s, prev) => {
       if (s.phase === "descending" && prev.phase === "loading") {
         c.smoothTime = 1.1;
@@ -171,7 +171,7 @@ export function DirectorCamera() {
       ref={controlsRef}
       makeDefault
       minDistance={4}
-      maxDistance={36}
+      maxDistance={52}
       maxPolarAngle={Math.PI / 2.05}
       smoothTime={DEFAULT_SMOOTH}
     />

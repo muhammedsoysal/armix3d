@@ -34,7 +34,7 @@ export function FinishedGoodsWarehouse() {
   return (
     <group>
       {/* Bölge zemini: koyu işaretli depo alanı */}
-      <mesh position={[10.6, 0.008, -9.6]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+      <mesh position={[13.2, 0.008, -9.6]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[7.5, 10.5]} />
         <meshStandardMaterial color="#0d1117" roughness={0.95} />
       </mesh>

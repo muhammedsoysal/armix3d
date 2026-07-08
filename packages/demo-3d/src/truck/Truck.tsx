@@ -8,9 +8,9 @@ import { OptionalModel } from "../assets/AssetLoader";
 import { truckStore } from "./truckStore";
 
 /** Kamyon park konumu (dünya) — +z yönüne bakar, kalkışta +z'ye sürer. */
-export const TRUCK_POS = [11.6, 0, 0] as const;
+export const TRUCK_POS = [15.5, 0, 0] as const;
 /** AGV'nin palet bıraktığı rampa kenarı (missionLegs drop noktası). */
-export const TRUCK_LOAD_POINT = { x: 10.2, z: 0.6 } as const;
+export const TRUCK_LOAD_POINT = { x: 14.2, z: 0.6 } as const;
 
 /** Kasadaki palet yuvaları (kamyon lokali, z ekseni boyunca) */
 const BED_SLOTS: [number, number, number][] = [
@@ -57,7 +57,7 @@ export function Truck() {
   return (
     <group>
       {/* RAMPA / DOK: platform, tamponlar, ikaz şeritli sütunlar */}
-      <group position={[10.55, 0, 0]}>
+      <group position={[14.45, 0, 0]}>
         <mesh position={[0, 0.09, 0]} receiveShadow>
           <boxGeometry args={[1.3, 0.18, 4.2]} />
           <meshStandardMaterial color="#2b323c" metalness={0.35} roughness={0.7} />

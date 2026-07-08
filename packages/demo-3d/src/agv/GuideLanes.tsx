@@ -10,11 +10,11 @@ const LANE_Y = 0.012; // Grid çizgilerinin (0.005) hemen üstü — z-fight yok
 
 /** Lojistik şeritleri: dock → koridor → istasyon/grid hücreleri. */
 const LOGISTICS_LANES: [number, number][][] = [
-  // Ana koridor
+  // Ana koridor — dok'a kadar uzar
   [
     [8.2, 3.2],
     [5.4, 2.2],
-    [8.5, 2.2],
+    [14.0, 2.2],
   ],
   // İstasyon sapağı
   [
@@ -23,12 +23,12 @@ const LOGISTICS_LANES: [number, number][][] = [
   ],
   // Bitmiş Ürün Deposu sapakları
   [
-    [8.4, 2.2],
-    [8.4, -3.8],
+    [11.0, 2.2],
+    [11.0, -3.8],
   ],
   [
-    [9.9, 2.2],
-    [9.9, -3.8],
+    [12.5, 2.2],
+    [12.5, -3.8],
   ],
 ];
 

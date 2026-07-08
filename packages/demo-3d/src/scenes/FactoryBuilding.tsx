@@ -10,11 +10,11 @@ import { CanvasTexture, FrontSide } from "three";
  */
 
 // Bina zarfı (dünya koordinatları)
-const X0 = -22;
-const X1 = 22;
-const Z0 = -16; // arka
-const Z1 = 10; // ön (açık cephe — dok çıkışı buradan)
-const H = 12; // saçak yüksekliği — katedral ölçek
+const X0 = -30;
+const X1 = 30;
+const Z0 = -22; // arka
+const Z1 = 14; // ön (açık cephe — dok çıkışı buradan)
+const H = 13; // saçak yüksekliği — endüstriyel kompleks ölçeği
 const WIN_Y = 4.2; // pencere bandı merkezi
 const WIN_H = 1.3;
 
@@ -145,6 +145,8 @@ export function FactoryBuilding() {
     [4.2, 1],
     [-14, -8],
     [12, -6],
+    [-22, -14],
+    [20, 4],
   ];
 
   return (
@@ -155,7 +157,7 @@ export function FactoryBuilding() {
       <Wall cx={X1} cz={cz} len={D} rotY={-Math.PI / 2} />
 
       {/* Duvar kolonları (arka duvar boyunca, iç tarafta) */}
-      {Array.from({ length: 10 }, (_, i) => X0 + 2 + i * (W / 10)).map((x) => (
+      {Array.from({ length: 13 }, (_, i) => X0 + 2 + i * (W / 13)).map((x) => (
         <mesh key={x} position={[x, H / 2, Z0 + 0.15]} castShadow={false}>
           <boxGeometry args={[0.3, H, 0.3]} />
           <meshStandardMaterial color={STEEL} metalness={0.4} roughness={0.6} />
@@ -175,7 +177,7 @@ export function FactoryBuilding() {
         </mesh>
       ))}
       {/* Makaslar */}
-      {[-18, -12, -6, 0, 6, 12, 18].map((x) => (
+      {[-26, -18.5, -11, -3.5, 4, 11.5, 19, 26.5].map((x) => (
         <Truss key={x} x={x} />
       ))}
 
@@ -188,7 +190,7 @@ export function FactoryBuilding() {
       ))}
 
       {/* DOK KAPISI: ön cephede kamyonun çıktığı portal + yarı açık kepenk */}
-      <group position={[11.6, 0, Z1]}>
+      <group position={[15.5, 0, Z1]}>
         {([-2.2, 2.2] as const).map((dx) => (
           <mesh key={dx} position={[dx, 2.6, 0]} castShadow={false}>
             <boxGeometry args={[0.4, 5.2, 0.4]} />

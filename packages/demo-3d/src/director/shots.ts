@@ -75,14 +75,14 @@ export const SHOTS: Record<ShotId, Shot> = {
   grandTour: {
     label: "Tesis Turu — Kuş Bakışı",
     // Katedral ölçeği gösteren süpürme: yüksek ve geniş
-    position: [24, 15, 26],
-    target: [-2, 1, -3],
+    position: [34, 21, 36],
+    target: [-2, 1, -4],
     drift: 0.02,
   },
   truckDock: {
     label: "Sevkiyat — Yükleme Rampası",
-    position: [7.6, 2.7, 5.6],
-    target: [11.2, 1.0, -0.4],
+    position: [10.6, 3.0, 6.4],
+    target: [15.2, 1.0, -0.4],
     drift: 0.016,
   },
   finale: {

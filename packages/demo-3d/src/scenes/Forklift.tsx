@@ -9,15 +9,20 @@ import { cellOf, traffic } from "../agv/trafficControl";
 /** İkmal mekiği rotası: yarma hattı yanı ↔ rulo deposu (yeni depo bölgesi).
  * Duraklarda çatal iner/kalkar; depodan dönüşte çatalda RULO taşır. */
 const ROUTE: FloorPath = [
-  [-10.2, 2.6],   // yarma hattı yanı (bırakma)
-  [-12.5, 0],
-  [-12.5, -10.5], // rulo deposu (alma) — yeni derin depo
-  [-12.5, 0],
-  [-10.2, 2.6],
+  // Pahlı (45°) köşeler: forklift ani dik dönüş yapmaz, doğal kavis çizer
+  [-10.4, 2.6],   // yarma hattı yanı (bırakma)
+  [-12.6, 1.4],
+  [-14.0, -0.8],
+  [-14.0, -11.0],
+  [-13.2, -13.0], // rulo deposu raf önü (alma)
+  [-14.0, -11.0],
+  [-14.0, -0.8],
+  [-12.6, 1.4],
+  [-10.4, 2.6],
 ];
 /** [rota mesafesi, bekleme sn, çatal hedefi 0|1, rulo al/bırak] */
 const STOPS: [number, number, number, "pick" | "drop" | null][] = [
-  [pathLength(ROUTE.slice(0, 3)), 3.5, 1, "pick"], // depoda: çatal kalkar, rulo biner
+  [pathLength(ROUTE.slice(0, 5)), 3.5, 1, "pick"], // depoda: çatal kalkar, rulo biner
   [0.01, 3.5, 0, "drop"], // başlangıçta: çatal iner, rulo iner
 ];
 const SPEED = 0.85;

@@ -235,7 +235,7 @@ export function IndustrialCoilStorage() {
   return (
     // Adanmış Rulo Deposu bölgesi: ana hattan geriye ve sola çekildi —
     // makine sahası nefes alır, depo ayrı bir "bina" gibi okunur
-    <group position={[-8, 0, -5.5]}>
+    <group position={[-11, 0, -8]}>
       <SteelRacks />
       <OverheadCrane />
       {coilsData.map((coil) => (
