@@ -125,3 +125,10 @@ Bu dosya, Antigravity AI asistanı tarafından yapılan son güncellemeleri diğ
 - **Canlı API katmanı:** `liveTelemetryService.ts` — WebSocket akışını simüle eden 1 Hz push (CTL-1 durumu GERÇEK makine state'inden; güç/sıcaklık/titreşim/OEE jitter'lı). Gerçek entegrasyonda interval yerine WS/fetch bağlanır, UI değişmez.
 - **Premium Tesis Dashboard'u:** `FactoryDashboard.tsx` — "Tesis" butonu; makine kartları (durum çipi, OEE gradient bar, neon cyan güç sparkline'ı, kW/°C/mm-s/parça metrikleri), SLT-1 iş kuyruğu canlı ilerleme çubuğuyla, "CANLI · WS 1Hz" bağlantı göstergesi.
 - **UX düzeltmesi:** "Üretim Tamamlandı" paneli artık X butonuyla kapatılabilir (plan yenilenince tekrar görünür).
+
+## 24. Ultra Lüks Dönüşüm — Faz 1-4 (ULTRA_PROMPT)
+- **Faz 1 — Fabrika Binası** (`FactoryBuilding.tsx`): cutaway duvarlar (pencere bantlı, içe bakan tek yüz — dışarıdan maket görünümü), çatı makasları + oluklu paneller, hüzmelerle hizalı ışıklıklar, kepenkli dok portalı, canvas tabelalar (CDN font yok — offline), sarı güvenlik şeritleri + zebra geçidi. 60 FPS.
+- **Faz 2 — Gantt** (`GanttView.tsx`): saf SVG MES zaman çizelgesi — 3 makine satırı, canlı "şimdi" çizgisi, soluk geçmiş / cyan aktif / çerçeveli gelecek, alarm geçmişi kırmızı bindirme (alarmStore.history eklendi). Toolbar'a Plan ikonu.
+- **Faz 3 — Tasarım Sistemi** (styles.css): Inter sınıfı font yığını, tabular-nums, 150ms ease-out standardı, ince scrollbar, tek vurgu rengi (mor → cyan birleştirildi).
+- **Faz 4 — Açılış** (`Splash.tsx`): markalı splash (altıgen M logo, progress GERÇEK yükleme adımlarına bağlı) → sinematik kamera inişi (yüksek pozdan varsayılan kadraja) → ilk ziyarette 3 adımlık onboarding. Intro sırasında otomatik kalite düşürme korumaya alındı.
+- **Faz 5** premium GLB'ler satın alınınca (docs/PREMIUM_ASSETS.md) tek satır manifest ile takılacak.
