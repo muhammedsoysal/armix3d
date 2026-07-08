@@ -7,6 +7,7 @@ import { simStore } from "../sim/simStore";
 import { truckStore } from "../truck/truckStore";
 import { fxStore } from "../fx/fxStore";
 import { directorStore } from "./directorStore";
+import { introStore } from "../hud/Splash";
 import { SHOTS, shotForEvent, type ShotId } from "./shots";
 
 /** Kullanıcı bu süre boyunca hiç dokunmazsa sunum modu kendiliğinden başlar. */
@@ -46,9 +47,23 @@ export function DirectorCamera() {
     );
   };
 
-  // Eski OrbitControls hedefiyle aynı başlangıç bakışı
+  // Açılış: kamera yüksekten başlar; splash bitince sinematik inişle
+  // varsayılan kadraja süzülür (introStore fazlarını Splash yönetir)
   useEffect(() => {
-    controlsRef.current?.setTarget(-0.8, 1, 0, false);
+    const c = controlsRef.current;
+    if (!c) return;
+    c.setLookAt(18, 17, 28, -0.8, 1, 0, false); // yüksek açılış pozu
+    const unsub = introStore.subscribe((s, prev) => {
+      if (s.phase === "descending" && prev.phase === "loading") {
+        c.smoothTime = 1.1;
+        void c.setLookAt(4.5, 4, 9.5, -0.8, 1, 0, true);
+        setTimeout(() => {
+          c.smoothTime = DEFAULT_SMOOTH;
+          introStore.setState({ phase: "done" });
+        }, 2600);
+      }
+    });
+    return unsub;
   }, []);
 
   // Olay abonelikleri: makine fazı + palet tamamlama + plan sonu

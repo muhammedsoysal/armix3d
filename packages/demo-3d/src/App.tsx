@@ -23,6 +23,7 @@ import { ShiftReport } from "./hud/ShiftReport";
 import { Toolbar } from "./hud/Toolbar";
 import { AlarmBanner } from "./alarm/AlarmBanner";
 import { GanttView } from "./hud/GanttView";
+import { Splash, Onboarding, introStore } from "./hud/Splash";
 import { connectLiveTelemetry } from "./telemetry/liveTelemetryService";
 import { DirectorHUD } from "./hud/DirectorHUD";
 import { directorStore } from "./director/directorStore";
@@ -46,7 +47,11 @@ export default function App() {
       >
         {/* flipflops=2: sınırda gezen makine sürekli kalite değiştirip durmasın.
             stepDown localStorage'a yazmaz — anlık yavaşlama kalıcı düşürme yapmaz. */}
-        <PerformanceMonitor flipflops={2} onDecline={() => qualityStore.getState().stepDown()}>
+        <PerformanceMonitor flipflops={2} onDecline={() => {
+            // Açılış/iniş sırasındaki shader derleme takılmaları kalite
+            // kararı DEĞİLDİR — intro bitmeden düşürme yapma
+            if (introStore.getState().phase === "done") qualityStore.getState().stepDown();
+          }}>
           <Factory />
           <MachineLine />
           <SimulationController />
@@ -73,6 +78,8 @@ export default function App() {
       <GanttView />
       <TraceabilityHUD />
       <ShiftReport />
+      <Splash />
+      <Onboarding />
     </div>
   );
 }
