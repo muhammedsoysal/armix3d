@@ -30,8 +30,9 @@ function Highbay({ x, z }: { x: number; z: number }) {
 }
 
 export function CeilingLights() {
-  const xs = [-25, -16.5, -8, 0.5, 9, 17.5, 26];
-  const zs = [-16, -7, 2, 10];
+  // Mega-fabrika: 7×5 = 35 armatür (100×60 m zarfı homojen kaplar)
+  const xs = [-44, -30, -16, -2, 12, 26, 40];
+  const zs = [-24, -13, -2, 9, 20];
   return (
     <group>
       {zs.flatMap((z) => xs.map((x) => <Highbay key={`${x},${z}`} x={x} z={z} />))}

@@ -75,6 +75,14 @@ export function FloorZones() {
       <Zone x={3.2} z={-3.9} w={8} d={3.4} color="#161d29" code="A3" />
       {/* Bitmiş ürün deposu — yeşilimsi sevkiyat epoksisi */}
       <Zone x={13.2} z={-4.8} w={9} d={10.5} color="#121d18" code="C1" border="#4a7a5a" />
+      {/* Robotik kaynak hücreleri — sıcak turuncu ton */}
+      <Zone x={29} z={-13.4} w={13.5} d={7.5} color="#1d1610" code="D1" border="#a06a2a" />
+      {/* Boru lazer hattı */}
+      <Zone x={33} z={5.6} w={14} d={6} color="#101d22" code="D2" border="#3a7a8a" />
+      {/* Plazma kesim kanadı — mavi ton */}
+      <Zone x={-41} z={-8} w={12.5} d={8.5} color="#101624" code="E1" border="#3a5a9a" />
+      {/* Toz boya tüneli — mor ton */}
+      <Zone x={2} z={-24.5} w={17.5} d={5.6} color="#160f22" code="F1" border="#6a4a9a" />
       {/* Yaya yolu — yeşil bant (koridor kuzeyi) */}
       <mesh position={[-2, 0.0042, 2.2]} rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[34, 1.1]} />

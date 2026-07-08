@@ -30,6 +30,10 @@ const SHAFTS: { x: number; z: number; topR: number; bottomR: number; h: number }
   { x: 12, z: -6, topR: 0.55, bottomR: 2.6, h: 12.6 },
   { x: -22, z: -14, topR: 0.6, bottomR: 3.0, h: 12.6 },
   { x: 20, z: 4, topR: 0.55, bottomR: 2.6, h: 12.6 },
+  { x: -41, z: -8, topR: 0.6, bottomR: 3.0, h: 12.6 }, // plazma
+  { x: 29, z: -12, topR: 0.6, bottomR: 2.8, h: 12.6 }, // kaynak
+  { x: 33, z: 8, topR: 0.55, bottomR: 2.6, h: 12.6 }, // boru lazer
+  { x: 2, z: -24, topR: 0.55, bottomR: 2.6, h: 12.6 }, // toz boya
 ];
 
 export function VolumetricShafts() {

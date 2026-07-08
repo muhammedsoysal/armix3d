@@ -37,7 +37,7 @@ function Tables() {
 
 import { IndustrialCoilStorage } from "./IndustrialCoilStorage";
 import { AGV, PatrolAGV } from "../agv/AGV";
-import { INNER_LOOP } from "../agv/agvLogic";
+import { EAST_LOOP, INNER_LOOP, WEST_LOOP } from "../agv/agvLogic";
 import { GuideLanes } from "../agv/GuideLanes";
 import { NestingProjection } from "../nesting/NestingProjection";
 import { ScrapBin } from "../nesting/ScrapBin";
@@ -53,6 +53,10 @@ import { Drums } from "./Drums";
 import { FinishedGoodsWarehouse } from "./FinishedGoodsWarehouse";
 import { PressBrake, Conveyors } from "./PressBrake";
 import { NeonAccents } from "./NeonAccents";
+import { WeldingCells } from "./WeldingCell";
+import { TubeLaser } from "./TubeLaser";
+import { PlasmaCutter } from "./PlasmaCutter";
+import { CoatingTunnel } from "./CoatingTunnel";
 
 /** CNC hattının tamamı: rulo → doğrultucu → kesim → vakum kaldırıcı → palet. */
 export function MachineLine() {
@@ -73,6 +77,8 @@ export function MachineLine() {
       <AGV />
       <PatrolAGV />
       <PatrolAGV id="AGV-03" loop={INNER_LOOP} speed={0.75} bodyColor="#7c3aed" startS={12} />
+      <PatrolAGV id="AGV-04" loop={EAST_LOOP} speed={0.85} bodyColor="#b45309" startS={20} />
+      <PatrolAGV id="AGV-05" loop={WEST_LOOP} speed={0.8} bodyColor="#1d4ed8" startS={35} />
       <GuideLanes />
       <Forklift />
       <SlittingLine />
@@ -87,6 +93,11 @@ export function MachineLine() {
       <PressBrake />
       <NeonAccents />
       <Conveyors />
+      {/* MEGA-FABRİKA DEPARTMANLARI */}
+      <WeldingCells />
+      <TubeLaser />
+      <PlasmaCutter />
+      <CoatingTunnel />
     </group>
   );
 }

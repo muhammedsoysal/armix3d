@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { CanvasTexture, FrontSide } from "three";
+import { PLANT } from "../sim/constants";
 
 /**
  * Fabrika binası — tesis artık boşlukta yüzmüyor.
@@ -9,12 +10,12 @@ import { CanvasTexture, FrontSide } from "three";
  * Draw-call bütçesi: ~70 mesh + 4 Text.
  */
 
-// Bina zarfı (dünya koordinatları)
-const X0 = -30;
-const X1 = 30;
-const Z0 = -22; // arka
-const Z1 = 14; // ön (açık cephe — dok çıkışı buradan)
-const H = 13; // saçak yüksekliği — endüstriyel kompleks ölçeği
+// Bina zarfı — PLANT tek kaynağından (Mini-Harita ile ortak)
+const X0 = PLANT.x0;
+const X1 = PLANT.x1;
+const Z0 = PLANT.z0; // arka
+const Z1 = PLANT.z1; // ön (açık cephe — dok çıkışı buradan)
+const H = PLANT.h; // saçak yüksekliği — mega-fabrika ölçeği
 const WIN_Y = 4.2; // pencere bandı merkezi
 const WIN_H = 1.3;
 
@@ -147,6 +148,12 @@ export function FactoryBuilding() {
     [12, -6],
     [-22, -14],
     [20, 4],
+    [-41, -8], // plazma kanadı
+    [29, -12], // kaynak hücreleri
+    [33, 8], // boru lazer
+    [2, -24], // toz boya
+    [-34, 14],
+    [38, 20],
   ];
 
   return (
@@ -157,7 +164,7 @@ export function FactoryBuilding() {
       <Wall cx={X1} cz={cz} len={D} rotY={-Math.PI / 2} />
 
       {/* Duvar kolonları (arka duvar boyunca, iç tarafta) */}
-      {Array.from({ length: 13 }, (_, i) => X0 + 2 + i * (W / 13)).map((x) => (
+      {Array.from({ length: 19 }, (_, i) => X0 + 2 + i * (W / 19)).map((x) => (
         <mesh key={x} position={[x, H / 2, Z0 + 0.15]} castShadow={false}>
           <boxGeometry args={[0.3, H, 0.3]} />
           <meshStandardMaterial color={STEEL} metalness={0.4} roughness={0.6} />
@@ -170,14 +177,14 @@ export function FactoryBuilding() {
         <meshStandardMaterial color="#161b22" roughness={0.95} side={FrontSide} />
       </mesh>
       {/* Oluklu görünüm: çatı altı uzun şeritler */}
-      {Array.from({ length: 9 }, (_, i) => Z0 + (i + 0.5) * (D / 9)).map((z) => (
+      {Array.from({ length: 12 }, (_, i) => Z0 + (i + 0.5) * (D / 12)).map((z) => (
         <mesh key={z} position={[cx, H + 0.38, z]} castShadow={false}>
           <boxGeometry args={[W, 0.06, 0.5]} />
           <meshStandardMaterial color="#10151c" roughness={0.95} />
         </mesh>
       ))}
-      {/* Makaslar */}
-      {[-26, -18.5, -11, -3.5, 4, 11.5, 19, 26.5].map((x) => (
+      {/* Makaslar — ~7.7 m aralıklı 13 adet */}
+      {Array.from({ length: 13 }, (_, i) => -46 + i * 7.7).map((x) => (
         <Truss key={x} x={x} />
       ))}
 
@@ -210,9 +217,13 @@ export function FactoryBuilding() {
 
       {/* TABELALAR */}
       <Sign pos={[-2, 6.4, Z0 + 0.2]} rotY={0} label="SAHA 1 — KESİM" />
-      <Sign pos={[X0 + 0.2, 6.4, -6]} rotY={Math.PI / 2} label="RULO DEPOSU" />
+      <Sign pos={[-20, 6.4, Z0 + 0.2]} rotY={0} label="RULO DEPOSU" />
+      <Sign pos={[2, 6.4, Z0 + 0.2]} rotY={0} label="SAHA 4 — TOZ BOYA" />
+      <Sign pos={[29, 6.4, Z0 + 0.2]} rotY={0} label="SAHA 2 — KAYNAK" />
+      <Sign pos={[X0 + 0.2, 6.4, -8]} rotY={Math.PI / 2} label="SAHA 3 — PLAZMA" />
+      <Sign pos={[X1 - 0.2, 6.4, 6]} rotY={-Math.PI / 2} label="BORU LAZER" />
       <Sign pos={[X1 - 0.2, 6.4, -2]} rotY={-Math.PI / 2} label="SEVKİYAT" />
-      <Sign pos={[X1 - 0.2, 6.4, 4]} rotY={-Math.PI / 2} label="DOK 1" />
+      <Sign pos={[X1 - 0.2, 6.4, 14]} rotY={-Math.PI / 2} label="DOK 1" />
 
       {/* ZEMİN GÜVENLİK ŞERİTLERİ: koridor kenarları + yaya geçidi */}
       <FloorLine x={0} z={3.0} w={22} l={0.12} />

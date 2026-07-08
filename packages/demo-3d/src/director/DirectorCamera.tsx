@@ -52,11 +52,16 @@ export function DirectorCamera() {
   useEffect(() => {
     const c = controlsRef.current;
     if (!c) return;
-    c.setLookAt(40, 34, 58, -0.8, 1, 0, false); // yüksek açılış pozu — katedral ölçek
+    c.setLookAt(58, 44, 80, -0.8, 1, 0, false); // yüksek açılış pozu — mega-fabrika ölçeği
+    // ?cam=px,py,pz,tx,ty,tz — sabit kadraj (fuar açılış açısı / doğrulama)
+    const camParam = new URLSearchParams(window.location.search).get("cam");
+    const fixed = camParam?.split(",").map(Number).filter((n) => Number.isFinite(n));
     const unsub = introStore.subscribe((s, prev) => {
       if (s.phase === "descending" && prev.phase === "loading") {
         c.smoothTime = 1.1;
-        void c.setLookAt(4.5, 4, 9.5, -0.8, 1, 0, true);
+        if (fixed?.length === 6) {
+          void c.setLookAt(fixed[0], fixed[1], fixed[2], fixed[3], fixed[4], fixed[5], true);
+        } else void c.setLookAt(4.5, 4, 9.5, -0.8, 1, 0, true);
         setTimeout(() => {
           c.smoothTime = DEFAULT_SMOOTH;
           introStore.setState({ phase: "done" });
@@ -171,7 +176,7 @@ export function DirectorCamera() {
       ref={controlsRef}
       makeDefault
       minDistance={4}
-      maxDistance={52}
+      maxDistance={82}
       maxPolarAngle={Math.PI / 2.05}
       smoothTime={DEFAULT_SMOOTH}
     />

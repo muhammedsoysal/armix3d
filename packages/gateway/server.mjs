@@ -78,7 +78,7 @@ const broadcast = (msg) => {
 };
 
 setInterval(() => {
-  for (const [id, p, oee] of [["CTL-1", 46, 88], ["SLT-1", 74, 91], ["LSR-2", 58, 84]]) {
+  for (const [id, p, oee] of [["CTL-1", 46, 88], ["SLT-1", 74, 91], ["LSR-2", 58, 84], ["WLD-1", 32, 89], ["TBL-1", 66, 86], ["PLZ-1", 92, 90], ["PWD-1", 41, 93]]) {
     broadcast({
       type: "machine.telemetry",
       machineId: id,

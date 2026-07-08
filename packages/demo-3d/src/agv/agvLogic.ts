@@ -101,13 +101,35 @@ export function missionLegs(
   };
 }
 
-/** Tesis çevresi devriye halkası (AGV-02). Raf sahası arkasından dolaşır. */
+/** Tesis çevresi devriye halkası (AGV-02). Mega-fabrika zarfının ~3.5 m içi. */
 export const PATROL_LOOP: FloorPath = [
-  [26, 11],
-  [-26, 11],
-  [-26, -19],
-  [26, -19],
-  [26, 11],
+  [46, 26],
+  [-46, 26],
+  [-46, -27.4],
+  [46, -27.4],
+  [46, 26],
+];
+
+/** Doğu servis halkası (AGV-04): kaynak hücreleri + boru lazeri ana
+ * koridora bağlar — FG rafları (x 10..16) ve kamyonun DOĞUSUNDAN dolaşır,
+ * kaynak çitine (z −11.7) ve boru lazer yatağına (z 4.5..7.5) girmez. */
+export const EAST_LOOP: FloorPath = [
+  [19, 2.2],
+  [40, 2.2],
+  [40, -18],
+  [19, -18],
+  [19, 2.2],
+];
+
+/** Batı servis halkası (AGV-05): plazma kanadını ana koridora bağlar —
+ * rulo deposunun (B1: x −19.5..−5.5) ve plazma masasının batı kenarından
+ * ≥1.5 m açıklıkla geçer. */
+export const WEST_LOOP: FloorPath = [
+  [-23, 4],
+  [-47.5, 4],
+  [-47.5, -18],
+  [-23, -18],
+  [-23, 4],
 ];
 
 /** İç devriye halkası (AGV-03) — dış halkayla z=±4.6 şeritlerini PAYLAŞIR:

@@ -119,6 +119,13 @@ function connectMock(): () => void {
     // LSR-2: kendi döngüsü LaserCell tarafından sürülür; sensörleri burada beslenir
     const lsr = telemetryStore.getState().machines["LSR-2"];
     push("LSR-2", lsr.status, 58, 83);
+
+    // MEGA-FABRİKA departmanları — her biri kendi çevrim ritminde
+    const t = Date.now() / 1000;
+    push("WLD-1", (t % 8) < 5.5 ? "RUNNING" : "IDLE", 32, 89); // 8 sn kaynak çevrimi
+    push("TBL-1", ((t % 14) / 14) < 0.82 ? "RUNNING" : "UNLOADING", 66, 86); // 14 sn boru çevrimi
+    push("PLZ-1", "RUNNING", 92, 90); // plazma sürekli tarama
+    push("PWD-1", "RUNNING", 41, 93); // konveyör kesintisiz akar
   }, 1000);
 
   return () => {

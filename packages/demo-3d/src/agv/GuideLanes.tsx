@@ -4,7 +4,7 @@ import { Line } from "@react-three/drei";
 import type { Line2 } from "three-stdlib";
 import { useMemo } from "react";
 import { CanvasTexture } from "three";
-import { DOCK, PATROL_LOOP } from "./agvLogic";
+import { DOCK, EAST_LOOP, PATROL_LOOP, WEST_LOOP } from "./agvLogic";
 
 const LANE_Y = 0.012; // Grid çizgilerinin (0.005) hemen üstü — z-fight yok
 
@@ -123,6 +123,12 @@ export function GuideLanes() {
       ))}
       <LaneBand points={PATROL_LOOP} />
       <AnimatedLane points={PATROL_LOOP} color="#eab308" speed={0.3} />
+      {/* Doğu servis halkası — kaynak + boru lazer departmanlarını bağlar */}
+      <LaneBand points={EAST_LOOP} />
+      <AnimatedLane points={EAST_LOOP} color="#f59e0b" speed={0.35} />
+      {/* Batı servis halkası — plazma kanadını bağlar */}
+      <LaneBand points={WEST_LOOP} />
+      <AnimatedLane points={WEST_LOOP} color="#60a5fa" speed={0.35} />
       {/* Şarj istasyonu zemin işareti */}
       <mesh position={[DOCK.x, 0.0095, DOCK.z]} rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[1.9, 1.9]} />

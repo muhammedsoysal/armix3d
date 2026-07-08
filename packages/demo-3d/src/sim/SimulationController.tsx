@@ -34,11 +34,15 @@ export function SimulationController() {
   useEffect(() => {
     const source = (import.meta.env.VITE_DATA_SOURCE ?? "mock") as DataSource;
     const apiUrl = import.meta.env.VITE_API_URL as string | undefined;
-    const stockProvider = createStockProvider(source, apiUrl);
-    const salesProvider = createSalesProvider(source, apiUrl);
     if (source === "live") console.log(`[PLAN] Canlı ERP kaynağı: ${apiUrl ?? "http://localhost:8787"}`);
 
-    Promise.all([stockProvider.getStockItems(), salesProvider.getSalesRecords()])
+    // Kiosk emniyeti: canlı kaynak erişilemezse MOCK'a düş — fuar standında
+    // ağ olmasa da splash hiçbir zaman kilitlenmez
+    const load = (src: DataSource): Promise<void> =>
+      Promise.all([
+        createStockProvider(src, apiUrl).getStockItems(),
+        createSalesProvider(src, apiUrl).getSalesRecords(),
+      ])
       .then(([stock, sales]) => {
         const parts = getPartDefinitions();
         // v2 motor: giyotin kısıtlı çok-varyantlı nesting (grid'den asla kötü değil)
@@ -59,8 +63,16 @@ export function SimulationController() {
             .map((r, i) => `${i + 1}. ${r.sku} (skor ${r.priorityScore}, fire %${r.estimatedScrapPercent})`)
             .join(" | "),
         );
-      })
-      .catch((err) => console.error("[PLAN] Üretim planı yüklenemedi:", err));
+      });
+
+    load(source).catch((err) => {
+      if (source === "live") {
+        console.warn("[PLAN] Canlı kaynak erişilemedi, mock'a düşülüyor:", err);
+        load("mock").catch((e2) => console.error("[PLAN] Üretim planı yüklenemedi:", e2));
+      } else {
+        console.error("[PLAN] Üretim planı yüklenemedi:", err);
+      }
+    });
   }, []);
 
   useFrame((_, rawDelta) => {

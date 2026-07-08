@@ -85,46 +85,53 @@ function WallFan({ pos, rotY }: { pos: [number, number, number]; rotY: number })
 export function WallDetails() {
   return (
     <group>
-      {/* HVAC ana kanalı — arka duvar boyunca tavan altında */}
-      <mesh position={[0, 11.6, -21.4]} rotation={[0, 0, Math.PI / 2]} castShadow={false}>
-        <cylinderGeometry args={[0.5, 0.5, 54, 14]} />
+      {/* HVAC ana kanalı — arka duvar boyunca tavan altında (100 m zarf) */}
+      <mesh position={[0, 11.6, -29.4]} rotation={[0, 0, Math.PI / 2]} castShadow={false}>
+        <cylinderGeometry args={[0.5, 0.5, 92, 14]} />
         <meshStandardMaterial color={DUCT} metalness={0.65} roughness={0.35} />
       </mesh>
       {/* Dikey inişler + dirsek küreleri */}
-      {[-18, -4, 10, 22].map((x) => (
+      {[-38, -18, -4, 10, 24, 40].map((x) => (
         <group key={x}>
-          <mesh position={[x, 11.6, -21.4]}>
+          <mesh position={[x, 11.6, -29.4]}>
             <sphereGeometry args={[0.55, 12, 10]} />
             <meshStandardMaterial color={DUCT} metalness={0.65} roughness={0.35} />
           </mesh>
-          <mesh position={[x, 9.2, -21.4]}>
+          <mesh position={[x, 9.2, -29.4]}>
             <cylinderGeometry args={[0.42, 0.42, 5.2, 12]} />
             <meshStandardMaterial color={DUCT} metalness={0.65} roughness={0.35} />
           </mesh>
-          <mesh position={[x, 6.4, -21.1]} rotation={[Math.PI / 2.6, 0, 0]}>
+          <mesh position={[x, 6.4, -29.1]} rotation={[Math.PI / 2.6, 0, 0]}>
             <cylinderGeometry args={[0.42, 0.55, 0.7, 12]} />
             <meshStandardMaterial color="#4a5560" metalness={0.6} roughness={0.4} />
           </mesh>
         </group>
       ))}
       {/* Kablo tavası — sol duvar boyunca */}
-      <mesh position={[-29.7, 9.6, -5]} castShadow={false}>
-        <boxGeometry args={[0.35, 0.12, 32]} />
+      <mesh position={[-49.7, 9.6, -5]} castShadow={false}>
+        <boxGeometry args={[0.35, 0.12, 44]} />
         <meshStandardMaterial color={STEEL} metalness={0.6} roughness={0.45} />
       </mesh>
       {/* EXIT tabelaları */}
-      <ExitSign pos={[8, 5.6, 13.85]} rotY={Math.PI} />
-      <ExitSign pos={[-29.75, 5.6, 4]} rotY={Math.PI / 2} />
+      <ExitSign pos={[8, 5.6, 29.85]} rotY={Math.PI} />
+      <ExitSign pos={[-49.75, 5.6, 4]} rotY={Math.PI / 2} />
+      <ExitSign pos={[49.75, 5.6, -6]} rotY={-Math.PI / 2} />
       {/* Yangın noktaları */}
-      <FirePoint pos={[-6, 1.1, -21.7]} rotY={0} />
-      <FirePoint pos={[16, 1.1, -21.7]} rotY={0} />
-      <FirePoint pos={[-29.7, 1.1, 1]} rotY={Math.PI / 2} />
+      <FirePoint pos={[-6, 1.1, -29.7]} rotY={0} />
+      <FirePoint pos={[16, 1.1, -29.7]} rotY={0} />
+      <FirePoint pos={[-36, 1.1, -29.7]} rotY={0} />
+      <FirePoint pos={[36, 1.1, -29.7]} rotY={0} />
+      <FirePoint pos={[-49.7, 1.1, 1]} rotY={Math.PI / 2} />
       {/* Elektrik panoları */}
-      <Panel pos={[4, 1.5, -21.75]} rotY={0} />
-      <Panel pos={[-20, 1.5, -21.75]} rotY={0} />
+      <Panel pos={[4, 1.5, -29.75]} rotY={0} />
+      <Panel pos={[-20, 1.5, -29.75]} rotY={0} />
+      <Panel pos={[30, 1.5, -29.75]} rotY={0} />
+      <Panel pos={[-49.75, 1.5, -14]} rotY={Math.PI / 2} />
       {/* Duvar vantilatörleri */}
-      <WallFan pos={[-12, 7.5, -21.75]} rotY={0} />
-      <WallFan pos={[22, 7.5, -21.75]} rotY={0} />
+      <WallFan pos={[-12, 7.5, -29.75]} rotY={0} />
+      <WallFan pos={[22, 7.5, -29.75]} rotY={0} />
+      <WallFan pos={[-42, 7.5, -29.75]} rotY={0} />
+      <WallFan pos={[44, 7.5, -29.75]} rotY={0} />
     </group>
   );
 }

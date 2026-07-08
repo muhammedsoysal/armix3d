@@ -18,7 +18,8 @@ export function Factory() {
   return (
     <>
       <color attach="background" args={["#07090d"]} />
-      <fog attach="fog" args={["#07090d", 18, 48]} />
+      {/* Mega-fabrika: sis ufku 100 m zarfı + kuşbakışı kadrajı kapsar */}
+      <fog attach="fog" args={["#07090d", 26, 150]} />
 
       <ambientLight intensity={0.25} />
       {/* key: gölge haritası boyutu değişince ışık yeniden kurulur (eski map dispose edilir) */}
@@ -35,6 +36,12 @@ export function Factory() {
       />
       <spotLight position={[-8, 6, 6]} angle={0.5} penumbra={0.8} intensity={40} color="#6fa8ff" />
       <spotLight position={[5, 5, -6]} angle={0.6} penumbra={0.9} intensity={25} color="#ffb36b" />
+      {/* Kanat dolgu ışıkları — yeni departmanlar karanlıkta kalmasın
+          (gölge yok: FPS bütçesine dokunmaz) */}
+      <spotLight position={[29, 11, -10]} angle={0.75} penumbra={0.9} intensity={30} color="#ffd9b0" />
+      <spotLight position={[33, 11, 6]} angle={0.7} penumbra={0.9} intensity={26} color="#bcd7ff" />
+      <spotLight position={[-41, 11, -6]} angle={0.75} penumbra={0.9} intensity={30} color="#bcd7ff" />
+      <spotLight position={[2, 11, -23]} angle={0.7} penumbra={0.9} intensity={24} color="#d8c6ff" />
 
       <Environment key={`env-${params.envResolution}`} resolution={params.envResolution}>
         <Lightformer intensity={1.9} position={[0, 6, 0]} rotation-x={Math.PI / 2} scale={[12, 8, 1]} />

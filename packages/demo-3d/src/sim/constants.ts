@@ -1,5 +1,16 @@
 import type { MachineState } from "@metalnest/core";
 
+/** Tesis zarfı (dünya koordinatları, metre) — Mega-Fabrika 100×60m.
+ * TEK KAYNAK: FactoryBuilding duvarları, Mini-Harita ölçeği, devriye
+ * halkaları ve tavan armatürleri hep buradan türetilir. */
+export const PLANT = {
+  x0: -50,
+  x1: 50,
+  z0: -30, // arka
+  z1: 30, // ön (açık cephe — dok çıkışı)
+  h: 13,
+} as const;
+
 /** Hat yerleşimi (metre). Sac +X yönünde akar. */
 export const LAYOUT = {
   // Ferah yerleşim: makineler arası gerçek fiziksel boşluk (clipping yok,

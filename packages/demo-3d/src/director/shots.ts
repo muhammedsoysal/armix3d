@@ -74,9 +74,9 @@ export const SHOTS: Record<ShotId, Shot> = {
   },
   grandTour: {
     label: "Tesis Turu — Kuş Bakışı",
-    // Katedral ölçeği gösteren süpürme: yüksek ve geniş
-    position: [34, 21, 36],
-    target: [-2, 1, -4],
+    // Mega-fabrika süpürmesi: 100×60 zarfı tek kadraja alır
+    position: [52, 30, 54],
+    target: [-2, 1, -5],
     drift: 0.02,
   },
   truckDock: {
