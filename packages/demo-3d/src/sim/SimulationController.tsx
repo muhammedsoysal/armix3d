@@ -23,6 +23,7 @@ import {
 import { currentPart, currentPartMeters, currentRecommendation, simStore } from "./simStore";
 import { computeNest } from "../nesting/nestingMath";
 import { scrapStore } from "../nesting/scrapStore";
+import { alarmStore, craneStore } from "../alarm/alarmStore";
 
 /**
  * Simülasyonun kalbi: üretim planını karar motorundan yükler ve makine
@@ -71,6 +72,13 @@ export function SimulationController() {
       return;
     }
 
+    // ALARM: makine donar (progress ilerlemez), süre dolunca otomatik çözülür
+    const alarm = alarmStore.getState();
+    if (alarm.active) {
+      if (Date.now() >= alarm.until) alarm.clear();
+      else return;
+    }
+
     const delta = Math.min(rawDelta, 0.1); // sekme arka planda kalınca sıçramayı önle
     const machine = machineStateStore.getState();
     const rec = currentRecommendation(sim)!;
@@ -84,7 +92,8 @@ export function SimulationController() {
       simFrame.coilAngle += fed / radius;
       if (radius <= COIL.RMIN + 1e-4) {
         simFrame.totalFedLength = 0;
-        console.log("[SIM] Rulo tükendi — yeni rulo yüklendi.");
+        console.log("[SIM] Rulo tükendi — vinç ikmal için çağrıldı.");
+        craneStore.getState().start();
       }
     }
 
@@ -134,6 +143,8 @@ export function SimulationController() {
           // Sona ekle: grid indeksleri stabil kalır (paletler yer değiştirmez)
           completed = [...s.completedPallets, { id: Date.now(), stack }].slice(-6);
         }
+        // Her 6 kesimde bir vinç stok-rotasyon/ikmal turu (gözlemlenebilir demo)
+        if ((s.totalPiecesCut + 1) % 6 === 0) craneStore.getState().start();
         return {
           palletStack: palletFull ? [] : stack,
           completedPallets: completed,

@@ -4,6 +4,7 @@ import { type Mesh, type MeshStandardMaterial } from "three";
 import { machineStateStore } from "@metalnest/core";
 import { simStore } from "../sim/simStore";
 import { LAYOUT } from "../sim/constants";
+import { alarmStore } from "../alarm/alarmStore";
 
 /** Andon kulesi — fabrikaların evrensel durum dili. Kesim portalının
  * yanında: yeşil=üretim, amber=beklemede, tümü yanıp sönen yeşil=plan bitti.
@@ -23,10 +24,11 @@ export function AndonTower() {
       const mat = m.material as MeshStandardMaterial;
       mat.emissiveIntensity = on ? (pulse ? 1.2 + 2.4 * blink : 2.6) : 0.08;
     };
-    // done: yeşil kutlama nabzı · IDLE: amber · üretim fazları: yeşil sabit
-    set(greenRef.current, done || state !== "IDLE", done);
-    set(amberRef.current, !done && state === "IDLE");
-    set(redRef.current, false); // arıza senaryosu için rezerve
+    // ALARM: kırmızı çakar, diğerleri söner · done: yeşil nabız · IDLE: amber
+    const alarm = alarmStore.getState().active;
+    set(redRef.current, alarm, true);
+    set(greenRef.current, !alarm && (done || state !== "IDLE"), done);
+    set(amberRef.current, !alarm && !done && state === "IDLE");
   });
 
   const seg = (y: number, color: string, emissive: string, ref: React.RefObject<Mesh>) => (

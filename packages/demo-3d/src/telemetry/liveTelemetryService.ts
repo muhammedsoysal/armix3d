@@ -1,4 +1,5 @@
 import { machineStateStore } from "@metalnest/core";
+import { alarmStore } from "../alarm/alarmStore";
 import { telemetryStore, type MachineStatus } from "./telemetryStore";
 
 /**
@@ -97,9 +98,20 @@ function connectMock(): () => void {
   console.log("[TELEMETRY] Canlı veri akışı bağlandı (mock WS, 1 Hz)");
 
   timer = setInterval(() => {
-    // CTL-1: gerçek simülasyon durumundan
+    // CTL-1: gerçek simülasyon durumundan; alarm senaryosunda ALARM + sıcaklık patlar
+    const { active: alarmed } = alarmStore.getState();
     const ctlState = machineStateStore.getState().state;
-    push("CTL-1", ctlState === "IDLE" ? "IDLE" : "RUNNING", 46, 87);
+    if (alarmed) {
+      const s = telemetryStore.getState();
+      const m = s.machines["CTL-1"];
+      s.updateMachine("CTL-1", {
+        status: "ALARM",
+        tempC: jitter(78, 4),
+        vibration: jitter(6.5, 1.5),
+        oee: Math.max(0, m.oee - 1.5),
+        history: [...m.history, m.powerKw].slice(-HISTORY_LEN),
+      });
+    } else push("CTL-1", ctlState === "IDLE" ? "IDLE" : "RUNNING", 46, 87);
 
     // SLT-1: yarma hattı sürekli çalışır (kendi iş kuyruğunu tüketir)
     push("SLT-1", "RUNNING", 74, 91);

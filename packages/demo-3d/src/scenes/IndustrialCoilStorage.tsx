@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
 import type { Group, Mesh } from "three";
+import { craneStore } from "../alarm/alarmStore";
 
 /** Bobin verileri */
 const coilsData = [
@@ -134,8 +135,30 @@ function OverheadCrane() {
   const ropeRef = useRef<Mesh>(null!);
   const hookRef = useRef<Group>(null!);
   const coilRef = useRef<Mesh>(null!);
+  const replRef = useRef(-1); // ≥0: ikmal turu zamanlayıcısı (öncelikli)
 
-  useFrame(({ clock }) => {
+  useFrame(({ clock }, dt) => {
+    // İKMAL TURU: craneStore tetiklerse ambient döngü yerine hızlı teslimat
+    if (craneStore.getState().replenishing && replRef.current < 0) replRef.current = 0;
+    if (replRef.current >= 0) {
+      replRef.current += Math.min(dt, 0.05);
+      const r = replRef.current;
+      // raf tarafına git (0-3) → indir/al (3-6) → hat tarafına taşı (6-10) → bırak (10-13)
+      const x = -2.2 * phase(r, 0, 3) + 4.7 * phase(r, 6, 10) - 2.5 * phase(r, 13, 15);
+      bridgeRef.current.position.x = x;
+      const L = 1.0 + 2.4 * (phase(r, 3, 4.5) - phase(r, 5, 6) + phase(r, 10, 11.5) - phase(r, 12, 13));
+      ropeRef.current.scale.y = L / 2;
+      ropeRef.current.position.y = -0.55 - L / 2;
+      hookRef.current.position.y = -0.55 - L;
+      coilRef.current.visible = r >= 4.5 && r < 12;
+      if (r >= 15) {
+        replRef.current = -1;
+        craneStore.getState().done();
+        console.log("[VINC] Yeni rulo hatta teslim edildi");
+      }
+      return;
+    }
+
     const t = clock.elapsedTime % 40;
 
     // Köprü x: 0 → -2 (alış) → +2 (bırakış) → 0
