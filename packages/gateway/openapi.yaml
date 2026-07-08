@@ -1,0 +1,83 @@
+openapi: 3.0.3
+info:
+  title: MetalNest ERP Gateway
+  version: 1.0.0
+  description: >
+    Digital Twin'in dış dünya kontratı. Gerçek ERP (SAP/Logo/Netsis) adaptörü
+    bu şemayı doldurur; tarayıcı YALNIZCA bu gateway ile konuşur.
+servers:
+  - url: http://localhost:8787
+paths:
+  /api/v1/health:
+    get:
+      summary: Gateway sağlık + veri sürümü
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, enum: [ok] }
+                  snapshotSeq: { type: integer, description: Delta senkronu için sürüm sayacı }
+  /api/v1/stock:
+    get:
+      summary: Canlı stok anlık görüntüsü
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/StockItem" }
+  /api/v1/sales:
+    get:
+      summary: Satış geçmişi özeti (Karar Motoru girdisi)
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/SalesRecord" }
+components:
+  schemas:
+    StockItem:
+      type: object
+      required: [sku, materialType, dimensions, quantityAvailable, arrivalDate, unitCost]
+      properties:
+        sku: { type: string }
+        materialType: { type: string }
+        dimensions:
+          type: object
+          properties:
+            width: { type: number }
+            length: { type: number }
+            thickness: { type: number }
+        quantityAvailable: { type: integer }
+        arrivalDate: { type: string, format: date-time }
+        unitCost: { type: number }
+        isStale: { type: boolean }
+    SalesRecord:
+      type: object
+      required: [sku, productName, unitsSoldLast30Days, unitsSoldLast90Days, revenueLast30Days, trend]
+      properties:
+        sku: { type: string }
+        productName: { type: string }
+        unitsSoldLast30Days: { type: integer }
+        unitsSoldLast90Days: { type: integer }
+        revenueLast30Days: { type: number }
+        trend: { type: string, enum: [rising, stable, falling] }
+
+# --- WebSocket olay şeması (ws://host/ws) ---
+# Her mesaj tek JSON nesnesi; `type` ayrıştırıcıdır, `seq` boşluk tespiti içindir.
+#
+# { "type": "machine.telemetry", "seq": 123, "ts": 1751900000000,
+#   "machineId": "CTL-1", "status": "RUNNING|IDLE|UNLOADING|ALARM",
+#   "oee": 87.2, "powerKw": 46.1, "tempC": 41.3, "vibration": 2.2 }
+#
+# { "type": "agv.pose", "seq": 124, "ts": ...,
+#   "agvId": "AGV-EXT-1", "x": 4.2, "z": 1.5, "heading": 1.57, "battery": 84 }
+#
+# { "type": "order.created", "seq": 125, "ts": ...,
+#   "order": { "sku": "PRT-008", "qty": 40, "dueDate": "2026-07-12" } }

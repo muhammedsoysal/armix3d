@@ -7,10 +7,10 @@ import { LiveStockProvider } from "./LiveStockProvider";
 import { LiveSalesProvider } from "./LiveSalesProvider";
 
 /** Veri kaynağı seçimi çağıran taraftan (.env) gelir — core env okumaz. */
-export function createStockProvider(source: DataSource): IStockProvider {
-  return source === "live" ? new LiveStockProvider() : new MockStockProvider();
+export function createStockProvider(source: DataSource, baseUrl?: string): IStockProvider {
+  return source === "live" ? new LiveStockProvider(baseUrl) : new MockStockProvider();
 }
 
-export function createSalesProvider(source: DataSource): ISalesProvider {
-  return source === "live" ? new LiveSalesProvider() : new MockSalesProvider();
+export function createSalesProvider(source: DataSource, baseUrl?: string): ISalesProvider {
+  return source === "live" ? new LiveSalesProvider(baseUrl) : new MockSalesProvider();
 }

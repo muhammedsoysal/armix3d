@@ -32,8 +32,10 @@ import { scrapStore } from "../nesting/scrapStore";
 export function SimulationController() {
   useEffect(() => {
     const source = (import.meta.env.VITE_DATA_SOURCE ?? "mock") as DataSource;
-    const stockProvider = createStockProvider(source);
-    const salesProvider = createSalesProvider(source);
+    const apiUrl = import.meta.env.VITE_API_URL as string | undefined;
+    const stockProvider = createStockProvider(source, apiUrl);
+    const salesProvider = createSalesProvider(source, apiUrl);
+    if (source === "live") console.log(`[PLAN] Canlı ERP kaynağı: ${apiUrl ?? "http://localhost:8787"}`);
 
     Promise.all([stockProvider.getStockItems(), salesProvider.getSalesRecords()])
       .then(([stock, sales]) => {

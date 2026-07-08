@@ -83,6 +83,8 @@ export function FactoryDashboard() {
   const [open, setOpen] = useState(false);
   const machines = useStore(telemetryStore, (s) => s.machines);
   const connected = useStore(telemetryStore, (s) => s.connected);
+  const source = useStore(telemetryStore, (s) => s.source);
+  const wsEvents = useStore(telemetryStore, (s) => s.wsEvents);
   const slitQueue = useStore(telemetryStore, (s) => s.slitQueue);
   const slitActiveIdx = useStore(telemetryStore, (s) => s.slitActiveIdx);
   const slitProgress = useStore(telemetryStore, (s) => s.slitProgress);
@@ -108,8 +110,12 @@ export function FactoryDashboard() {
           <div className="flex items-center justify-between px-1">
             <span className="text-[10px] font-bold tracking-[0.3em] text-slate-300">TESİS KONTROL</span>
             <span className="flex items-center gap-1.5 font-mono text-[9px] text-slate-400">
-              <span className={`h-1.5 w-1.5 rounded-full ${connected ? "animate-pulse bg-emerald-400" : "bg-red-500"}`} />
-              {connected ? "CANLI · WS 1Hz" : "BAĞLANTI YOK"}
+              <span className={`h-1.5 w-1.5 rounded-full ${connected ? "animate-pulse bg-emerald-400" : "animate-pulse bg-red-500"}`} />
+              {connected
+                ? source === "live"
+                  ? `ERP GATEWAY · ${wsEvents} olay`
+                  : "SİMÜLASYON · 1Hz"
+                : "YENİDEN BAĞLANIYOR…"}
             </span>
           </div>
           {Object.values(machines).map((m) => (

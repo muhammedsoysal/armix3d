@@ -32,9 +32,68 @@ function push(id: string, status: MachineStatus, basePower: number, baseOee: num
   });
 }
 
+/** VITE_WS_URL tanımlıysa GERÇEK WebSocket'e bağlan (gateway kontratı);
+ * kopunca 3 sn'de bir yeniden dener, hiç yoksa mock akışa düşer.
+ * Kiosk kuralı: ağ yokken de uygulama tam çalışır (mock fallback). */
 export function connectLiveTelemetry(): () => void {
+  const wsUrl = import.meta.env.VITE_WS_URL as string | undefined;
+  if (wsUrl) return connectWebSocket(wsUrl);
+  return connectMock();
+}
+
+function connectWebSocket(url: string): () => void {
+  let ws: WebSocket | null = null;
+  let retry: ReturnType<typeof setTimeout> | null = null;
+  let closed = false;
+
+  const open = () => {
+    ws = new WebSocket(url);
+    ws.onopen = () => {
+      telemetryStore.getState().setConnected(true, "live");
+      console.log(`[TELEMETRY] Harici gateway'e bağlandı: ${url}`);
+    };
+    ws.onmessage = (ev) => {
+      const s = telemetryStore.getState();
+      s.bumpWsEvents();
+      try {
+        const msg = JSON.parse(ev.data as string);
+        if (msg.type === "machine.telemetry") {
+          const m = s.machines[msg.machineId];
+          if (!m) return;
+          s.updateMachine(msg.machineId, {
+            status: msg.status,
+            oee: msg.oee,
+            powerKw: msg.powerKw,
+            tempC: msg.tempC,
+            vibration: msg.vibration,
+            history: [...m.history, msg.powerKw].slice(-HISTORY_LEN),
+          });
+        } else if (msg.type === "order.created") {
+          console.log(`[TELEMETRY] Yeni ERP siparişi: ${msg.order.sku} ×${msg.order.qty}`);
+        }
+        // agv.pose: sayaçta görünür; poz-güdümlü render Tier-2.5 işi
+      } catch {
+        /* bozuk mesajı yut, akışı düşürme */
+      }
+    };
+    ws.onclose = () => {
+      telemetryStore.getState().setConnected(false, "live");
+      if (!closed) retry = setTimeout(open, 3000); // otomatik yeniden bağlanma
+    };
+    ws.onerror = () => ws?.close();
+  };
+  open();
+  return () => {
+    closed = true;
+    if (retry) clearTimeout(retry);
+    ws?.close();
+    telemetryStore.getState().setConnected(false);
+  };
+}
+
+function connectMock(): () => void {
   if (timer) clearInterval(timer);
-  telemetryStore.getState().setConnected(true);
+  telemetryStore.getState().setConnected(true, "mock");
   console.log("[TELEMETRY] Canlı veri akışı bağlandı (mock WS, 1 Hz)");
 
   timer = setInterval(() => {

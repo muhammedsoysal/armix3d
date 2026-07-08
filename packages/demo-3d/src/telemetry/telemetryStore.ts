@@ -35,12 +35,17 @@ export interface SlitJob {
 export interface TelemetryStoreState {
   machines: Record<string, MachineTelemetry>;
   connected: boolean;
+  /** Veri kaynağı: mock (dahili simülasyon) | live (harici gateway WS) */
+  source: "mock" | "live";
+  /** Gelen WS olay sayısı — bağlantı sağlığı göstergesi */
+  wsEvents: number;
   /** Yarma hattı global iş kuyruğu */
   slitQueue: SlitJob[];
   slitActiveIdx: number;
   slitProgress: number;
   updateMachine: (id: string, patch: Partial<MachineTelemetry>) => void;
-  setConnected: (connected: boolean) => void;
+  setConnected: (connected: boolean, source?: "mock" | "live") => void;
+  bumpWsEvents: () => void;
   setSlitProgress: (progress: number) => void;
   advanceSlitJob: () => void;
 }
@@ -97,6 +102,8 @@ export const telemetryStore = createStore<TelemetryStoreState>()((set) => ({
     "LSR-2": machine("LSR-2", "Lazer Kesim 2", "Fiber Laser"),
   },
   connected: false,
+  source: "mock",
+  wsEvents: 0,
   slitQueue: SLIT_JOBS,
   slitActiveIdx: 0,
   slitProgress: 0,
@@ -106,7 +113,8 @@ export const telemetryStore = createStore<TelemetryStoreState>()((set) => ({
       if (!m) return s;
       return { machines: { ...s.machines, [id]: { ...m, ...patch } } };
     }),
-  setConnected: (connected) => set({ connected }),
+  setConnected: (connected, source) => set((s) => ({ connected, source: source ?? s.source })),
+  bumpWsEvents: () => set((s) => ({ wsEvents: s.wsEvents + 1 })),
   setSlitProgress: (slitProgress) => set({ slitProgress }),
   advanceSlitJob: () =>
     set((s) => {

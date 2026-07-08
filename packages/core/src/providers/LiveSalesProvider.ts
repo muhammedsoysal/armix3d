@@ -1,9 +1,13 @@
 import type { SalesRecord } from "../models";
 import type { ISalesProvider } from "./ISalesProvider";
 
-/** Gerçek pazaryeri/ERP entegrasyonu için stub — arayüz hazır, implementasyon değil. */
+/** Gateway REST ucu üzerinden canlı satış özeti (kontrat: openapi.yaml). */
 export class LiveSalesProvider implements ISalesProvider {
-  getSalesRecords(): Promise<SalesRecord[]> {
-    throw new Error("TODO: canlı veri kaynağı entegre edilecek (Trendyol/Etsy/ERP satış API'si)");
+  constructor(private readonly baseUrl = "http://localhost:8787") {}
+
+  async getSalesRecords(): Promise<SalesRecord[]> {
+    const res = await fetch(`${this.baseUrl}/api/v1/sales`);
+    if (!res.ok) throw new Error(`Satış API ${res.status}`);
+    return res.json();
   }
 }

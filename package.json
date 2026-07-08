@@ -11,7 +11,8 @@
     "dev": "concurrently -k -n demo3d,dashboard,electron -c blue,green,magenta \"npm run dev -w @metalnest/demo-3d\" \"npm run dev -w @metalnest/sales-dashboard\" \"npm run dev -w @metalnest/electron-shell\"",
     "dev:web": "concurrently -k -n demo3d,dashboard -c blue,green \"npm run dev -w @metalnest/demo-3d\" \"npm run dev -w @metalnest/sales-dashboard\"",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "build": "npm run build --workspaces --if-present"
+    "build": "npm run build --workspaces --if-present",
+    "gateway": "node packages/gateway/server.mjs"
   },
   "devDependencies": {
     "concurrently": "^9.0.1",
