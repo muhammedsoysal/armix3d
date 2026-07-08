@@ -40,6 +40,29 @@ paths:
               schema:
                 type: array
                 items: { $ref: "#/components/schemas/SalesRecord" }
+  /api/v1/orders:
+    post:
+      summary: Yeni sipariş girişi (kiosk formu) — tüm WS istemcilerine order.created yayılır
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [sku, qty]
+              properties:
+                sku: { type: string }
+                qty: { type: integer, minimum: 1 }
+                dueDate: { type: string, format: date }
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accepted: { type: boolean }
+                  seq: { type: integer }
 components:
   schemas:
     StockItem:

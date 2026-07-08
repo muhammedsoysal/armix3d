@@ -36,9 +36,35 @@ const json = (res, body) => {
 };
 
 const server = createServer((req, res) => {
+  // CORS preflight (tarayıcı POST'u OPTIONS ile önden sorar)
+  if (req.method === "OPTIONS") {
+    res.writeHead(204, {
+      "access-control-allow-origin": "*",
+      "access-control-allow-methods": "GET, POST, OPTIONS",
+      "access-control-allow-headers": "content-type",
+    });
+    return res.end();
+  }
   if (req.url === "/api/v1/health") return json(res, { status: "ok", snapshotSeq: seq });
   if (req.url === "/api/v1/stock") return json(res, STOCK);
   if (req.url === "/api/v1/sales") return json(res, SALES);
+  // Sipariş Girişi formu buraya POST eder → tüm istemcilere order.created yayılır
+  if (req.url === "/api/v1/orders" && req.method === "POST") {
+    let body = "";
+    req.on("data", (c) => (body += c));
+    req.on("end", () => {
+      try {
+        const { sku, qty, dueDate } = JSON.parse(body);
+        broadcast({ type: "order.created", order: { sku, qty, dueDate } });
+        console.log(`[GW] Yeni sipariş alındı: ${sku} ×${qty} (termin ${dueDate})`);
+        json(res, { accepted: true, seq });
+      } catch {
+        res.writeHead(400, { "access-control-allow-origin": "*" });
+        res.end();
+      }
+    });
+    return;
+  }
   res.writeHead(404, { "access-control-allow-origin": "*" });
   res.end();
 });

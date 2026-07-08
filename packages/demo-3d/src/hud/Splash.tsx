@@ -4,6 +4,7 @@ import { useStore } from "zustand";
 import { simStore } from "../sim/simStore";
 import { telemetryStore } from "../telemetry/telemetryStore";
 import { assetStore } from "../assets/AssetLoader";
+import { IS_KIOSK } from "../kiosk/kiosk";
 
 /** Açılış akışı fazı: yükleme → sinematik kamera inişi → hazır. */
 export const introStore = createStore<{ phase: "loading" | "descending" | "done" }>()(() => ({
@@ -86,7 +87,7 @@ export function Onboarding() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    if (phase !== "done") return;
+    if (phase !== "done" || IS_KIOSK) return; // kiosk TV'sinde ipucu turu olmaz
     try {
       if (!localStorage.getItem(OB_KEY)) setShow(true);
     } catch {

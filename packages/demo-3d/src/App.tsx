@@ -28,6 +28,10 @@ import { connectLiveTelemetry } from "./telemetry/liveTelemetryService";
 import { DirectorHUD } from "./hud/DirectorHUD";
 import { directorStore } from "./director/directorStore";
 import { qualityStore } from "./quality/qualityStore";
+import { OrderEntryHUD } from "./hud/OrderEntryHUD";
+import { MiniMap } from "./hud/MiniMap";
+import { ShiftBadge } from "./hud/ShiftBadge";
+import { IS_KIOSK } from "./kiosk/kiosk";
 
 export default function App() {
   const params = useStore(qualityStore, (s) => s.params);
@@ -35,6 +39,19 @@ export default function App() {
 
   // Canlı telemetri akışı (mock WS) — gerçek entegrasyonda SCADA/ERP ucu
   useEffect(() => connectLiveTelemetry(), []);
+
+  // Kiosk bekçisi: intro biter bitmez Sunum Modu açılır; biri kapatırsa
+  // (veya kadraj kesintisi sonrası) 5 sn'de bir yeniden devreye alınır
+  useEffect(() => {
+    if (!IS_KIOSK) return;
+    console.log("[KIOSK] Fuar vitrini modu — UI kilitli, Sunum Modu otopilot");
+    const id = setInterval(() => {
+      if (introStore.getState().phase === "done" && !directorStore.getState().active) {
+        directorStore.getState().activate();
+      }
+    }, 5000);
+    return () => clearInterval(id);
+  }, []);
 
   return (
     <div className="relative h-full w-full">
@@ -66,18 +83,25 @@ export default function App() {
       {/* Sunum modunda paneller sinematik kadraja yer açmak için söner */}
       <div className={`transition-opacity duration-700 ${directorActive ? "opacity-30" : "opacity-100"}`}>
         <ProductionPlanHUD />
-        <QualityControls />
+        {!IS_KIOSK && <QualityControls />}
       </div>
       <DirectorHUD />
       <OptimizerThinkingHUD />
-      <WhatIfHUD />
-      <AudioToggle />
-      <FactoryDashboard />
-      <Toolbar />
+      {!IS_KIOSK && (
+        <>
+          <WhatIfHUD />
+          <OrderEntryHUD />
+          <AudioToggle />
+          <FactoryDashboard />
+          <Toolbar />
+          <GanttView />
+          <TraceabilityHUD />
+          <ShiftReport />
+        </>
+      )}
       <AlarmBanner />
-      <GanttView />
-      <TraceabilityHUD />
-      <ShiftReport />
+      <ShiftBadge />
+      <MiniMap />
       <Splash />
       <Onboarding />
     </div>

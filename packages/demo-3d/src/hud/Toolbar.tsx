@@ -72,6 +72,16 @@ export function Toolbar() {
         </svg>
       </Btn>
       <Btn
+        title="Sipariş Girişi (Karar Motoru canlı yeniden planlar)"
+        active={openPanel === "order"}
+        activeClass="border-cyan-400/60 bg-cyan-500/20 text-cyan-300"
+        onClick={() => toggle("order")}
+      >
+        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={sw}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3m0 0h3m-3 0v3m0-3V9M7 3h7l5 5v12a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1z" />
+        </svg>
+      </Btn>
+      <Btn
         title="Senaryo Sandbox (acil sipariş, ağırlıklar, Akıllı Grupla)"
         active={openPanel === "whatif"}
         activeClass="border-cyan-400/60 bg-cyan-500/20 text-cyan-300"

@@ -27,6 +27,7 @@ import {
   type FloorPath,
 } from "./agvLogic";
 import { cellOf, traffic } from "./trafficControl";
+import { reportPose } from "../fleet/poseRegistry";
 
 const SPEED = 1.15; // m/s
 const LIFT_DURATION = 1.2; // s
@@ -323,6 +324,7 @@ export function AGV() {
     }
     // Batarya store'a saniyede ~1 kez yazılır (HUD aboneleri için)
     if (Math.abs(store.battery - f.battery) >= 1) store.setBattery(Math.round(f.battery));
+    reportPose("AGV-01", rootRef.current.position.x, rootRef.current.position.z, f.yaw);
   });
 
   return (
@@ -406,6 +408,7 @@ export function PatrolAGV({
     const dYaw = ((p.heading - yawRef.current + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
     yawRef.current += dYaw * Math.min(1, dt * 6);
     rootRef.current.rotation.y = yawRef.current;
+    reportPose(id, p.x, p.z, yawRef.current);
     if (granted) for (const w of wheelRefs.current) w.rotation.x += (speed * dt) / WHEEL_R;
     const t = clock.elapsedTime;
     if (beaconRef.current) {

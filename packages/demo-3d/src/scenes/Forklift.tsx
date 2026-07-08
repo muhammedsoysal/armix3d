@@ -5,6 +5,7 @@ import { type Group, type Mesh } from "three";
 import { OptionalModel } from "../assets/AssetLoader";
 import { pathLength, pointAlongPath, type FloorPath } from "../agv/agvLogic";
 import { cellOf, traffic } from "../agv/trafficControl";
+import { reportPose } from "../fleet/poseRegistry";
 
 /** İkmal mekiği rotası: yarma hattı yanı ↔ rulo deposu (yeni depo bölgesi).
  * Duraklarda çatal iner/kalkar; depodan dönüşte çatalda RULO taşır. */
@@ -73,6 +74,7 @@ export function Forklift() {
       f.yaw += dY * Math.min(1, dt * 4);
     }
     rootRef.current.rotation.y = f.yaw;
+    reportPose("FRK-1", p.x, p.z, f.yaw + Math.PI / 2, "forklift");
     forksRef.current.position.y = f.lift * 0.55;
     coilRef.current.visible = f.carrying && f.lift > 0.5;
   });
