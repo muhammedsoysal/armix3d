@@ -82,6 +82,16 @@ export function Toolbar() {
         </svg>
       </Btn>
       <Btn
+        title="Üretim Planı — Gantt"
+        active={openPanel === "gantt"}
+        activeClass="border-cyan-400/60 bg-cyan-500/20 text-cyan-300"
+        onClick={() => toggle("gantt")}
+      >
+        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={sw}>
+          <path strokeLinecap="round" d="M4 6h8M4 12h12M4 18h6M18 4v16" />
+        </svg>
+      </Btn>
+      <Btn
         title="Tesis Kontrol (canlı telemetri)"
         active={openPanel === "dashboard"}
         activeClass="border-emerald-400/60 bg-emerald-500/20 text-emerald-300"

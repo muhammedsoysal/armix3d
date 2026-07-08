@@ -22,6 +22,7 @@ import { TraceabilityHUD } from "./hud/TraceabilityHUD";
 import { ShiftReport } from "./hud/ShiftReport";
 import { Toolbar } from "./hud/Toolbar";
 import { AlarmBanner } from "./alarm/AlarmBanner";
+import { GanttView } from "./hud/GanttView";
 import { connectLiveTelemetry } from "./telemetry/liveTelemetryService";
 import { DirectorHUD } from "./hud/DirectorHUD";
 import { directorStore } from "./director/directorStore";
@@ -69,6 +70,7 @@ export default function App() {
       <FactoryDashboard />
       <Toolbar />
       <AlarmBanner />
+      <GanttView />
       <TraceabilityHUD />
       <ShiftReport />
     </div>
